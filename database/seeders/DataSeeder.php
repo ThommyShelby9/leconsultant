@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use App\Models\Administrateur;
 use App\Models\Pageservice;
 use App\Models\Type;
+use App\Models\User;
 
 class DataSeeder extends Seeder
 {
@@ -29,6 +30,18 @@ class DataSeeder extends Seeder
             'password'=>Hash::make('12345678'),
             'role'=> 1,
             'isActif'=>1
+        ]);
+
+        User::create([
+            'nom' => 'Doe', 
+            'prenoms' => 'John', 
+            'adresse' => '123 Rue Exemple, Ville', 
+            'telephone' => '0123456789', 
+            'typeActor' => 1, 
+            'email' => 'john.doe@example.com', 
+            'password' => Hash::make('password123'), 
+            'situation' => 'Mode Gratuit', 
+            'description' => null, 
         ]);
 
         Pageservice::create([
