@@ -41,7 +41,6 @@ class DataSeeder extends Seeder
             'email' => 'john.doe@example.com', 
             'password' => Hash::make('password123'), 
             'situation' => 'Mode Gratuit', 
-            'description' => null, 
         ]);
 
         Pageservice::create([
