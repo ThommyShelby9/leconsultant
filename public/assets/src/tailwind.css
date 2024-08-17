@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: Poppins;
+    font-weight: normal;
+    src: url("../fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+    font-family: Poppins;
+    font-style: italic;
+    src: url("../fonts/Poppins-Italic.ttf");
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: bold;
+    src: url("../fonts/Poppins-Bold.ttf");
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 600;
+    src: url("../fonts/Poppins-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 500;
+    src: url("../fonts/Poppins-Medium.ttf");
+}
+
+@font-face {
+    font-family: Poppins;
+    font-weight: 300;
+    src: url("../fonts/Poppins-Light.ttf");
+}
+
+
+body{
+    font-family: Poppins, sans-serif !important;
+}
+
+#main-menu-navigation li:last-child{
+    @apply text-white inline-block bg-consultant-blue rounded-lg text-lg font-medium lg:px-7 px-4 lg:py-4 py-2 lg:ml-0 ml-7;
+}
+
+#main-menu-navigation li a{
+    @apply relative inline-block;
+}
+
+#main-menu-navigation li a:after{
+    @apply block absolute bottom-[-3px] w-full h-[2px] origin-left scale-x-0 scale-y-0;
+    background: rgba(1, 64, 186, 1);
+    transition: transform 0.3s ease-out;
+    content: "";
+}
+
+#main-menu-navigation li a:hover:after{
+    @apply scale-x-100 scale-y-100;
+}
+
+#main-menu{
+    transition: 0.5s;
+}
+
+.unsticky{
+    @apply relative w-full bg-transparent;
+}
+
+.collant{
+    @apply fixed bg-white z-100 w-full shadow-lg delay-500;
+}
+
+.c-select{
+    @apply appearance-none rounded-lg block w-full px-3 py-6 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none;
+}
+
+form .select:nth-child(1) .c-select{
+    @apply rounded-l-lg;
+}
+
+form .select:nth-child(2) .c-select{
+
+}
+
+#nav-toggle span{
+    @apply block w-full h-[2px] bg-consultant-blue absolute pointer-events-none;
+    transition: opacity 0.5s 0.3s ease-out;
+}
+
+#nav-toggle span:nth-child(1), #nav-toggle span:nth-child(3){
+    transition: transform 0.5s ease-out;
+}
+
+#nav-toggle span:nth-child(1){
+    @apply -translate-y-[7px];
+}
+
+#nav-toggle span:nth-child(3){
+    @apply translate-y-[7px];
+}
+
+#nav-toggle.open span:nth-child(1){
+    @apply rotate-[135deg] translate-x-0 translate-y-0;
+}
+
+#nav-toggle.open span:nth-child(2){
+    opacity: 0;
+    transition: opacity 0s ease-out;
+}
+
+#nav-toggle.open span:nth-child(3){
+    @apply rotate-[-135deg] translate-x-0 translate-y-0;
+}
+
+/*#btn-sus:after{*/
+/*    @apply absolute text-white right-0;*/
+/*    content: 'f';*/
+/*}*/
+
+.inp-log{
+    transition: 0.5s;
+    @apply px-6 py-4 rounded-lg bg-white w-full mb-7 focus:outline-2 outline-none focus:outline-offset-0 focus:outline-consultant-rouge;
+}
+
+#validate{
+    transition: 0.5s;
+}
+
+.inp-sign{
+    transition: 0.5s;
+    @apply py-7 px-6 lg:w-3/5 w-full rounded bg-white mb-6 focus:outline-2 outline-none focus:outline-offset-0 focus:outline-consultant-rouge;
+}
+
+.inp-profil{
+    transition: 0.5s;
+    @apply lg:w-4/5 w-full px-4 py-3 border mb-6 focus:outline-2 outline-none focus:outline-offset-0 focus:outline-consultant-rouge
+}
+
+.inp-log:nth-child(2){
+    @apply mb-2;
+}
+
+.inp-sign:nth-child(6){
+    @apply mb-24;
+}
+
+.card-service{
+    @apply rounded-lg shadow px-16 pt-5 pb-14 transform;
+    transition: 0.5s;
+}
+
+.card-service a{
+    @apply relative inline-block;
+}
+
+.card-service a:after{
+    @apply block absolute bottom-[-3px] w-full h-[2px] origin-left scale-x-0 scale-y-0;
+    background: rgba(1, 64, 186, 1);
+    transition: transform 0.3s ease-out;
+    content: "";
+}
+
+.card-service:hover a:after{
+    @apply scale-x-100 scale-y-100 delay-300;
+}
+
+.card-service:hover{
+    box-shadow: 10px 10px 3px 6px #C4C4C4;
+}
+
+.card-formation{
+    @apply rounded-lg shadow transform;
+    transition: 0.5s;
+}
+
+.card-formation-content{
+    @apply flex flex-col;
+}
+
+.card-formation .card-formation-content div a{
+    @apply relative inline-block;
+}
+
+.card-formation .card-formation-content div a:after{
+    @apply block absolute bottom-[-3px] w-full h-[2px] origin-left scale-x-0 scale-y-0;
+    background: rgba(1, 64, 186, 1);
+    transition: transform 0.3s ease-out;
+    content: "";
+}
+
+.card-formation:hover .card-formation-content div a:after{
+    @apply scale-x-100 scale-y-100 delay-300;
+}
+
+.card-formation:hover{
+    /*box-shadow: 10px 4px 3px 6px #C4C4C4;*/
+    @apply shadow-lg;
+}
+
+/*.modal{*/
+/*    background-color: rgba(0,0,0, 0.4);*/
+/*}*/
+
+#profile-header{
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+}
+
+.link-consultant{
+    @apply relative inline-block text-consultant-blue font-semibold;
+}
+
+.link-consultant:after{
+    @apply block absolute bottom-[-3px] w-full h-[2px] origin-left scale-x-0 scale-y-0;
+    background: rgba(1, 64, 186, 1);
+    transition: transform 0.3s ease-out;
+    content: "";
+}
+
+.link-consultant:hover:after{
+    @apply scale-x-100 scale-y-100 delay-300;
+}
+
+.nav-tab-c{
+    @apply nav-link w-full flex items-center justify-center font-medium lg:text-lg text-sm leading-tight uppercase font-medium text-consultant-blue border-x-0 border-t-0 border-b-[5px] border-transparent px-6 py-8 my-2 lg:my-0 hover:border-transparent focus:border-transparent !important;
+}
+
+.nav-tabs .nav-tab-c.active{
+    @apply border-consultant-blue text-consultant-blue !important;
+}
+
+.card-form:hover .link-consultant:after{
+    @apply scale-x-100 scale-y-100 delay-300;
+}
+
+.rounded-checkbox {
+    @apply relative;
+}
+
+.rounded-checkbox label {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 28px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 28px;
+}
+
+.rounded-checkbox label:after {
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 7px;
+    opacity: 0;
+    position: absolute;
+    top: 8px;
+    transform: rotate(-45deg);
+    width: 12px;
+}
+
+.rounded-checkbox input[type="checkbox"] {
+    visibility: hidden;
+}
+
+.rounded-checkbox input[type="checkbox"]:checked + label {
+    @apply bg-consultant-blue border-consultant-blue;
+}
+
+.rounded-checkbox input[type="checkbox"]:checked + label:after {
+    opacity: 1;
+}
+
+.pills-abonnement{
+    @apply py-4 px-16 rounded-full text-white text-lg mb-2;
+    background: linear-gradient(224.51deg, rgba(252, 25, 25, 0) -48.23%, #F9AD48 6.98%, #FF0000 75.21%);
+}
+
+.list-abo{
+    @apply list-none;
+    list-style-image: url('../img/puce.png');
+}

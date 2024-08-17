@@ -1,0 +1,1 @@
+Connecté {{  Auth::user()->email }}
