@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AlerteNotification;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Alerte;
+use Illuminate\Support\Facades\Mail;
 
 class AlerteController extends Controller
 {
@@ -115,5 +117,29 @@ class AlerteController extends Controller
 
         return redirect()->route('home');
         //return view('userView.alerte.create');
+    }
+
+
+    public function alerte(Request $request)
+    {
+        // Validation des données du formulaire
+        $validated = $request->validate([
+            'type_marches' => 'required|array',
+            'categories_ac' => 'required|array',
+        ]);
+    
+        // Sauvegarde de l'alerte dans la base de données
+        $alerte = Alerte::create([
+            'idUser' => auth()->id(),
+            'marches' => json_encode($validated['type_marches']),
+            'ac' => json_encode($validated['categories_ac']),
+            'type' => null,
+            'idAbonnement' => null,
+        ]);
+    
+        // Envoi de l'email de notification à l'utilisateur
+        Mail::to(auth()->user()->email)->send(new AlerteNotification($alerte));
+    
+        return redirect()->back()->with('success', 'Votre alerte a été enregistrée avec succès !');
     }
 }

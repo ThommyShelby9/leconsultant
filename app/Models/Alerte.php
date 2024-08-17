@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Alerte extends Model
 {
     use HasFactory;
+
+
+    protected $fillable = [
+        'idUser',
+        'marches',
+        'ac',
+        'dateDebut',
+        'abonnement_id',
+        'stop',
+    ];
 }

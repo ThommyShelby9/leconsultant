@@ -75,7 +75,7 @@ Route::middleware(['auth:web' ])->group(function() {
     Route::post('alerte/prendre/{type}', [AlerteController::class, 'alerteCreer'])
     ->name('alerte.subscription');
 
-    Route::post('alerte/save', [AlerteController::class, 'alerteSave'])
+    Route::post('alerte/save', [AlerteController::class, 'alerte'])
     ->name('alerte.save');
 
     Route::get('/compte',[CompteController::class , 'account'])->name('moncompte');
