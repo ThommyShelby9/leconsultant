@@ -25,7 +25,7 @@
         <!-- Categorie -->
         <div class="w-1/3 pr-1 mb-4">
             <select class="form-select c-select" name="categ" aria-label="Default select example">
-                <option selected class="" value="0" >Toutes les Catégories d'A.C</option>
+                <option selected class="" value="0" >Catégories d'A.C</option>
                 @foreach ($les_categories as $item)
                 <option value="{{$item->id }}">{{ $item->title }}</option>
                 @endforeach
@@ -35,7 +35,7 @@
         <!-- Type d'offre -->
         <div class="w-1/3 pl-1 mb-4">
             <select name="type" class="form-select c-select" aria-label="Default select example">
-                <option value="0" selected>Tous les Types d'offre</option>
+                <option value="0" selected>Types d'offre</option>
                 @foreach ($les_types_marches as $item)
                 <option value="{{$item->id }}">{{ $item->title }}</option>
                 @endforeach
@@ -43,14 +43,7 @@
         </div>
 
         <!-- Autorité contractante -->
-        <div class="w-1/3 pr-1 mb-4">
-            <select class="form-select c-select" name="autorite" aria-label="Default select example">
-                <option selected class="" value="0" >Toutes les Autorités Contractantes</option>
-                @foreach ($les_autorites as $item)
-                <option value="{{$item->id }}">{{ $item->name }}</option>
-                @endforeach
-            </select>
-        </div>
+
 
         <!-- Statut de la demande -->
         <div class="w-1/3 pr-1 mb-4">
