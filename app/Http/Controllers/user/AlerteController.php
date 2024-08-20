@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Alerte;
+use App\Models\Autorite;
+use App\Models\Type;
 use Illuminate\Support\Facades\Mail;
 
 class AlerteController extends Controller
@@ -124,22 +126,47 @@ class AlerteController extends Controller
     {
         // Validation des données du formulaire
         $validated = $request->validate([
-            'type_marches' => 'required|array',
-            'categories_ac' => 'required|array',
+            'type_marche' => 'required|array', // Valide comme tableau
+            'ac' => 'required|array', // Valide comme tableau
+            'status' => 'required|string', // Valide comme chaîne de caractères
         ]);
+    
+        // Récupération des objets associés à partir de la base de données
+        $marches = Type::whereIn('id', $validated['type_marche'])->get();
+        $acs = Autorite::whereIn('id', $validated['ac'])->get();
     
         // Sauvegarde de l'alerte dans la base de données
         $alerte = Alerte::create([
             'idUser' => auth()->id(),
-            'marches' => json_encode($validated['type_marches']),
-            'ac' => json_encode($validated['categories_ac']),
-            'type' => null,
-            'idAbonnement' => null,
+            'marches' => json_encode($validated['type_marche']), // Sauvegarde en format JSON
+            'ac' => json_encode($validated['ac']), // Sauvegarde en format JSON
+            'details' => 'Alerte pour marchés: ' . implode(', ', $marches->pluck('title')->toArray()) . ' - AC: ' . implode(', ', $acs->pluck('name')->toArray()),
+            'abonnement_id' => 1,
+            'dateDebut' => now(),
         ]);
     
-        // Envoi de l'email de notification à l'utilisateur
-        Mail::to(auth()->user()->email)->send(new AlerteNotification($alerte));
+        // Préparation des données pour l'email
+        $data = [
+            'type_marches' => $marches, // Collection d'objets Marche
+            'categories_ac' => $acs, // Collection d'objets AutoriteContractante
+            'user_name' => auth()->user()->nom . ' ' . auth()->user()->prenoms,
+        ];
     
+        // Envoi de l'email de notification à l'utilisateur
+        Mail::send('emails.alerte_notification', $data, function ($message) use ($alerte) {
+            $message->subject('Nouvelle Alerte Correspondante')
+                    ->from(config('mail.from.address'), config('mail.from.name'))
+                    ->to(auth()->user()->email);
+        });
+    
+        // Redirection avec un message de succès
         return redirect()->back()->with('success', 'Votre alerte a été enregistrée avec succès !');
+    }
+    
+
+    public function alertePage(){
+        $ac = Autorite::all();
+        $marches = Type::all();
+       return view('emails.alerte')->with(compact('ac', 'marches')); 
     }
 }

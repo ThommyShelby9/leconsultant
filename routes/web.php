@@ -103,6 +103,9 @@ Route::middleware(['auth:web' ])->group(function() {
     Route::post('/description-save',[CompteController::class , 'surMoiSave'])
     ->name('moncompte.surMoi.save');
 
+    Route::get('/create_alerte',[AlerteController::class , 'alertePage'])
+    ->name('alerte');
+
 
 
 

@@ -17,7 +17,6 @@
 </section>
 @endsection
 
-
 @section('contenu')
 <div class="py-4">
     <div class="container">
@@ -25,8 +24,9 @@
             @csrf
 
             <div class="row">
+                <!-- Type de marché -->
                 <div class="col-lg-6 mb-4">
-                    <div class="bg-primary text-center text-white py-3 rounded mb-4">
+                    <div class="bg-primary text-center text-white py-3 rounded mb-4 shadow-sm">
                         <h2 class="h5">Type de marché qui vous intéresse</h2>
                     </div>
                     @foreach ($les_types_marches as $item)
@@ -39,8 +39,9 @@
                     @endforeach
                 </div>
 
+                <!-- Type d'autorité contractante (AC) -->
                 <div class="col-lg-6 mb-4">
-                    <div class="bg-primary text-center text-white py-3 rounded mb-4">
+                    <div class="bg-primary text-center text-white py-3 rounded mb-4 shadow-sm">
                         <h2 class="h5">Type de AC qui vous intéresse</h2>
                     </div>
                     @foreach ($les_categories as $item)
@@ -54,9 +55,11 @@
                 </div>
             </div>
 
-            <input type="hidden" name="type">
-            <input type="hidden" name="idAbonnement">
+            <!-- Hidden inputs -->
+            <input type="hidden" name="type" value="">
+            <input type="hidden" name="idAbonnement" value="">
 
+            <!-- Submit button -->
             <div class="text-center">
                 <button type="submit" class="btn btn-danger btn-lg">
                     Enregistrer
@@ -64,16 +67,9 @@
             </div>
         </form>
     </div>
-
-
-</div>
-
-
-
-    
-
 </div>
 @endsection
+
 
 @section('code')
     <script src="https://cdn.kkiapay.me/k.js"></script>

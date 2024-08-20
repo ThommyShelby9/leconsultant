@@ -40,6 +40,13 @@
     </li>
 
     @auth
+
+    <li class="text-consultant-blue text-lg font-medium px-7 py-2">
+        <a href="{{ Route('alerte') }}">
+            Créer une alerte
+        </a>
+    </li>
+    
     <li class="text-consultant-blue text-lg font-medium px-7 py-2">
         <a href="{{ route('moncompte') }}">
            Mon compte

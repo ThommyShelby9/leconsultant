@@ -14,6 +14,7 @@ use App\Mail\OffreNotification;
 
 use App\Models\Offre;
 use App\Models\User;
+use App\Notifications\OffreCorrespondante;
 
 class OffreController extends Controller
 {
@@ -73,28 +74,38 @@ class OffreController extends Controller
 
        //return $nbre. " et ".$tm;
 
-       $o = DB::table('alertes')
-       ->join('abonnements', 'alertes.abonnement_id', 'abonnements.id')
-       ->where('abonnements.dateFin', '>=', date('Y-m-d'))
-       ->Where('alertes.marches', 'like','%'.$nbre.'%')
-       ->Where('alertes.ac', 'like','%'.$tm.'%')
-       ->get(['alertes.idUser']);
+    //    $o = DB::table('alertes')
+    //    ->join('abonnements', 'alertes.abonnement_id', 'abonnements.id')
+    //    ->where('abonnements.dateFin', '>=', date('Y-m-d'))
+    //    ->Where('alertes.marches', 'like','%'.$nbre.'%')
+    //    ->Where('alertes.ac', 'like','%'.$tm.'%')
+    //    ->get(['alertes.idUser']);
+
+       $users = User::whereHas('alertes', function ($query) use ($offre) {
+        $query->where('marches', $offre->typeMar_id )
+              ->where('ac', $offre->ac_id);
+    })->get();
+
+    // Envoyer les notifications
+    foreach ($users as $user) {
+        $user->notify(new OffreCorrespondante($offre, $user));
+    }
 
        //Envoyez la notification aux abonnées
 
 
 
-       foreach($o as $item){
+    //    foreach($o as $item){
 
-            $user_al = User::find($item->idUser);
+    //         $user_al = User::find($item->idUser);
 
-            $offre = ['titre'=>$req['titre'] , 'expire'=>$req['dateExp'] ];
+    //         $offre = ['titre'=>$req['titre'] , 'expire'=>$req['dateExp'] ];
 
-            $user = ['email'=>$user_al->email , 'nomPrenoms'=>$user_al->nom." ".$user_al->prenoms, 'nomSociete'=>$user_al->nomSociete ,'type'=>$user_al->typeActor];
+    //         $user = ['email'=>$user_al->email , 'nomPrenoms'=>$user_al->nom." ".$user_al->prenoms, 'nomSociete'=>$user_al->nomSociete ,'type'=>$user_al->typeActor];
 
-            Mail::to($user['email'])->send(new OffreNotification($user , $offre ));
+    //         Mail::to($user['email'])->send(new OffreNotification($user , $offre ));
 
-       }
+    //    }
 
 
        return redirect()->route('admin.offre.list')
