@@ -7,11 +7,7 @@
             </h3>
             <div class="pl-7 mb-5">
                 <p class="text-white lg:text-lg text-sm text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                    ut aliquip
-                    ex ea commodo consequat.
+                Restez connectés avec Le Consultant et soyez les premiers informés des dernières actualités en matière de marchés publics et privés. Suivez-nous sur nos réseaux sociaux pour ne rien manquer et bénéficier de nos conseils exclusifs pour optimiser vos soumissions.
                 </p>
             </div>
             <div class="pl-5">
@@ -46,11 +42,7 @@
             </h3>
             <div class="pl-7 mb-5">
                 <p class="text-white lg:text-lg text-sm text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                    ut aliquip
-                    ex ea commodo consequat.
+                Abonnez-vous à notre newsletter pour recevoir directement dans votre boîte mail toutes les informations pertinentes sur les appels d’offres, les conseils d’experts, et les dernières tendances en matière de marchés publics. Ne manquez aucune opportunité avec Le Consultant
                 </p>
             </div>
             <!--div class="pl-5 relative">

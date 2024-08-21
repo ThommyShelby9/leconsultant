@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Support\Facades\Route;
 use App\Providers\FortifyServiceProvider;
 
@@ -10,6 +11,7 @@ use App\Http\Controllers\user\CompteController as CompteController;
 use App\Http\Controllers\user\AbonnementController as AbonnementController;
 
 use App\Http\Controllers\user\FTController as FTController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,6 +144,10 @@ Route::middleware(['auth:web' ])->group(function() {
 
     Route::get('/settings',[CompteController::class , 'mesSettings'])
     ->name('mesSetting');
+
+    Route::get('/email/verify/{email}', [CreateNewUser::class, 'verify'])->name('email_verified');
+
+
 
 });
 

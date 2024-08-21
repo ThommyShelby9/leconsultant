@@ -15,14 +15,10 @@ style="background-image: linear-gradient(to bottom, rgba(1, 64, 186, 0.6), rgba(
                 Nos services
             </h1>
             <p class="text-white text-justify lg:text-lg text-sm mb-3">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+            Le Consultant vous accompagne dans toutes les étapes de la veille stratégique des marchés publics et privés. De la consultation des appels d’offres à l’accompagnement dans la soumission de vos dossiers, nous mettons à votre disposition un ensemble de services pour maximiser vos chances de succès. Nos experts sont à votre écoute pour vous guider vers les meilleures opportunités.
             </p>
             <p class="text-white text-justify lg:text-lg text-sm">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+
             </p>
         </div>
     </div>

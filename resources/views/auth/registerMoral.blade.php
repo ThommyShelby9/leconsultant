@@ -2,6 +2,9 @@
 
 @section('titre')
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 
 <title>Le consultant | Inscription - Entreprise</title>
 @endsection
@@ -21,10 +24,12 @@
 @section('contenu')
 <div class="py-12">
     <div class="container">
+        <!-- Contenu de la page d'inscription -->
         <h3 class="lg:text-2xl text-lg text-consultant-gris text-center font-medium mb-12">
             S'inscrire en tant que personne:
         </h3>
         <div class="flex flex-wrap justify-center space-x-24 mb-20">
+            <!-- Sélection du type d'inscription -->
             <div class="">
                 <a href="{{ Route('register.morale') }} ">
                     <button
@@ -48,9 +53,10 @@
                     Physique
                 </div>
             </div>
-
         </div>
-        <form method="POST" name="MoralForm" onsubmit="return verificationMoral()" action="{{ route('register') }}"
+
+        <!-- Formulaire d'inscription -->
+        <form method="POST" name="MoralForm" id="registerForm" action="{{ route('register') }}"
             class="flex flex-col items-center">
             @csrf
             <input type="hidden" name="typeActor" value="2">
@@ -66,23 +72,22 @@
             <input id="nomSociete" type="text" class="inp-sign" name="nomSociete" placeholder="Dénomination sociale *"
                 value="{{ old('nomSociete') }}" autocomplete="nomSociete" autofocus>
 
-
             <span class="text-left text-consultant-rouge mb-1 " id="adresseMsg"></span>
             <input id="adresse" type="text" class="inp-sign" name="adresse" value="{{ old('adresse') }}"
                 autocomplete="adresse" autofocus placeholder="Adresse de l'entreprise *">
 
             <span class="text-left text-consultant-rouge mb-1 " id="telephoneMsg">
                 @error('telephone')
-                <span>Verifiez le format du numéro (Ex:+229 62 00 00 00 )</span>
+                <span>Vérifiez le format du numéro (Ex:+229 62 00 00 00 )</span>
                 @enderror
             </span>
 
             <input id="telephone" type="tel" class="inp-sign" name="telephone" value="{{ old('telephone') }}"
-                placeholder="Numero de telephone  (Ex: +229 61 00 00 00 )*" autocomplete="telephone" autofocus>
+                placeholder="Numéro de téléphone (Ex: +229 61 00 00 00 )*" autocomplete="telephone" autofocus>
 
             <span class="text-left text-consultant-rouge mb-1 " id="emailMsg">
                 @error('email')
-                <span>Email deja utilisé</span>
+                <span>Email déjà utilisé</span>
                 @enderror
             </span>
             <input id="email" type="email" class="inp-sign" placeholder="Votre mail *" name="email"

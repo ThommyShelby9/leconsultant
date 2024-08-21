@@ -4,8 +4,67 @@
 <title>Le consultant | Accueil</title>
 @endsection
 
-
 @section('banner')
+
+@if(!$hasActiveSubscription)
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            title: 'Abonnement requis',
+            text: "Veuillez souscrire à l'abonnement unique de 2999 FCFA afin de pouvoir accéder à la plateforme.",
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonText: 'Souscrire',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            backdrop: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Lancer le widget de paiement Kkiapay
+                Kkiapay({
+                    amount: 2999,
+                    position: "center",
+                    sandbox: true,  // Mettre à false en production
+                    key: "tpk_85abf271ae8311ecb9755de712bc9e4f", // Remplacez par votre clé publique Kkiapay
+                    callback: function(response) {
+                        // Traitez la réponse ici (redirection, enregistrement dans la base de données, etc.)
+                        console.log(response); // Exemple de traitement de la réponse
+                        
+                        if (response.status === 'SUCCESS') {
+                            // Rediriger vers une page de succès ou effectuer d'autres actions
+                            window.location.href = "/";
+                        } else {
+                            // Gérer les cas d'échec ou d'annulation
+                            Swal.fire({
+                                title: 'Paiement échoué',
+                                text: "Votre paiement n'a pas été effectué. Veuillez réessayer.",
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    onClose: function () {
+                        Swal.fire({
+                            title: 'Paiement annulé',
+                            text: "Vous devez compléter le paiement pour accéder à la plateforme.",
+                            icon: 'warning',
+                            confirmButtonText: 'Réessayer'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Relancer le paiement si l'utilisateur souhaite réessayer
+                                window.location.reload();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+@endif
 
 <section id="banner" class="relative overflow-hidden">
     <div class="bg-consultant-blue lg:pt-32 lg:pb-48 pt-10">
@@ -19,10 +78,8 @@
                         Bénin
                     </h1>
                     <p class="text-white text-justify mb-2">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut imperdiet ultrices elit suscipit dignissim massa. Purus viverra laoreet scelerisque morbi euismod eget. Nunc id tortor dui velit dignissim faucibus feugiat. Pharetra turpis condimentum ut nul,
-                    </p>
+                    Découvrez les opportunités d’affaires au Bénin à travers notre plateforme dédiée aux appels d’offres publics et privés. Que vous soyez une petite ou grande entreprise, nous vous aidons à identifier les projets les plus pertinents pour développer vos activités et accroître votre chiffre d’affaires. Ne manquez plus aucune opportunité grâce à notre système d’alerte personnalisée.                   </p>
                     <p class="text-white text-justify">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut imperdiet ultrices elit suscipit dignissim massa. Purus viverra laoreet scelerisque morbi euismod eget. Nunc id tortor dui velit dignissim faucibus feugiat. Pharetra turpis condimentum ut nul,
                     </p>
                 </div>
             </div>
@@ -142,28 +199,7 @@
     </div>
 </section>
 
-@auth
 
-@if(Auth::user()->situation == "Mode Essaie")
-    <div class="container">
-        <h2 class="text-consultant-rouge lg:text-5xl text-3xl font-bold mb-8">
-           Nos Packs d'Abonnement
-        </h2>
-    </div>
-
-    @include('component.packs')
-
-@elseif(Auth::user()->situation == "Mode Gratuit")
-
-    <div class="container">
-        <h2 class="text-consultant-rouge lg:text-5xl text-3xl font-bold mb-8">
-        Nos Packs d'Abonnement
-        </h2>
-    </div>
-    @include('component.packs')
-@endif
-
-@else
 <section id="news" class="relative mb-8">
     <div class="container">
         <h2 data-aos="zoom-out" class="lg:text-5xl text-3xl text-consultant-rouge font-bold mb-16 text-center">
@@ -216,10 +252,11 @@
     </div>
 </section>
 
-@endauth
+
 
 @endsection
 
 @section('code')
 <script src="https://cdn.kkiapay.me/k.js"></script>
 @endsection
+
