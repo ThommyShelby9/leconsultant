@@ -14,29 +14,38 @@ use App\Models\Formation;
 
 class PageController extends Controller
 {
-    function welcome() {
-        // Récupérer l'utilisateur connecté
+    public function welcome()
+{
+    $user = null;
+    $hasActiveSubscription = false;
+
+    // Vérifier si l'utilisateur est connecté
+    if (Auth::check()) {
         $user = Auth::user();
-    
-        // Vérifier si l'utilisateur a un abonnement actif en utilisant le modèle Abonnement
+
+        // Vérifier si l'utilisateur a un abonnement actif
         $hasActiveSubscription = Abonnement::where('idUser', $user->id)
             ->where('dateFin', '>=', now())  // Vérifie si la date de fin est dans le futur
             ->where('stop', false)  // Vérifie que l'abonnement n'est pas arrêté
             ->exists();
-    
-        // Requête pour récupérer les offres
-        $offre = DB::table('offres')
-            ->join('categories', 'offres.categ_id', 'categories.id')
-            ->join('autorites', 'offres.ac_id', 'autorites.id')
-            ->join('types', 'types.id', 'offres.typeMar_id')
-            ->where('offres.dateExpiration', '>=', date('Y-m-d'))
-            ->limit(4)
-            ->orderBy('offres.dateExpiration')
-            ->get(['offres.*', 'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName', 'autorites.logo as logo' , 'autorites.abreviation as autAbre']);
-    
-        return view('welcome', ['offres' => $offre], ['hasActiveSubscription' => $hasActiveSubscription]);
     }
-    
+
+    // Requête pour récupérer les offres
+    $offre = DB::table('offres')
+        ->join('categories', 'offres.categ_id', 'categories.id')
+        ->join('autorites', 'offres.ac_id', 'autorites.id')
+        ->join('types', 'types.id', 'offres.typeMar_id')
+        ->where('offres.dateExpiration', '>=', date('Y-m-d'))
+        ->limit(4)
+        ->orderBy('offres.dateExpiration')
+        ->get(['offres.*', 'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName', 'autorites.logo as logo' , 'autorites.abreviation as autAbre']);
+
+    return view('welcome', [
+        'offres' => $offre,
+        'hasActiveSubscription' => $hasActiveSubscription,
+        'user' => $user
+    ]);
+}
 
     function lesOffres(){
 

@@ -38,6 +38,13 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="w-1/3 pr-1 mb-4">
+            <select class="form-select c-select" name="statut" aria-label="Default select example">
+                <option selected class="" value="0" >Tous les Statuts</option>
+                <option value="en_cours">En cours</option>
+                <option value="expire">Expiré</option>
+            </select>
+        </div>
                             <div class="w-full relative mb-8 lg:mb-0">
                                 <input  value="{{ $search }}"  type="search" name="search" placeholder="Que cherchez vous ?"  id="validate" class="w-full px-3 py-6 bg-white bg-opacity-75 rounded-lg outline-none focus:outline-2 outline-none focus:outline-offset-0 focus:outline-consultant-rouge">
                                 <button type="submit" class="absolute right-0 top-0 bottom-0 bg-white px-6 rounded-lg">

@@ -62,15 +62,15 @@ class CreateNewUser implements CreatesNewUsers
             ['email' => $user->email]  // Utilisez ->email pour accéder à l'email de l'objet utilisateur
         );
 
-        Mail::send('emails.mail', [
-            'url' => $url, 
-            'nom' => $user->nom . ' ' . $user->prenoms
-        ], function ($message) use ($user) {
-            $config = config('mail');
-            $message->subject('Registration verification !')
-                ->from($config['from']['address'], $config['from']['name'])
-                ->to($user->email, $user->nom, $user->prenoms );
-        });
+        // Mail::send('emails.mail', [
+        //     'url' => $url, 
+        //     'nom' => $user->nom 
+        // ], function ($message) use ($user) {
+        //     $config = config('mail');
+        //     $message->subject('Registration verification !')
+        //         ->from($config['from']['address'], $config['from']['name'])
+        //         ->to($user->email, $user->nom );
+        // });
 
         return $user;  // Retournez l'objet utilisateur complet
     } elseif ($input['typeActor'] == 2) {

@@ -5,10 +5,14 @@
 @endsection
 
 @section('banner')
-
+@if($user)
 @if(!$hasActiveSubscription)
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
+<script src="https://cdn.kkiapay.me/k.js"></script>
+
+<!-- Inclure le script SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
             title: 'Abonnement requis',
@@ -22,49 +26,50 @@
             backdrop: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Lancer le widget de paiement Kkiapay
-                Kkiapay({
-                    amount: 2999,
-                    position: "center",
-                    sandbox: true,  // Mettre à false en production
-                    key: "tpk_85abf271ae8311ecb9755de712bc9e4f", // Remplacez par votre clé publique Kkiapay
-                    callback: function(response) {
-                        // Traitez la réponse ici (redirection, enregistrement dans la base de données, etc.)
-                        console.log(response); // Exemple de traitement de la réponse
-                        
+                // Ouvrir le widget Kkiapay pour le paiement
+                KkiapayWidget.init({
+                    amount: 2999, // Montant à payer en FCFA
+                    key: "2a9363b7c6c78cf76717f8895a561990f39bac73", // Votre clé publique Kkiapay
+                    sandbox: true, // Utilisez false en production
+                    callback: "https://votre-site.com/kkiapay-callback", // URL de callback
+                    onSuccess: function(response) {
                         if (response.status === 'SUCCESS') {
-                            // Rediriger vers une page de succès ou effectuer d'autres actions
-                            window.location.href = "/";
-                        } else {
-                            // Gérer les cas d'échec ou d'annulation
                             Swal.fire({
-                                title: 'Paiement échoué',
-                                text: "Votre paiement n'a pas été effectué. Veuillez réessayer.",
-                                icon: 'error',
+                                title: 'Paiement réussi',
+                                text: "Votre abonnement a été activé avec succès.",
+                                icon: 'success',
                                 confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.reload(); // Rechargez la page pour mettre à jour l'état
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Erreur',
+                                text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
+                                icon: 'error',
+                                confirmButtonText: 'Réessayer'
                             });
                         }
                     },
-                    onClose: function () {
+                    onError: function(error) {
                         Swal.fire({
-                            title: 'Paiement annulé',
-                            text: "Vous devez compléter le paiement pour accéder à la plateforme.",
-                            icon: 'warning',
+                            title: 'Erreur',
+                            text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
+                            icon: 'error',
                             confirmButtonText: 'Réessayer'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // Relancer le paiement si l'utilisateur souhaite réessayer
-                                window.location.reload();
-                            }
                         });
                     }
                 });
+
+                // Ouvrir le widget Kkiapay
+                KkiapayWidget.requestPayment();
             }
         });
     });
 </script>
-
 @endif
+@endif
+
 
 <section id="banner" class="relative overflow-hidden">
     <div class="bg-consultant-blue lg:pt-32 lg:pb-48 pt-10">
@@ -78,7 +83,7 @@
                         Bénin
                     </h1>
                     <p class="text-white text-justify mb-2">
-                    Découvrez les opportunités d’affaires au Bénin à travers notre plateforme dédiée aux appels d’offres publics et privés. Que vous soyez une petite ou grande entreprise, nous vous aidons à identifier les projets les plus pertinents pour développer vos activités et accroître votre chiffre d’affaires. Ne manquez plus aucune opportunité grâce à notre système d’alerte personnalisée.                   </p>
+                        Découvrez les opportunités d’affaires au Bénin à travers notre plateforme dédiée aux appels d’offres publics et privés. Que vous soyez une petite ou grande entreprise, nous vous aidons à identifier les projets les plus pertinents pour développer vos activités et accroître votre chiffre d’affaires. Ne manquez plus aucune opportunité grâce à notre système d’alerte personnalisée. </p>
                     <p class="text-white text-justify">
                     </p>
                 </div>
@@ -96,7 +101,7 @@
                         <div class="flex flex-wrap justify-center lg:w-2/3 w-full">
                             <div class="w-1/2 pr-1 mb-4">
                                 <select class="form-select c-select" name="categ" aria-label="Default select example">
-                                    <option selected class="" value="0" >Toutes les Catégories d'A.C</option>
+                                    <option selected class="" value="0">Toutes les Catégories d'A.C</option>
                                     @foreach ($les_categories as $item)
                                     <option value="{{$item->id }}">{{ $item->title }}</option>
                                     @endforeach
@@ -110,19 +115,34 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="w-full relative mb-8 lg:mb-0">
-                                <input type="search" name="search" placeholder="Que cherchez vous ?"  id="validate" class="w-full px-3 py-6 bg-white bg-opacity-75 rounded-lg outline-none focus:outline-2 outline-none focus:outline-offset-0 focus:outline-consultant-rouge">
-                                <button type="submit"  class="absolute right-0 top-0 bottom-0 bg-white px-6 rounded-lg">
-                                    <i class="fi-xnsuh2-search text-consultant-rouge"></i>
-                                </button>
+                            <div class="w-1/3 pr-1 mb-4">
+                                <select class="form-select c-select" name="statut" aria-label="Default select example">
+                                    <option selected class="" value="0">Tous les Statuts</option>
+                                    <option value="en_cours">En cours</option>
+                                    <option value="expire">Expiré</option>
+                                </select>
                             </div>
+                            <div class="flex items-center mb-8 lg:mb-0">
+                                <div class="relative w-full">
+                                    <input type="search" name="search" placeholder="Que cherchez-vous ?" id="validate" class="w-full px-3 py-6 bg-white bg-opacity-75 rounded-lg outline-none focus:outline-2 focus:outline-offset-0 focus:outline-consultant-rouge">
+                                    <button type="submit" class="absolute right-0 top-0 bottom-0 bg-white px-6 rounded-lg">
+                                        <i class="fi-xnsuh2-search text-consultant-rouge"></i>
+                                    </button>
+                                </div>
+                                <a href="{{route('alerte')}}" class="ml-4 px-6 py-3 alerte_text-white rounded-lg hover:bg-consultant-rouge-dark alerte-bg">
+                                <button type="button" class=" ">
+                                    Créer une alerte
+                                </button>
+                                </a>
+                            </div>
+
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <div  data-aos="fade-left" class="absolute lg:right-[-30%] xl:right-[0%] xl:top-0 lg:bottom-0 lg:block hidden">
+    <div data-aos="fade-left" class="absolute lg:right-[-30%] xl:right-[0%] xl:top-0 lg:bottom-0 lg:block hidden">
         <img src="{{asset('assets/img/Photo%201.png')}}" alt="" class="xl:w-full lg:w-3/5">
     </div>
 </section>
@@ -140,26 +160,26 @@
         <div class="flex flex-wrap lg:flex-row flex-col items-center mb-6">
             @foreach ($offres as $item)
             <div class="w-1/5 lg:mb-16 mb-6" data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom" >
+                data-aos-anchor-placement="top-bottom">
                 @if( $item->logo !=null and file_exists($item->logo))
-                    <img src="{{ asset($item->logo)}}" alt=""
+                <img src="{{ asset($item->logo)}}" alt=""
                     class="w-full rounded-lg">
                 @else
-                    <img src="{{asset('default_offres.jpg')}}" alt=""
+                <img src="{{asset('default_offres.jpg')}}" alt=""
                     class="w-full rounded-lg">
                 @endif
             </div>
 
             <div class="w-4/5 lg:mb-16 mb-6" data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom">
+                data-aos-anchor-placement="top-bottom">
                 <div class="px-5">
-                    <a  class="text-black lg:text-3xl text-xl text-justify mb-4 inline-block w-full">
+                    <a class="text-black lg:text-3xl text-xl text-justify mb-4 inline-block w-full">
                         <h3>
                             {{$item->titre}}
                         </h3>
                     </a>
                     <h3 class="text-consultant-blue lg:text-3xl text-xl inline-block font-medium">
-                         {{ $item->autName }}
+                        {{ $item->autName }}
                     </h3>
                     <hr class="bg-consultant-blue h-[2px] mt-3 mb-1 lg:block hidden">
                     <div class="flex flex-wrap lg:flex-row flex-col">
@@ -175,13 +195,13 @@
 
                         <?php $file = str_replace(("upload_files/"), '', $item->fichier);  ?>
 
-                        <div class="lg:w-1/4 w-full mt-8"  data-aos="zoom-in-up">
+                        <div class="lg:w-1/4 w-full mt-8" data-aos="zoom-in-up">
                             <a href="{{ route('voirFichier',$file)  }}">
                                 <button
                                     class="inline-block lg:mt-0 mt-10 py-4 bg-consultant-blue text-white  rounded-lg w-full">
                                     Télécharger
                                 </button>
-                             </a>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -192,7 +212,7 @@
         <div class="flex flex-wrap justify-center items-center mb-12">
             <a href="{{ Route('offre') }}">
                 <h3 class="text-center px-4 py-3 border border-consultant-blue text-consultant-blue font-medium lg:text-2xl text-lg mr-2">
-                    Voir toutes les offres  </h3>
+                    Voir toutes les offres </h3>
 
             </a>
         </div>
@@ -210,7 +230,7 @@
                 Ministère de l'économie et des finances
             </h3>
             <div class="flex flex-wrap">
-                <div  class="lg:w-3/5 w-full lg:pr-4 pr-0 lg:my-0 my-4">
+                <div class="lg:w-3/5 w-full lg:pr-4 pr-0 lg:my-0 my-4">
                     <p class="text-justify lg:text-lg text-sm">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                         incididunt ut labore et dolore magna
@@ -252,11 +272,43 @@
     </div>
 </section>
 
+<style>
+    .ml-4 {
+    margin-left: 1rem; /* 16px, équivalent à 4 unités Bootstrap */
+}
 
+.px-6 {
+    padding-left: 1.5rem; /* 24px, équivalent à 6 unités Bootstrap */
+    padding-right: 1.5rem; /* 24px, équivalent à 6 unités Bootstrap */
+}
+
+.py-3 {
+    padding-top: 0.75rem; /* 12px, équivalent à 3 unités Bootstrap */
+    padding-bottom: 0.75rem; /* 12px, équivalent à 3 unités Bootstrap */
+}
+
+
+
+.alerte_text-white {
+    color: black; /* Couleur du texte blanche */
+}
+
+.rounded-lg {
+    border-radius: 0.5rem; /* 8px, équivalent à 'lg' dans Bootstrap */
+}
+
+.hover\:bg-consultant-rouge-dark:hover {
+    background-color: whitesmoke; /* Couleur rouge foncée pour l'état de survol, ajustez la valeur hexadécimale selon vos besoins */
+}
+
+.alerte-bg{
+    background-color: white;
+}
+
+</style>
 
 @endsection
 
 @section('code')
 <script src="https://cdn.kkiapay.me/k.js"></script>
 @endsection
-

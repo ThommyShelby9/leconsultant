@@ -128,12 +128,12 @@ class AlerteController extends Controller
         $validated = $request->validate([
             'type_marche' => 'required|array', // Valide comme tableau
             'ac' => 'required|array', // Valide comme tableau
-            'status' => 'required|string', // Valide comme chaîne de caractères
         ]);
     
         // Récupération des objets associés à partir de la base de données
         $marches = Type::whereIn('id', $validated['type_marche'])->get();
         $acs = Autorite::whereIn('id', $validated['ac'])->get();
+
     
         // Sauvegarde de l'alerte dans la base de données
         $alerte = Alerte::create([

@@ -129,7 +129,7 @@ class AbonnementController extends Controller
 
         }elseif( $hgh->status== "TRANSACTION_NOT_FOUND"){
 
-            return redirect()->route('mesAbonnements')->with();
+            return redirect()->route('mesAbonnements');
         }
 
     }
@@ -160,6 +160,41 @@ class AbonnementController extends Controller
 
         return redirect()->route('mesAbonnements')->with('msg-success','');
 
+    }
+
+    public function handleCallback(Request $request)
+    {
+        // Valider la requête et les paramètres de Kkiapay
+        $validatedData = $request->validate([
+            'status' => 'required|string',
+            'transaction_id' => 'required|string',
+            'amount' => 'required|numeric',
+            'reference' => 'required|string',
+        ]);
+
+        // Vérifier si la transaction est réussie
+        if ($validatedData['status'] === 'SUCCESS') {
+            // Trouver l'utilisateur connecté
+            $user = Auth::user(); 
+
+            // Créer ou mettre à jour l'abonnement
+            $abonnement = Abonnement::updateOrCreate(
+                ['idUser' => $user->id, 'typePack' => 'unique'],
+                [
+                    'dateDebut' => now(),
+                    'dateFin' => now()->addMonth(3), // Abonnement d'un an
+                    'transaction_id' => $validatedData['transaction_id'],
+                    'stop' => false
+                ]
+            );
+
+            // Optionnel : mettre à jour le statut de l'utilisateur
+            // $user->update(['has_active_subscription' => true]);
+
+            return response()->json(['message' => 'Abonnement activé avec succès'], 200);
+        } else {
+            return response()->json(['message' => 'Échec du paiement'], 400);
+        }
     }
 
 }

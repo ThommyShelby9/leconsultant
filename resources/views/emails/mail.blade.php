@@ -10,12 +10,14 @@
 <body style="background-color: #f8f9fa; font-family: Arial, sans-serif;">
 
     <div class="container" style="max-width: 600px; margin: 50px auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <img src="{{ asset('assets/img/Logoconsultant%201.png')}}" alt="" class="">
+
         <h2 class="text-center text-primary">
-            Bonjour {{$nom}} {{ $prenoms }}
+            Bonjour {{ $nom }} 
         </h2>
 
         <p class="lead">
-            Pour activer votre compte, veuillez <a href="{{$url}}" class="btn btn-primary">cliquer ici</a>.
+            Pour activer votre compte, veuillez <a href="{{ $url }}" class="btn btn-primary">cliquer ici</a>.
         </p>
 
         <p>
@@ -23,7 +25,7 @@
         </p>
 
         <div class="alert alert-light" role="alert">
-            <a href="{{$url}}" class="text-break">{{ $url }}</a>
+            <a href="{{ $url }}" class="text-break">{{ $url }}</a>
         </div>
 
         <p class="text-muted">

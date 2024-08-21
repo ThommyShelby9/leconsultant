@@ -147,6 +147,9 @@ Route::middleware(['auth:web' ])->group(function() {
 
     Route::get('/email/verify/{email}', [CreateNewUser::class, 'verify'])->name('email_verified');
 
+    Route::post('/save-transaction', [AbonnementController::class, 'handleCallback'])->name('save-transaction');
+
+
 
 
 });
