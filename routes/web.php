@@ -149,6 +149,7 @@ Route::middleware(['auth:web' ])->group(function() {
 
     Route::post('/save-transaction', [AbonnementController::class, 'handleCallback'])->name('save-transaction');
 
+    Route::post('/admin/offre/{id}', [OffreController::class, 'delete_offre'])->name('admin.offre.delete');
 
 
 

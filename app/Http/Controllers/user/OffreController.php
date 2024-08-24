@@ -167,4 +167,34 @@ class OffreController extends Controller
 
         return view('userView.offreRecherche',['offres'=>$res , 'search'=>$req['search'] , 'categ'=>$req['categ'], 'type'=>$req['type']]);
     }
+
+    public function delete_offre($id)
+    {
+        // Trouver l'offre par son identifiant
+        $offre = Offre::find($id);
+    
+        if ($offre) {
+            // Supprimer les relations associées, si nécessaire
+            // Exemple : supprimer les types de marché associés à l'offre
+            // Vous devez adapter cette partie selon vos besoins spécifiques
+            $offre->types()->detach(); // Détache les relations de type de marché
+    
+            // Supprimer le fichier associé, si nécessaire
+            if (file_exists(storage_path('app/public/' . $offre->fichier))) {
+                unlink(storage_path('app/public/' . $offre->fichier)); // Supprime le fichier du stockage
+            }
+    
+            // Supprimer l'offre
+            $offre->delete();
+    
+            // Rediriger ou retourner une réponse
+            return redirect()->route('admin.offre.list')
+                             ->with('msg-success', 'L\'offre a été supprimée avec succès.');
+        } else {
+            // Offres non trouvée
+            return redirect()->route('admin.offre.list')
+                             ->with('msg-error', 'L\'offre demandée n\'existe pas.');
+        }
+    }
+    
 }
