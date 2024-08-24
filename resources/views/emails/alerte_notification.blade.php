@@ -8,6 +8,8 @@
 </head>
 <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
 <div class="container" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+<img src="https://leconsultant.bj/assets/img/Logoconsultant%201.png" alt="Image Description" class="img-fluid mb-4">
+
         <h1 class="text-center" style="color: #007bff;">Votre Alerte Personnalisée</h1>
 
         <p class="lead">Voici les types de marché qui vous intéressent :</p>

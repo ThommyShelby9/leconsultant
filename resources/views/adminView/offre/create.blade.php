@@ -32,34 +32,34 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form class="px-4 pb-5 pt-3" method="POST" action="{{ Route('admin.offre.save') }}" enctype="multipart/form-data" >
+            <form class="px-4 pb-5 pt-3" method="POST" action="{{ Route('admin.offre.save') }}" enctype="multipart/form-data">
                 @csrf
 
                 <div class="form-row">
                     <div class="col-sm-12  col-md-4">
                         <div class="form-group">
                             <label for="reference">Reference de l'offre</label>
-                            <input type="text" name="reference" id="" class="form-control" value="{{@old('reference')}}" >
+                            <input type="text" name="reference" id="" class="form-control" value="{{@old('reference')}}">
                             @error('reference')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
                             <label for="titre">Titre de l'appel d'offre</label>
-                            <input type="text" name="titre" id="" class="form-control" value="{{ @old('titre')}}" >
+                            <input type="text" name="titre" id="" class="form-control" value="{{ @old('titre')}}">
                             @error('titre')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                     <div class="col-sm-12  col-md-4">
                         <div class="form-group">
                             <label for="depot">Lieu de Depot des candidatures</label>
-                            <input type="text" name="depot" id="" class="form-control" value="{{ @old('depot')}}" >
+                            <input type="text" name="depot" id="" class="form-control" value="{{ @old('depot')}}">
                             @error('depot')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -70,26 +70,26 @@
                     <div class="col-sm-12  col-md-4">
                         <div class="form-group">
                             <label for="categorie">Catégorie</label>
-                            <select name="categorie" id="categorie" class="form-control"  onchange="AfficherAC()"  >
+                            <select name="categorie" id="categorie" class="form-control" onchange="AfficherAC()">
                                 <option value="">Choisir</option>
                                 @foreach ($les_categories as $item)
-                                <option value="{{ $item->id }}" >{{ $item->title }}</option>
+                                <option value="{{ $item->id }}">{{ $item->title }}</option>
                                 @endforeach
                             </select>
                             @error('categorie')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                     <div class="col-sm-12  col-md-4">
                         <div class="form-group">
                             <label for="autorite">Autorité</label>
-                            <select name="autorite" id="autorite" class="form-control" onchange="AfficherServ()" >
+                            <select name="autorite" id="autorite" class="form-control" onchange="AfficherServ()">
                                 <!--Dynamiquement remplir avec du JS  -->
                             </select>
                             <small id="helpId" class="text-muted">Choisissez la catégorie pour faire afficher les A.C</small>
                             @error('autorite')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                                 <!--Dynamiquement remplir avec du JS  -->
                             </select>
                             @error('service')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -110,32 +110,32 @@
                     <div class="col-sm-12  col-md-4">
                         <div class="form-group">
                             <label for="marche">Type de marché</label>
-                            <select name="marche" id="" class="form-control" onselected="">
-                                <option value="">Choisir</option>
+                            <select name="marche[]" id="marche" class="form-control" multiple>
                                 @foreach ($les_types_marches as $item)
-                                    <option value="{{ $item->id }}">{{$item->title}}</option>
+                                <option value="{{ $item->id }}">{{ $item->title }}</option>
                                 @endforeach
                             </select>
                             @error('marche')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
+
                     <div class="col-sm-12  col-md-4">
                         <div class="form-group">
                             <label for="dateOuv">Date Ouverture</label>
-                            <input type="date" name="dateOuv" id="" class="form-control" value="{{ @old('dateOuv') }}" >
+                            <input type="date" name="dateOuv" id="" class="form-control" value="{{ @old('dateOuv') }}">
                             @error('dateOuv')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
                             <label for="categorie">Heure d'Ouverture</label>
-                            <input type="time" name="heureOuv" id="" class="form-control" value="{{ @old('heureOuv') }}" >
+                            <input type="time" name="heureOuv" id="" class="form-control" value="{{ @old('heureOuv') }}">
                             @error('heureOuv')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -145,9 +145,9 @@
                     <div class="col-sm-12  col-md-4">
                         <div class="form-group">
                             <label for="categorie">Date Expiration</label>
-                            <input type="date" name="dateExp" id="" class="form-control" value="{{ @old('dateExp') }}" >
+                            <input type="date" name="dateExp" id="" class="form-control" value="{{ @old('dateExp') }}">
                             @error('dateExp')
-                                <span class="text-danger">{{ $message }}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -187,40 +187,40 @@
 
 @section('code')
 <script>
-    function AfficherServ(){
-        var idAc= document.getElementById('autorite').value;
+    function AfficherServ() {
+        var idAc = document.getElementById('autorite').value;
 
 
-        if(idAc != 0){
+        if (idAc != 0) {
 
-           col='<option value="Toutes les directions">Toutes les directions</option>';
-           $("#service").empty();
-           $("#service").append(col);
+            col = '<option value="Toutes les directions">Toutes les directions</option>';
+            $("#service").empty();
+            $("#service").append(col);
 
-            $(function(){
+            $(function() {
 
                 var _token = '<?php echo csrf_token(); ?>';
 
 
                 $.ajax({
 
-                    url:'{{ route("afficher-direction") }}',
-                    data:{
+                    url: '{{ route("afficher-direction") }}',
+                    data: {
                         idAc: idAc,
                         _token
                     },
                     dataType: 'JSON',
-                    type:'POST',
-                    encode  : true,
-                    success:function(data){
+                    type: 'POST',
+                    encode: true,
+                    success: function(data) {
                         //alert(data);
                         //console.log("Debut");
-                        var col ;
+                        var col;
                         data.forEach(element => {
 
 
 
-                            col='<option value="'+element['abreviation']+'">'+element['name']+'</option>';
+                            col = '<option value="' + element['abreviation'] + '">' + element['name'] + '</option>';
 
                             $("#service").append(col);
                             console.log(col);
@@ -229,46 +229,46 @@
                         //console.log("Fin debug");
 
                     },
-                    failure: function(){
+                    failure: function() {
                         alert("Error Direc");
                     }
                 });
 
             })
 
-        }else{
+        } else {
 
             $("#service").empty();
         }
     }
 
 
-    function AfficherAC(){
+    function AfficherAC() {
         var idCateg = document.getElementById('categorie').value;
 
-        if(idCateg != 0){
+        if (idCateg != 0) {
 
-           col='<option value="null">Choisir A.C</option>';
-           $("#autorite").empty();
-           $("#autorite").append(col);
+            col = '<option value="null">Choisir A.C</option>';
+            $("#autorite").empty();
+            $("#autorite").append(col);
 
-            $(function(){
+            $(function() {
                 var _token = '<?php echo csrf_token(); ?>';
                 console.log("AC Debut ajax");
                 $.ajax({
-                    url:'{{ route("ajax-ac") }}',
-                    data:{
+                    url: '{{ route("ajax-ac") }}',
+                    data: {
                         idCateg: idCateg,
                         _token
                     },
                     dataType: 'JSON',
-                    type:'POST',
-                    encode  : true,
-                    success:function(data){
-                       //console.log("AC Ca marche 1");
-                        var col ;
+                    type: 'POST',
+                    encode: true,
+                    success: function(data) {
+                        //console.log("AC Ca marche 1");
+                        var col;
                         data.forEach(element => {
-                            col='<option value="'+element['id']+'">'+element['name']+'</option>';
+                            col = '<option value="' + element['id'] + '">' + element['name'] + '</option>';
 
 
                             $("#autorite").append(col);
@@ -278,19 +278,18 @@
                         });
 
                     },
-                     failure: function(){
+                    failure: function() {
                         alert("Error AC");
                     }
                 });
                 //console.log("AC Fin ajax");
             })
 
-        }else{
+        } else {
 
             $("#autorite").empty();
             $("#service").empty();
         }
     }
-
 </script>
 @endsection

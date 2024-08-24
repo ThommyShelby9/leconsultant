@@ -10,7 +10,7 @@
 <body style="background-color: #f8f9fa; font-family: Arial, sans-serif;">
 
     <div class="container" style="max-width: 600px; margin: 50px auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-        <img src="{{ asset('assets/img/Logoconsultant%201.png')}}" alt="" class="">
+    <img src="https://leconsultant.bj/assets/img/Logoconsultant%201.png" alt="Image Description" class="img-fluid mb-4">
 
         <h2 class="text-center text-primary">
             Bonjour {{ $nom }} 

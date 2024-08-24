@@ -56,4 +56,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function alertes()
+    {
+        return $this->hasMany(Alerte::class, 'idUser');  // 'user_id' est la clé étrangère dans la table 'alertes'
+    }
 }

@@ -136,7 +136,7 @@ class AlerteController extends Controller
 
     
         // Sauvegarde de l'alerte dans la base de données
-        $alerte = Alerte::create([
+        $alerte = Alerte::updateOrcreate([
             'idUser' => auth()->id(),
             'marches' => json_encode($validated['type_marche']), // Sauvegarde en format JSON
             'ac' => json_encode($validated['ac']), // Sauvegarde en format JSON

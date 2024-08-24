@@ -63,22 +63,6 @@ class DataSeeder extends Seeder
             'statut'=>1,
         ]);
 
-        Type::create([
-            'title'=>'Batiment et construction BTP',
-            'useFor'=>'activite',
-            'isDel'=>False
-        ]);
-
-        Type::create([
-            'title'=>'Travaux publics',
-            'useFor'=>'activite',
-            'isDel'=>False
-        ]);
-        Type::create([
-            'title'=>'Hottelerie et Restauration',
-            'useFor'=>'activite',
-            'isDel'=>False
-        ]);
 
         Type::create([
             'title'=>'Fourniture',

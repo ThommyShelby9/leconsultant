@@ -47,19 +47,45 @@ class PageController extends Controller
     ]);
 }
 
-    function lesOffres(){
-
-        $offre = DB::table('offres')
-        ->select(['offres.*','types.title as typeTitle', 'categories.title as categTitle' ,'autorites.logo as logo' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-        ->join('categories', 'offres.categ_id', 'categories.id')
-        ->join('autorites', 'offres.ac_id', 'autorites.id')
-        ->join('types', 'types.id', 'offres.typeMar_id')
+function lesOffres()
+{
+    // Création d'une instance de QueryBuilder pour construire la requête
+    $query = DB::table('offres')
+        ->select([
+            'offres.id',
+            'offres.titre',
+            'offres.reference',
+            'offres.lieu_depot',
+            'offres.datePublication',
+            'offres.dateExpiration',
+            'offres.dateOuverture',
+            'offres.heureOuverture',
+            'offres.categ_id',
+            'offres.ac_id',
+            'offres.service',
+            'offres.writeBy',
+            'offres.fichier',
+            'categories.title as categTitle',
+            'autorites.logo as logo',
+            'autorites.name as autName',
+            'types.title as typeTitle'
+        ])
+        ->join('categories', 'offres.categ_id', '=', 'categories.id')
+        ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+        ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
+        ->leftJoin('types', 'offre_type.type_id', '=', 'types.id')
         ->where('offres.dateExpiration', '>=', date('Y-m-d'))
         ->orderBy('offres.dateExpiration')
-        ->paginate(4);
+        ->groupBy('offres.id'); // Assurez-vous que les résultats sont correctement groupés
 
-        return view('userView.offre',['offres'=>$offre]);
-    }
+    // Appel à paginate sur l'instance de QueryBuilder
+    $offres = $query->paginate(4);
+
+    // Retourner la vue avec les résultats paginés
+    return view('userView.offre', ['offres' => $offres]);
+}
+
+
 
     function lesServices(){
 

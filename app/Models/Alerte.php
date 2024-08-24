@@ -18,4 +18,9 @@ class Alerte extends Model
         'abonnement_id',
         'stop',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'idUser');  // 'user_id' est la clé étrangère dans la table 'alertes'
+    }
 }

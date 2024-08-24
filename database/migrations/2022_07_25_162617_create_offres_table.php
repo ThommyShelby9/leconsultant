@@ -26,10 +26,6 @@ class CreateOffresTable extends Migration
             $table->date('dateOuverture');
             $table->string('heureOuverture');
 
-            //Type de marché
-            $table->bigInteger('typeMar_id')->unsigned();
-            $table->foreign('typeMar_id')->references('id')->on('types');
-
             //Categorie
             $table->bigInteger('categ_id')->unsigned();
             $table->foreign('categ_id')->references('id')->on('categories');
