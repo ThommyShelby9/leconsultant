@@ -31,21 +31,23 @@ class PageController extends Controller
     }
 
     // Requête pour récupérer les offres
-    $offre = DB::table('offres')
-        ->join('categories', 'offres.categ_id', 'categories.id')
-        ->join('autorites', 'offres.ac_id', 'autorites.id')
-        ->join('types', 'types.id', 'offres.typeMar_id')
+    $offres = DB::table('offres')
+        ->join('categories', 'offres.categ_id', '=', 'categories.id')
+        ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+        ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
+        ->leftJoin('types', 'offre_type.type_id', '=', 'types.id')
         ->where('offres.dateExpiration', '>=', date('Y-m-d'))
         ->limit(4)
         ->orderBy('offres.dateExpiration')
-        ->get(['offres.*', 'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName', 'autorites.logo as logo' , 'autorites.abreviation as autAbre']);
+        ->get(['offres.*', 'types.title as typeTitle', 'categories.title as categTitle', 'autorites.name as autName', 'autorites.logo as logo', 'autorites.abreviation as autAbre']);
 
     return view('welcome', [
-        'offres' => $offre,
+        'offres' => $offres,
         'hasActiveSubscription' => $hasActiveSubscription,
         'user' => $user
     ]);
 }
+
 
 function lesOffres()
 {
