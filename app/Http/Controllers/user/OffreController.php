@@ -167,4 +167,6 @@ class OffreController extends Controller
 
         return view('userView.offreRecherche',['offres'=>$res , 'search'=>$req['search'] , 'categ'=>$req['categ'], 'type'=>$req['type']]);
     }
+
+    
 }

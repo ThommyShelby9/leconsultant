@@ -24,7 +24,6 @@
 </div>
 @endsection
 
-
 @section('contenu')
 
 <div class="row">
@@ -78,45 +77,45 @@
                             </td>
                             <td> {{$item->dateExpiration}}</td>
                             <td>
-    <a href="{{ route('admin.offre.see', $item->id) }}">
-        <button class="btn btn-warning" title="Voir une offre">
-            <i class="fa-solid fa-eye"></i>
-        </button>
-    </a>
-    <a href="{{ route('admin.offre.edit', $item->id) }}">
-        <button class="btn btn-primary" title="Modifier une offre">
-            <i class="fa-solid fa-pen"></i>
-        </button>
-    </a>
+                                <a href="{{ route('admin.offre.see', $item->id) }}">
+                                    <button class="btn btn-warning" title="Voir une offre">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </a>
+                                <a href="{{ route('admin.offre.edit', $item->id) }}">
+                                    <button class="btn btn-primary" title="Modifier une offre">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                </a>
 
-    <!-- Bouton de suppression -->
-    <button class="btn btn-danger" title="Supprimer une offre" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $item->id }}">
-        <i class="fa-solid fa-trash"></i>
-    </button>
+                                <!-- Bouton de suppression -->
+                                <button class="btn btn-danger" title="Supprimer une offre" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $item->id }}">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
 
-    <!-- Modal de confirmation -->
-    <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel{{ $item->id }}">Confirmation de Suppression</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Êtes-vous sûr de vouloir supprimer cette offre ? Cette action est irréversible.
-                </div>
-                <div class="modal-footer">
-                    <form action="{{ route('admin.offre.delete', $item->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-danger">Supprimer</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</td>
+                                <!-- Modal de confirmation -->
+                                <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel{{ $item->id }}">Confirmation de Suppression</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Êtes-vous sûr de vouloir supprimer cette offre ? Cette action est irréversible.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="{{ route('admin.offre.delete', $item->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
 
                         </tr>
                         @endforeach
@@ -131,7 +130,7 @@
 
 @section('code')
 <script>
-    $(function () {
+    $(function() {
         $("#example1").DataTable({
             "responsive": true,
             "autoWidth": false,
@@ -149,7 +148,5 @@
             },
         });
     });
-
-
 </script>
 @endsection
