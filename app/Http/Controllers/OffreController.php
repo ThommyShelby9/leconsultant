@@ -21,14 +21,16 @@ class OffreController extends Controller
 {
     ///LEs offres
     function storeOffre(){
-        $offre = DB::table('offres')
-        ->join('categories', 'offres.categ_id', 'categories.id')
-        ->join('autorites', 'offres.ac_id', 'autorites.id')
-        ->get(['offres.*', 'categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre']);
-
-        return view('adminView.offre.liste',['offres'=>$offre]);
-
+        $offres = DB::table('offres')
+            ->join('categories', 'offres.categ_id', '=', 'categories.id')
+            ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+            ->orderBy('offres.datePublication', 'desc') // Tri par la date de publication la plus récente
+            ->get(['offres.*', 'categories.title as categTitle', 'autorites.name as autName', 'autorites.abreviation as autAbre']);
+    
+        return view('adminView.offre.liste', ['offres' => $offres]);
     }
+    
+    
 
     function publierOffre(){
         return view('adminView.offre.create');
@@ -192,6 +194,18 @@ class OffreController extends Controller
         ->get(['offres.*', 'categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre']);
 
         return view('adminView.offre.voir', ['offre'=>$offre]);
+    }
+
+    public function delete_offre($id)
+    {
+        // Trouver l'offre par son ID
+        $offre = Offre::findOrFail($id);
+
+        // Supprimer l'offre
+        $offre->delete();
+
+        // Rediriger avec un message de succès
+        return redirect()->route('admin.offre.list')->with('msg-success', 'L\'offre a été supprimée avec succès.');
     }
 
 }

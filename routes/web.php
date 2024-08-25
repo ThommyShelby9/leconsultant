@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Http\Controllers\OffreController as ControllersOffreController;
 use Illuminate\Support\Facades\Route;
 use App\Providers\FortifyServiceProvider;
 
@@ -149,6 +150,7 @@ Route::middleware(['auth:web' ])->group(function() {
 
     Route::post('/save-transaction', [AbonnementController::class, 'handleCallback'])->name('save-transaction');
 
+    Route::delete('/admin/offre/{id}', [ControllersOffreController::class, 'delete_offre'])->name('admin.offre.delete');
 
 
 

@@ -1,4 +1,8 @@
 @extends('layout.adminLayout.template')
+<!-- Scripts de Bootstrap (inclut Popper.js et Bootstrap JS) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
 
 @section('titre-site')
 <title>Leconsultant| Offres</title>
@@ -74,19 +78,46 @@
                             </td>
                             <td> {{$item->dateExpiration}}</td>
                             <td>
+    <a href="{{ route('admin.offre.see', $item->id) }}">
+        <button class="btn btn-warning" title="Voir une offre">
+            <i class="fa-solid fa-eye"></i>
+        </button>
+    </a>
+    <a href="{{ route('admin.offre.edit', $item->id) }}">
+        <button class="btn btn-primary" title="Modifier une offre">
+            <i class="fa-solid fa-pen"></i>
+        </button>
+    </a>
 
-                                <a href="{{ Route('admin.offre.see', $item->id) }}">
-                                    <button class="btn btn-warning" title="Voir une offre"   >
-                                        <i class="fa-solid fa-eye"></i>
-                                    </button>
-                                </a>
-                                <a href="{{ Route('admin.offre.edit', $item->id) }}">
-                                    <button class="btn btn-primary" title="Modifier une offre" >
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                </a>
+    <!-- Bouton de suppression -->
+    <button class="btn btn-danger" title="Supprimer une offre" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $item->id }}">
+        <i class="fa-solid fa-trash"></i>
+    </button>
 
-                            </td>
+    <!-- Modal de confirmation -->
+    <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ $item->id }}">Confirmation de Suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer cette offre ? Cette action est irréversible.
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ route('admin.offre.delete', $item->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+
                         </tr>
                         @endforeach
                     </tbody>
@@ -118,6 +149,7 @@
             },
         });
     });
+
 
 </script>
 @endsection
