@@ -65,6 +65,18 @@
                     </div>
 
                 </div>
+                <div class="form-row">
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group">
+                            <label for="domaineActivite">Domaine d'Activité</label>
+                            <input type="text" name="domaineActivite" id="domaineActivite" class="form-control" value="{{ @old('domaineActivite') }}" placeholder="Entrez le domaine d'activité">
+                            @error('domaineActivite')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="form-row">
                     <div class="col-sm-12  col-md-4">
@@ -104,6 +116,7 @@
                             @enderror
                         </div>
                     </div>
+
                 </div>
 
                 <div class="form-row">
@@ -168,6 +181,7 @@
                             @enderror
                         </div>
                     </div>
+
 
                 </div>
 

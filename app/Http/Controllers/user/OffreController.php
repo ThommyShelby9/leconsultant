@@ -33,140 +33,54 @@ class OffreController extends Controller
 
     }
 
-    function rechercher(Request $req ){
-        //page":"offre","search":null,"
-        //categ":"Toutes les Cat\u00e9gorie d'A.C","type":"Tous les Types d'offre"
-
-        if($req['search']==null){
-
-            if($req['categ']==0){
-
-                if($req['type']==0){
-
-                   // echo "Entrée vide, Toute categ , tous type";
-                    $res = DB::table('offres')
-                    ->select(['offres.*','autorites.logo as logo',  'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                    ->join('autorites', 'offres.ac_id', 'autorites.id')
-                    ->join('types', 'types.id', 'offres.typeMar_id')
-                    ->orderByDesc('offres.id')
-                    ->paginate(4);
-
-                }elseif($req['type']>=1){
-                    //echo "Entrée vide, TOutes categ mais avec type";
-                    $res = DB::table('offres')
-                    ->select(['offres.*','autorites.logo as logo',  'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                    ->join('autorites', 'offres.ac_id', 'autorites.id')
-                    ->join('types', 'types.id', 'offres.typeMar_id')
-                    ->where('typeMar_id', $req['type'])
-                    ->orderByDesc('offres.id')
-                    ->paginate(4);
-
-
-                }
-
-            }elseif($req['categ']>=1){
-
-                if($req['type']==0){
-
-                   // echo "Entrée vide, Une categ , tous type";
-                    $res = DB::table('offres')
-                    ->select(['offres.*','autorites.logo as logo',  'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                    ->join('autorites', 'offres.ac_id', 'autorites.id')
-                    ->join('types', 'types.id', 'offres.typeMar_id')
-                    ->where('offres.categ_id', $req['categ'])
-                    ->orderByDesc('offres.id')
-                    ->paginate(4);
-
-                }elseif($req['type']>=1){
-
-                    //echo "Entrée vide, Une catge , un type";
-                    $res = DB::table('offres')
-                    ->select(['offres.*','autorites.logo as logo',  'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                    ->join('autorites', 'offres.ac_id', 'autorites.id')
-                    ->join('types', 'types.id', 'offres.typeMar_id')
-                    ->where('offres.categ_id', $req['categ'])
-                    ->where('offres.typeMar_id', $req['type'])
-                    ->orderByDesc('offres.id')
-                    ->paginate(4);
-
-                }
-
-            }
-        }else{
-
-            if($req['categ']==0){
-
-                if($req['type']==0){
-
-                   // echo "Entrée non vide, Toute categ , tous type";
-
-                    $res = DB::table('offres')
-                    ->select(['offres.*','autorites.logo as logo',  'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                    ->join('autorites', 'offres.ac_id', 'autorites.id')
-                    ->join('types', 'types.id', 'offres.typeMar_id')
-                    ->where('offres.titre', 'like', '%'.$req['search'].'%')
-                    ->orderByDesc('offres.id')
-                     ->paginate(4);
-
-                }elseif($req['type']>=1){
-
-                   // echo "Entrée non vide, TOutes categ mais avec type";
-
-                    $res = DB::table('offres')
-                    ->select(['offres.*','autorites.logo as logo',  'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                     ->join('autorites', 'offres.ac_id', 'autorites.id')
-                     ->join('types', 'types.id', 'offres.typeMar_id')
-                     ->where('offres.titre', 'like', '%'.$req['search'].'%')
-                    ->where('typeMar_id', $req['type'])
-                    ->orderByDesc('offres.id')
-                    ->paginate(4);
-
-                }
-
-            }elseif($req['categ']>=1){
-
-                if($req['type']==0){
-
-                    //echo "Entrée non vide, Une categ , tous type";
-                    $res = DB::table('offres')
-                    ->select(['offres.*',  'types.title as typeTitle','categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                    ->join('autorites', 'offres.ac_id', 'autorites.id')
-                    ->join('types', 'types.id', 'offres.typeMar_id')
-                    ->where('offres.titre', 'like', '%'.$req['search'].'%')
-                    ->where('offres.categ_id', $req['categ'])
-                    ->orderByDesc('offres.id')
-                    ->paginate(4);
-
-                }elseif($req['type']>=1){
-
-                    //echo "Entrée non vide, Une catge , un type";
-                    $res = DB::table('offres')
-                    ->select(['offres.*', 'types.title as typeTitle',  'categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])->select(['offres.*', 'categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre'])
-                    ->join('categories', 'offres.categ_id', 'categories.id')
-                    ->join('autorites', 'offres.ac_id', 'autorites.id')
-                    ->join('types', 'types.id', 'offres.typeMar_id')
-                    ->where('offres.titre', 'like', '%'.$req['search'].'%')
-                    ->where('offres.categ_id', $req['categ'])
-                    ->where('typeMar_id', $req['type'])
-                    ->orderByDesc('offres.id')
-                     ->paginate(4);
-
-
-                }
-
-            }
-
+    
+    public function rechercher(Request $req)
+    {
+        // Initialisation de la requête de base
+        $query = DB::table('offres')
+            ->select([
+                'offres.*',
+                'autorites.logo as logo',
+                'types.title as typeTitle',
+                'categories.title as categTitle',
+                'autorites.name as autName',
+                'autorites.abreviation as autAbre'
+            ])
+            ->join('categories', 'offres.categ_id', '=', 'categories.id')
+            ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+            ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
+            ->leftJoin('types', 'offre_type.type_id', '=', 'types.id');
+    
+        // Filtrer par titre si la recherche n'est pas vide
+        if ($req['search'] !== null) {
+            $query->where('offres.titre', 'like', '%' . $req['search'] . '%');
         }
-
-        return view('userView.offreRecherche',['offres'=>$res , 'search'=>$req['search'] , 'categ'=>$req['categ'], 'type'=>$req['type']]);
+    
+        // Filtrer par catégorie si une catégorie spécifique est sélectionnée
+        if ($req['categ'] > 0) {
+            $query->where('offres.categ_id', '=', $req['categ']);
+        }
+    
+        // Filtrer par type si un type spécifique est sélectionné
+        if ($req['type'] > 0) {
+            $query->where('offre_type.type_id', '=', $req['type']);
+        }
+    
+        // Tri des résultats par ordre décroissant d'ID
+        $query->orderByDesc('offres.id');
+    
+        // Paginer les résultats
+        $res = $query->paginate(4);
+    
+        // Retourner la vue avec les résultats de recherche
+        return view('userView.offreRecherche', [
+            'offres' => $res,
+            'search' => $req['search'],
+            'categ' => $req['categ'],
+            'type' => $req['type']
+        ]);
     }
+    
 
     
 }

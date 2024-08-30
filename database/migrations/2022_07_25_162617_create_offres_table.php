@@ -36,6 +36,8 @@ class CreateOffresTable extends Migration
 
             //Service
             $table->string('service');
+            $table->string('domaine_activity');
+
 
             $table->boolean('isPub')->default(True);
 

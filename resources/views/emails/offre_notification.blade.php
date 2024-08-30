@@ -25,13 +25,15 @@
                     <li class="list-group-item"><strong>Titre:</strong> {{ $offre->titre }}</li>
                     <li class="list-group-item"><strong>Service:</strong> {{ $offre->service }}</li>
                     <li class="list-group-item"><strong>Lieu de dépôt:</strong> {{ $offre->lieu_depot }}</li>
+                    <li class="list-group-item"><strong>Autorité Contractante:</strong> {{ $autorite }}</li> <!-- Nom de l'autorité contractante -->
                     <li class="list-group-item"><strong>Date d'ouverture:</strong> {{ $offre->dateOuverture }}</li>
                     <li class="list-group-item"><strong>Heure d'ouverture:</strong> {{ $offre->heureOuverture }}</li>
                     <li class="list-group-item"><strong>Date d'expiration:</strong> {{ $offre->dateExpiration }}</li>
                 </ul>
 
                 <div class="text-center">
-                    <a href="{{ $lien_offre }}" class="btn btn-primary">Voir l'offre</a>
+                    <a href="{{ $lien_offre }}" class="btn btn-primary mb-3">Voir l'offre</a>
+                    <a href="{{ $fichier_offre }}" class="btn btn-secondary">Télécharger l'appel d'offre</a> <!-- Bouton de téléchargement -->
                 </div>
 
                 <p class="text-muted mt-4">

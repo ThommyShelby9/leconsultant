@@ -128,18 +128,20 @@ class AlerteController extends Controller
         $validated = $request->validate([
             'type_marche' => 'required|array', // Valide comme tableau
             'ac' => 'required|array', // Valide comme tableau
+            'domaine_activite' => 'required|string', // Validation du domaine d'activité
         ]);
     
         // Récupération des objets associés à partir de la base de données
         $marches = Type::whereIn('id', $validated['type_marche'])->get();
         $acs = Autorite::whereIn('id', $validated['ac'])->get();
-
     
         // Sauvegarde de l'alerte dans la base de données
-        $alerte = Alerte::updateOrcreate([
+        $alerte = Alerte::updateOrCreate([
             'idUser' => auth()->id(),
+        ], [
             'marches' => json_encode($validated['type_marche']), // Sauvegarde en format JSON
             'ac' => json_encode($validated['ac']), // Sauvegarde en format JSON
+            'domaine_activity' => $validated['domaine_activite'], // Sauvegarde du domaine d'activité
             'details' => 'Alerte pour marchés: ' . implode(', ', $marches->pluck('title')->toArray()) . ' - AC: ' . implode(', ', $acs->pluck('name')->toArray()),
             'abonnement_id' => 1,
             'dateDebut' => now(),
@@ -147,8 +149,9 @@ class AlerteController extends Controller
     
         // Préparation des données pour l'email
         $data = [
-            'type_marches' => $marches, // Collection d'objets Marche
-            'categories_ac' => $acs, // Collection d'objets AutoriteContractante
+            'type_marches' => $marches, // Collection d'objets Type
+            'categories_ac' => $acs, // Collection d'objets Autorite
+            'domaine_activite' => $validated['domaine_activite'], // Domaine d'activité pour l'email
             'user_name' => auth()->user()->nom . ' ' . auth()->user()->prenoms,
         ];
     

@@ -11,10 +11,37 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Offre;
 use App\Models\Pageservice;
 use App\Models\Formation;
+use GoogleSearchResults;
 
 class PageController extends Controller
 {
-    public function welcome()
+
+
+    public function getBeninNews()
+    {
+        $search = new GoogleSearchResults('27a351758a8c62270b7dad656c728ee0c2d9ecc855b28e1eeb574008de2d4a4e');
+    
+        $params = [
+            "engine" => "google",
+            "q" => "actualités Bénin",
+            "location" => "Benin",
+            "hl" => "fr",
+            "gl" => "fr",
+            "tbm" => "nws",
+            "num" => 10 // Limite le nombre de résultats à 5
+        ];
+    
+        $result = $search->get_json($params);
+    
+        // Accéder aux propriétés de l'objet stdClass en utilisant -> au lieu de []
+        if (isset($result->news_results)) {
+            return $result->news_results; // Retourne les résultats d'actualités
+        } else {
+            return [];
+        }
+    }
+    
+public function welcome()
 {
     $user = null;
     $hasActiveSubscription = false;
@@ -24,7 +51,8 @@ class PageController extends Controller
         $user = Auth::user();
 
         // Vérifier si l'utilisateur a un abonnement actif
-        $hasActiveSubscription = Abonnement::where('idUser', $user->id)
+        $hasActiveSubscription = DB::table('abonnements')
+            ->where('idUser', $user->id)
             ->where('dateFin', '>=', now())  // Vérifie si la date de fin est dans le futur
             ->where('stop', false)  // Vérifie que l'abonnement n'est pas arrêté
             ->exists();
@@ -41,13 +69,15 @@ class PageController extends Controller
         ->orderBy('offres.dateExpiration')
         ->get(['offres.*', 'types.title as typeTitle', 'categories.title as categTitle', 'autorites.name as autName', 'autorites.logo as logo', 'autorites.abreviation as autAbre']);
 
+    $news = $this->getBeninNews(); // Appeler la méthode dans le même contrôleur
+
     return view('welcome', [
         'offres' => $offres,
         'hasActiveSubscription' => $hasActiveSubscription,
-        'user' => $user
+        'user' => $user,
+        'news' => $news, // Passer les actualités à la vue
     ]);
 }
-
 
 function lesOffres()
 {

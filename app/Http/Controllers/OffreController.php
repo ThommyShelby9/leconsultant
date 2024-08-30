@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Mail\OffreNotification;
 use App\Models\Alerte;
+use App\Models\Autorite;
 use App\Models\Offre;
 use App\Models\Type_Offre;
 use App\Models\User;
@@ -20,21 +21,24 @@ use App\Notifications\OffreCorrespondante;
 class OffreController extends Controller
 {
     ///LEs offres
-    function storeOffre(){
+    function storeOffre()
+    {
         $offres = DB::table('offres')
             ->join('categories', 'offres.categ_id', '=', 'categories.id')
             ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
             ->orderBy('offres.datePublication', 'desc') // Tri par la date de publication la plus récente
             ->get(['offres.*', 'categories.title as categTitle', 'autorites.name as autName', 'autorites.abreviation as autAbre']);
-    
+
         return view('adminView.offre.liste', ['offres' => $offres]);
     }
-    
-    
 
-    function publierOffre(){
+
+
+    function publierOffre()
+    {
         return view('adminView.offre.create');
     }
+
     function saveOffre(Request $req)
     {
         // Validation des données
@@ -51,11 +55,11 @@ class OffreController extends Controller
             'heureOuv' => ['required'],
             'dateExp' => ['required'],
             'fichier' => 'required|file|mimes:pdf|max:5000000',
+            'domaineActivite' => ['required', 'string'], // Validation du domaine d'activité
         ]);
-    
+
         // Stockage du fichier
         $chemin = $req->file('fichier')->store('upload_files', 'public');
-    
         // Création de l'offre
         $offre = new Offre();
         $offre->titre = $req['titre'];
@@ -68,10 +72,11 @@ class OffreController extends Controller
         $offre->categ_id = $req['categorie'];
         $offre->ac_id = $req['autorite'];
         $offre->service = $req['service'];
+        $offre->domaine_activity = $req['domaineActivite']; // Enregistrement du domaine d'activité
         $offre->writeBy = Auth::user()->id;
         $offre->fichier = $chemin;
         $offre->save();
-    
+
         // Insertion manuelle dans la table pivot
         foreach ($req['marche'] as $typeId) {
             DB::table('offre_type')->insert([
@@ -80,75 +85,79 @@ class OffreController extends Controller
             ]);
         }
 
-    
+        // Notification des utilisateurs
         $users = User::whereHas('alertes', function ($query) use ($offre) {
             $typeMarIds = $offre->types->pluck('id'); // Obtenir les IDs des types de marché
             $acId = $offre->ac_id;
-            foreach($typeMarIds as $typeMarId){
+            foreach ($typeMarIds as $typeMarId) {
                 Alerte::where('marches', $typeMarId)
-                ->where('ac', $acId)->get();
+                    ->where('ac', $acId)->get();
             };
         })->get();
-        
+
+        // Récupération du nom de l'autorité contractante
+        $autorite = Autorite::find($offre->ac_id)->name;
 
         foreach ($users as $user) {
             $data = [
                 'offre' => $offre,
                 'user' => $user,
-                'lien_offre' => url('/appels-d-offres/') // Génère le lien direct vers l'offre
+                'autorite' => $autorite, // Ajouter le nom de l'autorité contractante
+                'lien_offre' => url('/appels-d-offres/'),
+                'fichier_offre' => url($offre->fichier), // Génère le lien de téléchargement du fichier
             ];
-    
+
             Mail::send('emails.offre_notification', $data, function ($message) use ($user) {
                 $message->subject('Nouvelle Alerte Correspondante')
-                        ->from(config('mail.from.address'), config('mail.from.name'))
-                        ->to($user->email);
+                    ->from(config('mail.from.address'), config('mail.from.name'))
+                    ->to($user->email);
             });
         }
-    
+
         return redirect()->route('admin.offre.list')
             ->with('msg-success', "L'offre a été bien ajoutée.");
     }
 
 
-    function editer($id){
-        return view('adminView.offre.edit',['offre'=>Offre::find($id)]);
+    function editer($id)
+    {
+        return view('adminView.offre.edit', ['offre' => Offre::find($id)]);
     }
 
-    function saveEdit(Request $req){
-        if($req['fichier'] == null){
+    function saveEdit(Request $req)
+    {
+        if ($req['fichier'] == null) {
 
             $req->validate([
-                'id'=>['required',  'numeric'],
-                'reference'=>['required',  'string' , 'max:15'],
-                'titre'=>['required',  'string'],
-                'depot'=>['required',  'string' ],
-                'categorie'=>['required',  'numeric' ],
-                'autorite'=>['required',  'numeric'],
-                'service'=>['required'],
-                'marche'=>['required',  'numeric' ],
-                'dateOuv'=>['required'],
-                'heureOuv'=>['required'],
-                'dateExp'=>['required'],
+                'id' => ['required',  'numeric'],
+                'reference' => ['required',  'string', 'max:15'],
+                'titre' => ['required',  'string'],
+                'depot' => ['required',  'string'],
+                'categorie' => ['required',  'numeric'],
+                'autorite' => ['required',  'numeric'],
+                'service' => ['required'],
+                'marche' => ['required',  'numeric'],
+                'dateOuv' => ['required'],
+                'heureOuv' => ['required'],
+                'dateExp' => ['required'],
             ]);
-
-        }else{
+        } else {
             $req->validate([
-                'id'=>['required',  'numeric'],
-                'reference'=>['required',  'string' , 'max:15'],
-                'titre'=>['required',  'string'],
-                'depot'=>['required',  'string' ],
-                'categorie'=>['required',  'numeric' ],
-                'autorite'=>['required',  'numeric'],
-                'service'=>['required'],
-                'marche'=>['required',  'numeric' ],
-                'dateOuv'=>['required'],
-                'heureOuv'=>['required'],
-                'dateExp'=>['required'],
-                'fichier'=>'required|file|mimes:pdf|max:5000000',
+                'id' => ['required',  'numeric'],
+                'reference' => ['required',  'string', 'max:15'],
+                'titre' => ['required',  'string'],
+                'depot' => ['required',  'string'],
+                'categorie' => ['required',  'numeric'],
+                'autorite' => ['required',  'numeric'],
+                'service' => ['required'],
+                'marche' => ['required',  'numeric'],
+                'dateOuv' => ['required'],
+                'heureOuv' => ['required'],
+                'dateExp' => ['required'],
+                'fichier' => 'required|file|mimes:pdf|max:5000000',
             ]);
 
-            $chemin=$req->file('fichier')->store('upload_files', 'public');
-
+            $chemin = $req->file('fichier')->store('upload_files', 'public');
         }
 
 
@@ -168,9 +177,9 @@ class OffreController extends Controller
         $offre->ac_id = $req['autorite'];
         $offre->service = $req['service'];
 
-        if($req['fichier'] != null){
+        if ($req['fichier'] != null) {
 
-            if(file_exists($offre->fichier)){
+            if (file_exists($offre->fichier)) {
                 unlink($offre->fichier);
             }
 
@@ -178,22 +187,22 @@ class OffreController extends Controller
         }
 
 
-       $offre->save();
+        $offre->save();
 
-       return redirect()->route('admin.offre.list')
-             ->with('msg-success', "Offre bien modifiée.");
-
+        return redirect()->route('admin.offre.list')
+            ->with('msg-success', "Offre bien modifiée.");
     }
 
-    function voir($id){
+    function voir($id)
+    {
 
         $offre = DB::table('offres')
-        ->join('categories', 'offres.categ_id', 'categories.id')
-        ->join('autorites', 'offres.ac_id', 'autorites.id')
-        ->where('offres.id', $id)
-        ->get(['offres.*', 'categories.title as categTitle' ,'autorites.name as autName' , 'autorites.abreviation as autAbre']);
+            ->join('categories', 'offres.categ_id', 'categories.id')
+            ->join('autorites', 'offres.ac_id', 'autorites.id')
+            ->where('offres.id', $id)
+            ->get(['offres.*', 'categories.title as categTitle', 'autorites.name as autName', 'autorites.abreviation as autAbre']);
 
-        return view('adminView.offre.voir', ['offre'=>$offre]);
+        return view('adminView.offre.voir', ['offre' => $offre]);
     }
 
     public function delete_offre($id)
@@ -207,5 +216,4 @@ class OffreController extends Controller
         // Rediriger avec un message de succès
         return redirect()->route('admin.offre.list')->with('msg-success', 'L\'offre a été supprimée avec succès.');
     }
-
 }

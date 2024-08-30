@@ -39,6 +39,11 @@
                     @endforeach
                 </select>
             </div>
+            <div class="form-group mb-4">
+                <label for="domaineActivite" class="form-label">Domaine d'Activité</label>
+                <input type="text" class="form-control" id="domaineActivite" name="domaine_activite" placeholder="Entrez le domaine d'activité">
+            </div>
+
 
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Créer Alerte</button>
@@ -118,51 +123,79 @@
     }
 
     .text-center {
-    text-align: center; /* Centers the content horizontally */
-}
+        text-align: center;
+        /* Centers the content horizontally */
+    }
 
-.btn {
-    display: inline-block; /* Allows setting width and margin */
-    font-weight: 400; /* Normal font weight */
-    color: #fff; /* White text color */
-    text-align: center; /* Centers text inside the button */
-    vertical-align: middle; /* Aligns text vertically */
-    user-select: none; /* Prevents text selection */
-    background-color: transparent; /* Default background color */
-    border: 1px solid transparent; /* Default border */
-    padding: 0.375rem 0.75rem; /* Padding inside the button */
-    font-size: 1rem; /* Font size */
-    line-height: 1.5; /* Line height */
-    border-radius: 0.25rem; /* Slightly rounded corners */
-    transition: all 0.15s ease-in-out; /* Smooth transition for hover and focus states */
-}
+    .btn {
+        display: inline-block;
+        /* Allows setting width and margin */
+        font-weight: 400;
+        /* Normal font weight */
+        color: #fff;
+        /* White text color */
+        text-align: center;
+        /* Centers text inside the button */
+        vertical-align: middle;
+        /* Aligns text vertically */
+        user-select: none;
+        /* Prevents text selection */
+        background-color: transparent;
+        /* Default background color */
+        border: 1px solid transparent;
+        /* Default border */
+        padding: 0.375rem 0.75rem;
+        /* Padding inside the button */
+        font-size: 1rem;
+        /* Font size */
+        line-height: 1.5;
+        /* Line height */
+        border-radius: 0.25rem;
+        /* Slightly rounded corners */
+        transition: all 0.15s ease-in-out;
+        /* Smooth transition for hover and focus states */
+    }
 
-.btn-primary {
-    color: #fff; /* White text color */
-    background-color: #007bff; /* Primary color */
-    border-color: #007bff; /* Primary color border */
-}
+    .btn-primary {
+        color: #fff;
+        /* White text color */
+        background-color: #007bff;
+        /* Primary color */
+        border-color: #007bff;
+        /* Primary color border */
+    }
 
-.btn-primary:hover {
-    color: #fff; /* White text color on hover */
-    background-color: #0056b3; /* Darker shade of primary color on hover */
-    border-color: #004085; /* Darker shade of primary color border on hover */
-}
+    .btn-primary:hover {
+        color: #fff;
+        /* White text color on hover */
+        background-color: #0056b3;
+        /* Darker shade of primary color on hover */
+        border-color: #004085;
+        /* Darker shade of primary color border on hover */
+    }
 
-.btn-primary:focus, .btn-primary.focus {
-    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Shadow on focus */
-}
+    .btn-primary:focus,
+    .btn-primary.focus {
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+        /* Shadow on focus */
+    }
 
-.btn-primary:active, .btn-primary.active, .show > .btn-primary.dropdown-toggle {
-    color: #fff; /* White text color when active */
-    background-color: #0056b3; /* Darker shade of primary color when active */
-    border-color: #004085; /* Darker shade of primary color border when active */
-}
+    .btn-primary:active,
+    .btn-primary.active,
+    .show>.btn-primary.dropdown-toggle {
+        color: #fff;
+        /* White text color when active */
+        background-color: #0056b3;
+        /* Darker shade of primary color when active */
+        border-color: #004085;
+        /* Darker shade of primary color border when active */
+    }
 
-.btn-primary:disabled, .btn-primary[disabled] {
-    opacity: 0.65; /* Reduced opacity for disabled state */
-}
-
+    .btn-primary:disabled,
+    .btn-primary[disabled] {
+        opacity: 0.65;
+        /* Reduced opacity for disabled state */
+    }
 </style>
 
 @endsection

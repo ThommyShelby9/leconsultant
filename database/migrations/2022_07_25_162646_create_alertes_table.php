@@ -24,6 +24,8 @@ class CreateAlertesTable extends Migration
 
             $table->string('marches');
             $table->string('ac');
+            $table->string('domaine_activity');
+
 
             $table->date('dateDebut');
 

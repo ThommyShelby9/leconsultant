@@ -21,7 +21,7 @@ class CategorieController extends Controller
     //Enregistrer
     function add(Request $req){
         $req->validate([
-            'title'=>['required',  'string' , 'max:20'],
+            'title'=>['required',  'string' ],
             'abrev'=> ['required' , 'max:5'],
         ]);
 

@@ -5,6 +5,12 @@
 @endsection
 
 @section('banner')
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
 @if($user)
 @if(!$hasActiveSubscription)
 <script src="https://cdn.kkiapay.me/k.js"></script>
@@ -130,9 +136,9 @@
                                     </button>
                                 </div>
                                 <a href="{{route('alerte')}}" class="ml-4 px-6 py-3 alerte_text-white rounded-lg hover:bg-consultant-rouge-dark alerte-bg">
-                                <button type="button" class=" ">
-                                    Créer une alerte
-                                </button>
+                                    <button type="button" class=" ">
+                                        Créer une alerte
+                                    </button>
                                 </a>
                             </div>
 
@@ -219,91 +225,178 @@
     </div>
 </section>
 
-
 <section id="news" class="relative mb-8">
     <div class="container">
         <h2 data-aos="zoom-out" class="lg:text-5xl text-3xl text-consultant-rouge font-bold mb-16 text-center">
             Actualités
         </h2>
-        <div class="bg-[#F5FAFE] shadow-lg p-8 -m-8">
-            <h3 class="lg:text-2xl text-lg font-medium mb-3">
-                Ministère de l'économie et des finances
-            </h3>
-            <div class="flex flex-wrap">
-                <div class="lg:w-3/5 w-full lg:pr-4 pr-0 lg:my-0 my-4">
-                    <p class="text-justify lg:text-lg text-sm">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna
-                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea commodo consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                        nulla pariatur. Excepteur
-                        sint occaecat
-                    </p>
-                    <p class="text-justify lg:text-lg text-sm">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna
-                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea commodo consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                        nulla pariatur. Excepteur
-                        sint occaecat
-                    </p>
-                    <p class="text-justify lg:text-lg text-sm mb-10">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna
-                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea commodo consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                        nulla pariatur. Excepteur
-                        sint occaecat
-                    </p>
-                    <button
-                        class="inline-block lg:text-2xl text-lg float-right text-white font-semibold bg-consultant-blue rounded-lg px-16 py-3">
-                        Voir plus
-                    </button>
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                @if (!empty($news))
+                @foreach ($news as $article)
+                <div class="swiper-slide">
+                    <div class="bg-[#F5FAFE] shadow-lg p-8">
+                        <div class="lg:w-3/5 w-full lg:pr-4 pr-0 lg:my-0 my-4">
+                            <h4 class="lg:text-xl text-lg font-semibold">{{ $article->title }}</h4>
+                            <p class="text-justify lg:text-lg text-sm">
+                                {{ $article->snippet }}
+                            </p>
+                            <a href="{{ $article->link }}" target="_blank" class="text-consultant-blue underline">
+                                Lire l'article complet
+                            </a>
+                        </div>
+                        <div class="lg:w-2/5 w-full lg:px-4 px-0 lg:my-0 my-4 relative">
+    @if (isset($article->thumbnail))
+    <img src="{{ $article->thumbnail }}" class="w-full object-center object-cover" alt="Image d'actualité">
+    @endif
+    <!-- Optionnel : Si vous utilisez une superposition -->
+    <!-- <div class="overlay"></div> -->
+</div>
+
+                    </div>
                 </div>
-                <div class="lg:w-2/5 w-full lg:px-4 px-0 lg:my-0 my-4">
-                    <img src="assets/img/0720349001625050856%201.png" class="w-full object-center object-cover"
-                        alt="">
+                @endforeach
+                @else
+                <div class="swiper-slide">
+                    <p class="text-justify lg:text-lg text-sm">
+                        Aucune actualité disponible pour le moment.
+                    </p>
                 </div>
+                @endif
             </div>
+
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+
+            <!-- Add Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
         </div>
     </div>
 </section>
 
+
+
 <style>
     .ml-4 {
-    margin-left: 1rem; /* 16px, équivalent à 4 unités Bootstrap */
+        margin-left: 1rem;
+        /* 16px, équivalent à 4 unités Bootstrap */
+    }
+
+    .px-6 {
+        padding-left: 1.5rem;
+        /* 24px, équivalent à 6 unités Bootstrap */
+        padding-right: 1.5rem;
+        /* 24px, équivalent à 6 unités Bootstrap */
+    }
+
+    .py-3 {
+        padding-top: 0.75rem;
+        /* 12px, équivalent à 3 unités Bootstrap */
+        padding-bottom: 0.75rem;
+        /* 12px, équivalent à 3 unités Bootstrap */
+    }
+
+
+
+    .alerte_text-white {
+        color: black;
+        /* Couleur du texte blanche */
+    }
+
+    .rounded-lg {
+        border-radius: 0.5rem;
+        /* 8px, équivalent à 'lg' dans Bootstrap */
+    }
+
+    .hover\:bg-consultant-rouge-dark:hover {
+        background-color: whitesmoke;
+        /* Couleur rouge foncée pour l'état de survol, ajustez la valeur hexadécimale selon vos besoins */
+    }
+
+    .alerte-bg {
+        background-color: white;
+    }
+
+    /* Assurez-vous que les slides sont bien centrés et que les éléments sont disposés correctement */
+.swiper-slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre horizontalement les éléments */
+    justify-content: center; /* Centre verticalement les éléments */
+    text-align: center; /* Centre tout le texte */
+    padding: 20px; /* Padding pour espacer les éléments des bords */
 }
 
-.px-6 {
-    padding-left: 1.5rem; /* 24px, équivalent à 6 unités Bootstrap */
-    padding-right: 1.5rem; /* 24px, équivalent à 6 unités Bootstrap */
+/* Style de l'image dans le slide */
+.swiper-slide img {
+    max-width: 100%; /* L'image ne dépasse pas la largeur du conteneur */
+    height: auto; /* Maintient le ratio de l'image */
+    margin-top: 10px; /* Espacement au-dessus de l'image */
 }
 
-.py-3 {
-    padding-top: 0.75rem; /* 12px, équivalent à 3 unités Bootstrap */
-    padding-bottom: 0.75rem; /* 12px, équivalent à 3 unités Bootstrap */
+/* Style du conteneur Swiper */
+.swiper-container {
+    overflow: hidden; /* Évite le débordement du contenu */
+}
+
+/* Style de l'arrière-plan du slide */
+.bg-[#F5FAFE] {
+    padding: 20px; /* Ajoute du padding autour du contenu */
+    box-sizing: border-box; /* Inclut le padding dans la largeur et la hauteur */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre le contenu horizontalement */
+}
+
+/* Assurez-vous que les titres sont centrés */
+.bg-[#F5FAFE] h4 {
+    margin-bottom: 10px; /* Espacement sous le titre */
+}
+
+/* Assurez-vous que la description est justifiée */
+.bg-[#F5FAFE] p {
+    text-align: justify; /* Justifie le texte */
+    margin-bottom: 10px; /* Espacement sous la description */
+}
+
+/* Assurez-vous que les liens sont centrés */
+.bg-[#F5FAFE] a {
+    color: #1e40af; /* Couleur du lien */
+    text-decoration: underline; /* Souligné pour les liens */
+    margin-top: 10px; /* Espacement au-dessus du lien */
+}
+
+/* Méthode avec filtre de luminosité */
+.bg-[#F5FAFE] img {
+    filter: brightness(1.2); /* Augmente la luminosité de 20% */
+}
+
+/* Méthode avec superposition */
+.bg-[#F5FAFE] {
+    position: relative;
+}
+
+.bg-[#F5FAFE] img {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
+}
+
+.bg-[#F5FAFE]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3); /* Superposition blanche avec 30% d'opacité */
+    z-index: 2;
 }
 
 
-
-.alerte_text-white {
-    color: black; /* Couleur du texte blanche */
-}
-
-.rounded-lg {
-    border-radius: 0.5rem; /* 8px, équivalent à 'lg' dans Bootstrap */
-}
-
-.hover\:bg-consultant-rouge-dark:hover {
-    background-color: whitesmoke; /* Couleur rouge foncée pour l'état de survol, ajustez la valeur hexadécimale selon vos besoins */
-}
-
-.alerte-bg{
-    background-color: white;
-}
 
 </style>
 
@@ -311,4 +404,24 @@
 
 @section('code')
 <script src="https://cdn.kkiapay.me/k.js"></script>
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        loop: true,
+        slidesPerView: 1, // Affiche un seul slide à la fois
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        autoplay: {
+            delay: 5000, // Temps en millisecondes avant de passer à la diapositive suivante
+            disableOnInteraction: false, // Continue l'autoplay même après une interaction utilisateur
+        },
+    });
+</script>
+
+
 @endsection
