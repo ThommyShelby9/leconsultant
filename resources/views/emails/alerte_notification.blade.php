@@ -7,11 +7,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
-<div class="container" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-<img src="https://leconsultant.bj/assets/img/Logoconsultant%201.png" alt="Image Description" class="img-fluid mb-4">
+    <div class="container" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <img src="https://leconsultant.bj/assets/img/Logoconsultant%201.png" alt="Image Description" class="img-fluid mb-4">
 
         <h1 class="text-center" style="color: #007bff;">Votre Alerte Personnalisée</h1>
 
+        <p class="lead">Voici le domaine d'activité qui vous intéresse :</p>
+        <ul class="list-group mb-4">
+            @foreach ($domaine_activite as $domaine)
+                <li class="list-group-item">{{ $domaine->title }}</li>
+            @endforeach
+        </ul>
         <p class="lead">Voici les types de marché qui vous intéressent :</p>
         <ul class="list-group mb-4">
             @foreach ($type_marches as $marche)

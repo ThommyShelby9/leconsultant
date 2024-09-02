@@ -69,13 +69,21 @@
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
                             <label for="domaineActivite">Domaine d'Activité</label>
-                            <input type="text" name="domaineActivite" id="domaineActivite" class="form-control" value="{{ @old('domaineActivite') }}" placeholder="Entrez le domaine d'activité">
+                            <select name="domaineActivite" id="domaineActivite" class="form-control">
+                                <option value="">Sélectionnez un domaine d'activité</option>
+                                @foreach($types as $type)
+                                <option value="{{ $type->id }}" {{ old('domaineActivite') == $type->id ? 'selected' : '' }}>
+                                    {{ $type->title }}
+                                </option>
+                                @endforeach
+                            </select>
                             @error('domaineActivite')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                 </div>
+
 
 
                 <div class="form-row">

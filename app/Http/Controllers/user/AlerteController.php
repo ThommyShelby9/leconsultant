@@ -142,16 +142,19 @@ class AlerteController extends Controller
             'marches' => json_encode($validated['type_marche']), // Sauvegarde en format JSON
             'ac' => json_encode($validated['ac']), // Sauvegarde en format JSON
             'domaine_activity' => $validated['domaine_activite'], // Sauvegarde du domaine d'activité
-            'details' => 'Alerte pour marchés: ' . implode(', ', $marches->pluck('title')->toArray()) . ' - AC: ' . implode(', ', $acs->pluck('name')->toArray()),
+            'details' => 'Alerte pour marchés: ' . implode(', ', $marches->pluck('title')->toArray()) . 
+                         ' - AC: ' . implode(', ', $acs->pluck('name')->toArray()) . 
+                         ' - Domaine d\'Activité: ' . $validated['domaine_activite'], // Ajout du domaine d'activité
             'abonnement_id' => 1,
             'dateDebut' => now(),
         ]);
     
         // Préparation des données pour l'email
+        $domaine = Type::where('id', $validated['domaine_activite'])->get();
         $data = [
             'type_marches' => $marches, // Collection d'objets Type
             'categories_ac' => $acs, // Collection d'objets Autorite
-            'domaine_activite' => $validated['domaine_activite'], // Domaine d'activité pour l'email
+            'domaine_activite' => $domaine, // Domaine d'activité pour l'email
             'user_name' => auth()->user()->nom . ' ' . auth()->user()->prenoms,
         ];
     
@@ -167,9 +170,12 @@ class AlerteController extends Controller
     }
     
 
-    public function alertePage(){
+    public function alertePage() {
         $ac = Autorite::all();
         $marches = Type::all();
-       return view('emails.alerte')->with(compact('ac', 'marches')); 
+        $domainesActivite = Type::where('useFor', 'activite')->get();
+        
+        return view('emails.alerte')->with(compact('ac', 'marches', 'domainesActivite'));
     }
+    
 }

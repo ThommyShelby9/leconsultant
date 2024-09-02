@@ -40,9 +40,15 @@
                 </select>
             </div>
             <div class="form-group mb-4">
-                <label for="domaineActivite" class="form-label">Domaine d'Activité</label>
-                <input type="text" class="form-control" id="domaineActivite" name="domaine_activite" placeholder="Entrez le domaine d'activité">
-            </div>
+    <label for="domaineActivite" class="form-label">Domaine d'Activité</label>
+    <select class="form-control" id="domaineActivite" name="domaine_activite">
+        <option value="" disabled selected>Choisissez un domaine d'activité</option>
+        @foreach($domainesActivite as $domaine)
+            <option value="{{ $domaine->id }}">{{ $domaine->title }}</option>
+        @endforeach
+    </select>
+</div>
+
 
 
             <div class="text-center">
