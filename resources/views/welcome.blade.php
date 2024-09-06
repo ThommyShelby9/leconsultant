@@ -135,11 +135,10 @@
                                         <i class="fi-xnsuh2-search text-consultant-rouge"></i>
                                     </button>
                                 </div>
-                                <a href="{{route('alerte')}}" class="ml-4 px-6 py-3 alerte_text-white rounded-lg hover:bg-consultant-rouge-dark alerte-bg">
-                                    <button type="button" class=" ">
-                                        Créer une alerte
-                                    </button>
+                                <a href="{{ route('alerte') }}" class="ml-1 px-1 py-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 block text-center w-full max-w-xs">
+                                    Créer une alerte
                                 </a>
+
                             </div>
 
                         </div>
@@ -193,18 +192,16 @@
                             <div class="text-consultant-gris font-medium flex flex-wrap">
                                 <h4 class="mr-12"><span class="text-black">Catégorie</span> : {{$item->categTitle }}</h4>
                                 <h4 class="mr-12"><span class="text-black">Type d'offre</span> : {{$item->typeTitle }}</h4>
-                                <h4 class="mr-12"><span class="text-black">Publiée le </span> : {{ date('d M Y', strtotime($item->datePublication))  }} </h4>
-                                <h4 class="mr-12"><span class="text-black">Expire le </span> : {{ date('d M Y', strtotime($item->dateExpiration))  }} </h4>
-                                <h4 class="mr-12 w-full"><span class="text-black">Lieu de dépot </span> : {{ $item->lieu_depot }} </h4>
+                                <h4 class="mr-12"><span class="text-black">Publiée le </span> : {{ date('d M Y', strtotime($item->datePublication)) }} </h4>
+                                <h4 class="mr-12"><span class="text-black">Expire le </span> : {{ date('d M Y', strtotime($item->dateExpiration)) }} </h4>
+                                <h4 class="mr-12 w-full"><span class="text-black">Lieu de dépôt </span> : {{ $item->lieu_depot }} </h4>
                             </div>
                         </div>
 
                         <?php $file = str_replace(("upload_files/"), '', $item->fichier);  ?>
-
                         <div class="lg:w-1/4 w-full mt-8" data-aos="zoom-in-up">
-                            <a href="{{ route('voirFichier',$file)  }}">
-                                <button
-                                    class="inline-block lg:mt-0 mt-10 py-4 bg-consultant-blue text-white  rounded-lg w-full">
+                            <a href="{{ route('voirFichier', $file) }}">
+                                <button class="inline-block lg:mt-0 mt-10 py-4 bg-consultant-blue text-white rounded-lg w-full">
                                     Télécharger
                                 </button>
                             </a>
@@ -213,18 +210,11 @@
                 </div>
             </div>
             @endforeach
-
-        </div>
-        <div class="flex flex-wrap justify-center items-center mb-12">
-            <a href="{{ Route('offre') }}">
-                <h3 class="text-center px-4 py-3 border border-consultant-blue text-consultant-blue font-medium lg:text-2xl text-lg mr-2">
-                    Voir toutes les offres </h3>
-
-            </a>
         </div>
     </div>
 </section>
 
+<!-- Section des actualités -->
 <section id="news" class="relative mb-8">
     <div class="container">
         <h2 data-aos="zoom-out" class="lg:text-5xl text-3xl text-consultant-rouge font-bold mb-16 text-center">
@@ -235,32 +225,29 @@
                 @if (!empty($news))
                 @foreach ($news as $article)
                 <div class="swiper-slide">
-                    <div class="bg-[#F5FAFE] shadow-lg p-8">
-                        <div class="lg:w-3/5 w-full lg:pr-4 pr-0 lg:my-0 my-4">
-                            <h4 class="lg:text-xl text-lg font-semibold">{{ $article->title }}</h4>
-                            <p class="text-justify lg:text-lg text-sm">
-                                {{ $article->snippet }}
-                            </p>
-                            <a href="{{ $article->link }}" target="_blank" class="text-consultant-blue underline">
-                                Lire l'article complet
-                            </a>
+                    <div class="bg-[#F5FAFE] shadow-lg p-8 rounded-lg w-full">
+                        <div class="w-full">
+                            <!-- Titre de l'article centré -->
+                            <h4 class="text-xl font-semibold text-center mb-4">{{ $article->title }}</h4>
+                            <!-- Description justifiée -->
+                            <p class="text-justify text-lg mb-4">{{ $article->snippet }}</p>
+                            <!-- Lien vers l'article complet centré -->
+                            <div class="text-center mb-4">
+                                <a href="{{ $article->link }}" target="_blank" class="text-consultant-blue underline">Lire l'article complet</a>
+                            </div>
+                            <!-- Image centrée -->
+                            @if (isset($article->thumbnail))
+                            <div class="w-full flex justify-center">
+                                <img src="{{ $article->thumbnail }}" class="lg:w-1/3 w-full object-cover mt-4" alt="Image d'actualité">
+                            </div>
+                            @endif
                         </div>
-                        <div class="lg:w-2/5 w-full lg:px-4 px-0 lg:my-0 my-4 relative">
-    @if (isset($article->thumbnail))
-    <img src="{{ $article->thumbnail }}" class="w-full object-center object-cover" alt="Image d'actualité">
-    @endif
-    <!-- Optionnel : Si vous utilisez une superposition -->
-    <!-- <div class="overlay"></div> -->
-</div>
-
                     </div>
                 </div>
                 @endforeach
                 @else
                 <div class="swiper-slide">
-                    <p class="text-justify lg:text-lg text-sm">
-                        Aucune actualité disponible pour le moment.
-                    </p>
+                    <p class="text-justify lg:text-lg text-sm">Aucune actualité disponible pour le moment.</p>
                 </div>
                 @endif
             </div>
@@ -275,130 +262,96 @@
     </div>
 </section>
 
-
-
 <style>
-    .ml-4 {
-        margin-left: 1rem;
-        /* 16px, équivalent à 4 unités Bootstrap */
+    /* Styles de la section des actualités */
+    .swiper-container {
+        overflow: hidden;
     }
 
-    .px-6 {
-        padding-left: 1.5rem;
-        /* 24px, équivalent à 6 unités Bootstrap */
-        padding-right: 1.5rem;
-        /* 24px, équivalent à 6 unités Bootstrap */
+    /* Style des slides pour être bien centrés */
+    .swiper-slide {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
     }
 
-    .py-3 {
-        padding-top: 0.75rem;
-        /* 12px, équivalent à 3 unités Bootstrap */
-        padding-bottom: 0.75rem;
-        /* 12px, équivalent à 3 unités Bootstrap */
+    /* Style du conteneur des actualités */
+    .bg-[#F5FAFE] {
+        background-color: #F5FAFE;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Style pour le titre centré */
+    .bg-[#F5FAFE] h4 {
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Style pour le texte justifié */
+    .bg-[#F5FAFE] p {
+        text-align: justify;
+        margin-bottom: 10px;
+        font-size: 1rem;
+    }
+
+    /* Style du lien vers l'article centré */
+    .bg-[#F5FAFE] a {
+        color: #1e40af;
+        text-decoration: underline;
+        font-size: 1rem;
+    }
+
+    /* Image centrée */
+    /* Image centrée */
+    .bg-[#F5FAFE] img {
+        width: 100%;
+        max-width: 300px;
+        /* Augmentez la taille max de l'image */
+        height: auto;
+        object-fit: cover;
+        margin-top: 20px;
     }
 
 
-
-    .alerte_text-white {
-        color: black;
-        /* Couleur du texte blanche */
+    /* Pagination et navigation de swiper */
+    .swiper-pagination,
+    .swiper-button-next,
+    .swiper-button-prev {
+        color: #007bff;
     }
 
-    .rounded-lg {
-        border-radius: 0.5rem;
-        /* 8px, équivalent à 'lg' dans Bootstrap */
+    /* Superposition sur l'image (optionnel) */
+    .bg-[#F5FAFE]::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        z-index: 2;
     }
 
-    .hover\:bg-consultant-rouge-dark:hover {
-        background-color: whitesmoke;
-        /* Couleur rouge foncée pour l'état de survol, ajustez la valeur hexadécimale selon vos besoins */
+    .swiper-slide img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        object-fit: cover;
+        margin-top: 20px;
     }
-
-    .alerte-bg {
-        background-color: white;
-    }
-
-    /* Assurez-vous que les slides sont bien centrés et que les éléments sont disposés correctement */
-.swiper-slide {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centre horizontalement les éléments */
-    justify-content: center; /* Centre verticalement les éléments */
-    text-align: center; /* Centre tout le texte */
-    padding: 20px; /* Padding pour espacer les éléments des bords */
-}
-
-/* Style de l'image dans le slide */
-.swiper-slide img {
-    max-width: 100%; /* L'image ne dépasse pas la largeur du conteneur */
-    height: auto; /* Maintient le ratio de l'image */
-    margin-top: 10px; /* Espacement au-dessus de l'image */
-}
-
-/* Style du conteneur Swiper */
-.swiper-container {
-    overflow: hidden; /* Évite le débordement du contenu */
-}
-
-/* Style de l'arrière-plan du slide */
-.bg-[#F5FAFE] {
-    padding: 20px; /* Ajoute du padding autour du contenu */
-    box-sizing: border-box; /* Inclut le padding dans la largeur et la hauteur */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centre le contenu horizontalement */
-}
-
-/* Assurez-vous que les titres sont centrés */
-.bg-[#F5FAFE] h4 {
-    margin-bottom: 10px; /* Espacement sous le titre */
-}
-
-/* Assurez-vous que la description est justifiée */
-.bg-[#F5FAFE] p {
-    text-align: justify; /* Justifie le texte */
-    margin-bottom: 10px; /* Espacement sous la description */
-}
-
-/* Assurez-vous que les liens sont centrés */
-.bg-[#F5FAFE] a {
-    color: #1e40af; /* Couleur du lien */
-    text-decoration: underline; /* Souligné pour les liens */
-    margin-top: 10px; /* Espacement au-dessus du lien */
-}
-
-/* Méthode avec filtre de luminosité */
-.bg-[#F5FAFE] img {
-    filter: brightness(1.2); /* Augmente la luminosité de 20% */
-}
-
-/* Méthode avec superposition */
-.bg-[#F5FAFE] {
-    position: relative;
-}
-
-.bg-[#F5FAFE] img {
-    display: block;
-    width: 100%;
-    height: auto;
-    position: relative;
-    z-index: 1;
-}
-
-.bg-[#F5FAFE]::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.3); /* Superposition blanche avec 30% d'opacité */
-    z-index: 2;
-}
-
-
-
 </style>
+
 
 @endsection
 

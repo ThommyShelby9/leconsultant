@@ -172,7 +172,7 @@ class AlerteController extends Controller
 
     public function alertePage() {
         $ac = Autorite::all();
-        $marches = Type::all();
+        $marches = Type::where('useFor', '!=', 'activite')->get();
         $domainesActivite = Type::where('useFor', 'activite')->get();
         
         return view('emails.alerte')->with(compact('ac', 'marches', 'domainesActivite'));
