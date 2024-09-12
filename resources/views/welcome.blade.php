@@ -350,6 +350,47 @@
         object-fit: cover;
         margin-top: 20px;
     }
+
+    @media (max-width: 768px) {
+  .w-1/5 {
+    margin-right: 0.5rem;
+  }
+
+  .w-4/5 {
+    margin-left: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  #offres {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+#offres {
+  margin-top: 2rem; /* au lieu de 8rem */
+  margin-bottom: 2rem; /* au lieu de 8rem */
+}
+
+@media (max-width: 768px) {
+  .mb-6 {
+    margin-bottom: 1rem;
+  }
+
+  .mb-16 {
+    margin-bottom: 2rem;
+  }
+}
+
+.mb-6 {
+  margin-bottom: 2rem; /* au lieu de 6rem */
+}
+
+.mb-16 {
+  margin-bottom: 4rem; /* au lieu de 16rem */
+}
+
 </style>
 
 
