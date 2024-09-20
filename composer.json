@@ -9,6 +9,7 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "jcobhams/newsapi": "^1.0",
         "kkiapay/kkiapay-php": "dev-master",
         "laravel-lang/lang": "~8.0",
         "laravel/fortify": "^1.13",

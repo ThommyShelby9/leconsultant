@@ -12,6 +12,8 @@ use App\Models\Offre;
 use App\Models\Pageservice;
 use App\Models\Formation;
 use GoogleSearchResults;
+use Illuminate\Support\Facades\Log;
+use jcobhams\NewsApi\NewsApi;
 
 class PageController extends Controller
 {
@@ -19,24 +21,33 @@ class PageController extends Controller
 
     public function getBeninNews()
     {
-        $search = new GoogleSearchResults('27a351758a8c62270b7dad656c728ee0c2d9ecc855b28e1eeb574008de2d4a4e');
+        $newsapi = new NewsApi('a9fa759e6b5a460e97dd4c90992ca6f4');
     
         $params = [
-            "engine" => "google",
-            "q" => "actualités Bénin",
-            "location" => "Benin",
-            "hl" => "fr",
-            "gl" => "fr",
-            "tbm" => "nws",
-            "num" => 10 // Limite le nombre de résultats à 5
+            'q' => 'Bénin',
+            'language' => 'fr',
+            'country' => 'bj', // Code pays pour le Bénin
+            'pageSize' => 10,
         ];
     
-        $result = $search->get_json($params);
+        try {
+            $top_headlines = $newsapi->getTopHeadlines(
+                $params['q'],
+                null,
+                $params['country'],
+                null,
+                $params['pageSize'],
+                1
+            );
     
-        // Accéder aux propriétés de l'objet stdClass en utilisant -> au lieu de []
-        if (isset($result->news_results)) {
-            return $result->news_results; // Retourne les résultats d'actualités
-        } else {
+            if (isset($top_headlines->articles) && !empty($top_headlines->articles)) {
+                return $top_headlines->articles;
+            } else {
+                return [];
+            }
+        } catch (\Exception $e) {
+            // Gérer l'erreur ici, par exemple en la journalisant
+            Log::error('Erreur lors de la récupération des actualités: ' . $e->getMessage());
             return [];
         }
     }

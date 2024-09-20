@@ -4,7 +4,6 @@
 <title>Le consultant | Formations</title>
 @endsection
 
-
 @section('banner')
 <section id="banner" class="relative overflow-hidden">
     <div class="bg-consultant-blue lg:py-14 py-6">
@@ -18,14 +17,14 @@
 @endsection
 
 @section('contenu')
-<div class="py-4">
-    <div class="container">
-        <form action="{{ route('alerte.save') }}" method="post">
+<div class="py-8">
+    <div class="container mx-auto">
+        <form action="{{ route('alerte.save') }}" method="post" class="bg-white shadow-md rounded-lg p-6">
             @csrf
 
-            <div class="row">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Type de marché -->
-                <div class="col-lg-6 mb-4">
+                <div class="mb-4">
                     <div class="bg-primary text-center text-white py-3 rounded mb-4 shadow-sm">
                         <h2 class="h5">Type de marché qui vous intéresse</h2>
                     </div>
@@ -40,7 +39,7 @@
                 </div>
 
                 <!-- Type d'autorité contractante (AC) -->
-                <div class="col-lg-6 mb-4">
+                <div class="mb-4">
                     <div class="bg-primary text-center text-white py-3 rounded mb-4 shadow-sm">
                         <h2 class="h5">Type de AC qui vous intéresse</h2>
                     </div>
@@ -60,8 +59,8 @@
             <input type="hidden" name="idAbonnement" value="">
 
             <!-- Submit button -->
-            <div class="text-center">
-                <button type="submit" class="btn btn-danger btn-lg">
+            <div class="text-center mt-6">
+                <button type="submit" class="bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300">
                     Enregistrer
                 </button>
             </div>
@@ -69,7 +68,6 @@
     </div>
 </div>
 @endsection
-
 
 @section('code')
     <script src="https://cdn.kkiapay.me/k.js"></script>
