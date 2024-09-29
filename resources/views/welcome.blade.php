@@ -10,19 +10,44 @@
 
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-
 @if($user)
 @if(!$hasActiveSubscription)
-<script src="https://cdn.kkiapay.me/k.js"></script>
 
+<!-- Inclure le script Kkiapay -->
 <!-- Inclure le script SweetAlert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+// Fonction pour charger le script Kkiapay
+function loadKkiapayScript() {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = "https://cdn.kkiapay.me/k.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
+    });
+}
+
+// Fonction principale
+async function initializePayment() {
+    try {
+        await loadKkiapayScript();
+        
+        // Attendre que Kkiapay soit défini
+        let attempts = 0;
+        while (typeof Kkiapay === 'undefined' && attempts < 10) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            attempts++;
+        }
+
+        if (typeof Kkiapay === 'undefined') {
+            throw new Error("Le SDK Kkiapay n'a pas pu être chargé après plusieurs tentatives");
+        }
+
+        // Le reste de votre code ici
         Swal.fire({
             title: 'Abonnement requis',
-            text: "Veuillez souscrire à l'abonnement unique de 2999 FCFA afin de pouvoir accéder à la plateforme.",
+            text: "Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
             icon: 'warning',
             showCancelButton: false,
             confirmButtonText: 'Souscrire',
@@ -32,32 +57,39 @@
             backdrop: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Ouvrir le widget Kkiapay pour le paiement
-                KkiapayWidget.init({
-                    amount: 2999, // Montant à payer en FCFA
-                    key: "2a9363b7c6c78cf76717f8895a561990f39bac73", // Votre clé publique Kkiapay
-                    sandbox: true, // Utilisez false en production
-                    callback: "https://votre-site.com/kkiapay-callback", // URL de callback
-                    onSuccess: function(response) {
-                        if (response.status === 'SUCCESS') {
-                            Swal.fire({
-                                title: 'Paiement réussi',
-                                text: "Votre abonnement a été activé avec succès.",
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                window.location.reload(); // Rechargez la page pour mettre à jour l'état
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Erreur',
-                                text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
-                                icon: 'error',
-                                confirmButtonText: 'Réessayer'
-                            });
-                        }
-                    },
-                    onError: function(error) {
+                console.log('Bouton Souscrire cliqué');
+                // Configuration du widget Kkiapay
+                Kkiapay.init({
+                    key: "2a9363b7c6c78cf76717f8895a561990f39bac73",
+                    sandbox: true
+                });
+
+                // Ouvrir le widget Kkiapay
+                Kkiapay.open({
+                    amount: 1490,
+                    callback: "https://votre-site.com/kkiapay-callback",
+                    data: "Abonnement unique",
+                    theme: "blue",
+                    name: "Paiement de l'abonnement",
+                    description: "Abonnement unique pour accéder à la plateforme",
+                    reason: "Abonnement unique",
+                    currency: "XOF",
+                    countries: ["BJ"],
+                    paymentMethods: ["card", "mobile-money", "direct-debit"],
+                    key: "2a9363b7c6c78cf76717f8895a561990f39bac73"
+                }, 
+                function(response) {
+                    console.log('Réponse de Kkiapay:', response);
+                    if (response.status === 'SUCCESSFUL') {
+                        Swal.fire({
+                            title: 'Paiement réussi',
+                            text: "Votre abonnement a été activé avec succès.",
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
                         Swal.fire({
                             title: 'Erreur',
                             text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
@@ -65,56 +97,76 @@
                             confirmButtonText: 'Réessayer'
                         });
                     }
+                }, 
+                function(error) {
+                    console.error('Erreur Kkiapay:', error);
+                    Swal.fire({
+                        title: 'Erreur',
+                        text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
+                        icon: 'error',
+                        confirmButtonText: 'Réessayer'
+                    });
                 });
-
-                // Ouvrir le widget Kkiapay
-                KkiapayWidget.requestPayment();
             }
         });
-    });
+    } catch (error) {
+        console.error("Erreur lors de l'initialisation du paiement:", error);
+        Swal.fire({
+            title: 'Erreur',
+            text: "Une erreur est survenue lors de l'initialisation du paiement. Veuillez réessayer plus tard.",
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
+// Exécuter la fonction principale lorsque le DOM est chargé
+document.addEventListener('DOMContentLoaded', initializePayment);
 </script>
+
 @endif
 @endif
 
+
 <section id="banner" class="relative overflow-hidden">
-    <div class="bg-consultant-blue lg:pt-32 lg:pb-48 pt-10">
-        <div class="container mx-auto">
+    <div class="bg-consultant-blue lg:pt-32 lg:pb-48 pt-6 pb-6">
+        <div class="container mx-auto px-0 lg:px-0">
             <div class="flex flex-wrap">
                 <div class="lg:w-2/3 w-full">
-                    <h1 class="text-white lg:text-6xl text-4xl font-bold mb-4">
+                    <h1 class="text-white lg:text-6xl text-3xl font-bold mb-1 lg:mb-4 w-full">
                         Explorer les Appels d'offres disponibles au
                     </h1>
-                    <h1 class="text-consultant-rouge lg:text-6xl text-4xl font-bold mb-6">
+                    <h1 class="text-consultant-rouge lg:text-6xl text-3xl font-bold mb-2 lg:mb-6 w-full">
                         Bénin
                     </h1>
-                    <p class="text-white text-justify mb-2">
+                    <p class="text-white text-justify mb-1 lg:mb-2 w-full">
                         Découvrez les opportunités d’affaires au Bénin à travers notre plateforme dédiée aux appels d’offres publics et privés. Que vous soyez une petite ou grande entreprise, nous vous aidons à identifier les projets les plus pertinents pour développer vos activités et accroître votre chiffre d’affaires. Ne manquez plus aucune opportunité grâce à notre système d’alerte personnalisée.
                     </p>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="bg-consultant-rouge lg:pt-12 lg:pb-12 py-6">
-        <div class="container mx-auto">
+        <div class="container mx-auto px-0 lg:px-0">
             <div class="flex flex-wrap">
                 <div class="lg:w-2/3 w-full">
                     <form action="{{ route('offre.recherche') }}" method="post" class="flex flex-wrap justify-center lg:w-2/3 w-full">
                         @csrf
-                        <!-- Sélecteur de catégories -->
+                        <!-- Sélecteur des Autorités Contractantes -->
                         <div class="w-full lg:w-1/3 px-1 mb-4">
                             <select name="categ" class="w-full bg-white bg-opacity-75 border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-consultant-rouge focus:border-transparent">
-                                <option selected value="0">Toutes les Catégories</option>
-                                @foreach ($les_categories as $item)
-                                <option value="{{ $item->id }}">{{ $item->title }}</option>
+                                <option selected value="0">Toutes les Autorités Contractantes</option>
+                                @foreach ($ac as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <!-- Sélecteur de types d'offre -->
+                        <!-- Sélecteur des Domaines d'Activité (Types) -->
                         <div class="w-full lg:w-1/3 px-1 mb-4">
                             <select name="type" class="w-full bg-white bg-opacity-75 border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-consultant-rouge focus:border-transparent">
-                                <option value="0" selected>Tous les Types d'offre</option>
-                                @foreach ($les_types_marches as $item)
+                                <option value="0" selected>Tous les Domaines d'Activités</option>
+                                @foreach ($types as $item)
                                 <option value="{{ $item->id }}">{{ $item->title }}</option>
                                 @endforeach
                             </select>
@@ -136,10 +188,12 @@
         </div>
     </div>
 
+
     <div data-aos="fade-left" class="absolute lg:right-[-30%] xl:right-[0%] xl:top-0 lg:bottom-0 lg:block hidden">
         <img src="{{ asset('assets/img/Photo%201.png') }}" alt="" class="xl:w-full lg:w-3/5">
     </div>
 </section>
+
 
 @endsection
 
@@ -312,52 +366,54 @@
     }
 
     @media (max-width: 768px) {
-  .w-1/5 {
-    margin-right: 0.5rem;
-  }
+        .w-1/5 {
+            margin-right: 0.5rem;
+        }
 
-  .w-4/5 {
-    margin-left: 0.5rem;
-  }
-}
+        .w-4/5 {
+            margin-left: 0.5rem;
+        }
+    }
 
-@media (max-width: 768px) {
-  #offres {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-}
+    @media (max-width: 768px) {
+        #offres {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+    }
 
-#offres {
-  margin-top: 2rem; /* au lieu de 8rem */
-  margin-bottom: 2rem; /* au lieu de 8rem */
-}
+    #offres {
+        margin-top: 2rem;
+        /* au lieu de 8rem */
+        margin-bottom: 2rem;
+        /* au lieu de 8rem */
+    }
 
-@media (max-width: 768px) {
-  .mb-6 {
-    margin-bottom: 1rem;
-  }
+    @media (max-width: 768px) {
+        .mb-6 {
+            margin-bottom: 1rem;
+        }
 
-  .mb-16 {
-    margin-bottom: 2rem;
-  }
-}
+        .mb-16 {
+            margin-bottom: 2rem;
+        }
+    }
 
-.mb-6 {
-  margin-bottom: 2rem; /* au lieu de 6rem */
-}
+    .mb-6 {
+        margin-bottom: 2rem;
+        /* au lieu de 6rem */
+    }
 
-.mb-16 {
-  margin-bottom: 4rem; /* au lieu de 16rem */
-}
-
+    .mb-16 {
+        margin-bottom: 4rem;
+        /* au lieu de 16rem */
+    }
 </style>
 
 
 @endsection
 
 @section('code')
-<script src="https://cdn.kkiapay.me/k.js"></script>
 <script>
     var swiper = new Swiper('.swiper-container', {
         loop: true,

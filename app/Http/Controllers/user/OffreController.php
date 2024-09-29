@@ -35,52 +35,52 @@ class OffreController extends Controller
 
     
     public function rechercher(Request $req)
-    {
-        // Initialisation de la requête de base
-        $query = DB::table('offres')
-            ->select([
-                'offres.*',
-                'autorites.logo as logo',
-                'types.title as typeTitle',
-                'categories.title as categTitle',
-                'autorites.name as autName',
-                'autorites.abreviation as autAbre'
-            ])
-            ->join('categories', 'offres.categ_id', '=', 'categories.id')
-            ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
-            ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
-            ->leftJoin('types', 'offre_type.type_id', '=', 'types.id');
-    
-        // Filtrer par titre si la recherche n'est pas vide
-        if ($req['search'] !== null) {
-            $query->where('offres.titre', 'like', '%' . $req['search'] . '%');
-        }
-    
-        // Filtrer par catégorie si une catégorie spécifique est sélectionnée
-        if ($req['categ'] > 0) {
-            $query->where('offres.categ_id', '=', $req['categ']);
-        }
-    
-        // Filtrer par type si un type spécifique est sélectionné
-        if ($req['type'] > 0) {
-            $query->where('offre_type.type_id', '=', $req['type']);
-        }
-    
-        // Tri des résultats par ordre décroissant d'ID
-        $query->orderByDesc('offres.id');
-    
-        // Paginer les résultats
-        $res = $query->paginate(4);
-    
-        // Retourner la vue avec les résultats de recherche
-        return view('userView.offreRecherche', [
-            'offres' => $res,
-            'search' => $req['search'],
-            'categ' => $req['categ'],
-            'type' => $req['type']
-        ]);
+{
+    // Initialisation de la requête de base
+    $query = DB::table('offres')
+        ->select([
+            'offres.*',
+            'autorites.logo as logo',
+            'types.title as typeTitle',
+            'categories.title as categTitle',
+            'autorites.name as autName',
+            'autorites.abreviation as autAbre'
+        ])
+        ->join('categories', 'offres.categ_id', '=', 'categories.id')
+        ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+        ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
+        ->leftJoin('types', 'offre_type.type_id', '=', 'types.id');
+
+    // Filtrer par titre si la recherche n'est pas vide
+    if ($req['search'] !== null) {
+        $query->where('offres.titre', 'like', '%' . $req['search'] . '%');
     }
-    
+
+    // Filtrer par autorité contractante si un type spécifique est sélectionné
+    if ($req['categ'] > 0) {
+        $query->where('offres.ac_id', '=', $req['categ']);
+    }
+
+    // Filtrer par domaine d'activité (type d'offre) si un type spécifique est sélectionné
+    if ($req['type'] > 0) {
+        $query->where('offre_type.type_id', '=', $req['type']);
+    }
+
+    // Tri des résultats par ordre décroissant d'ID
+    $query->orderByDesc('offres.id');
+
+    // Paginer les résultats
+    $res = $query->paginate(4);
+
+    // Retourner la vue avec les résultats de recherche
+    return view('userView.offreRecherche', [
+        'offres' => $res,
+        'search' => $req['search'],
+        'categ' => $req['categ'],
+        'type' => $req['type']
+    ]);
+}
+
 
     
 }

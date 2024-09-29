@@ -4,6 +4,7 @@ namespace App\Http\Controllers\user;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Abonnement;
+use App\Models\Autorite;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Offre;
 use App\Models\Pageservice;
 use App\Models\Formation;
+use App\Models\Type;
 use GoogleSearchResults;
 use Illuminate\Support\Facades\Log;
 use jcobhams\NewsApi\NewsApi;
@@ -56,6 +58,9 @@ public function welcome()
 {
     $user = null;
     $hasActiveSubscription = false;
+    $types = Type::where('useFor', 'activite')->get();
+    $ac = Autorite::all();
+
 
     // Vérifier si l'utilisateur est connecté
     if (Auth::check()) {
@@ -84,6 +89,8 @@ public function welcome()
 
     return view('welcome', [
         'offres' => $offres,
+        'types' => $types,
+        'ac' => $ac,
         'hasActiveSubscription' => $hasActiveSubscription,
         'user' => $user,
         'news' => $news, // Passer les actualités à la vue
