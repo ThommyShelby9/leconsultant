@@ -14,9 +14,9 @@ use App\Models\User;
 
 class AbonnementController extends Controller
 {
-    public  $public_key= "85abcb60ae8311ecb9755de712bc9e4f";
-    public $private_key = "tpk_85abf271ae8311ecb9755de712bc9e4f";
-    public $secret= "tsk_85abf272ae8311ecb9755de712bc9e4f";
+    public  $public_key= "2a9363b7c6c78cf76717f8895a561990f39bac73";
+    public $private_key = "pk_e468b0c18dc058ebd9898cd7886efb85f3a8f3a628d0e3c41ba85feee1fae310";
+    public $secret= "sk_d8ef36c0362a982cefbaa061a34e68ba9b828f3dbacc8987e45fc2833cd755e5";
 
 
     function mesAbonnementsPage(){
@@ -80,59 +80,69 @@ class AbonnementController extends Controller
         }
     }
 
-    function packSubscription($type, Request $req){
-
-
-
-        $kkiapay = new \Kkiapay\Kkiapay(
-            "85abcb60ae8311ecb9755de712bc9e4f",
-            "tpk_85abf271ae8311ecb9755de712bc9e4f",
-            "tsk_85abf272ae8311ecb9755de712bc9e4f",
-            $sandbox = true);
-
-        $hgh = $kkiapay->verifyTransaction($req->transaction_id);
-
-
-         $pack = DB::table('packs')->where('payant',1)->where('id',$hgh->state)->get(['nombre' , 'titre']);
-        $pack_month =  $pack[0]->nombre;
-        $pack_titre =  $pack[0]->titre;
-
-
-        if($hgh->status == "SUCCESS"){
-
-            $ligne = DB::table('abonnements')
-            ->where('idUser',Auth::user()->id)->orderByDesc('abonnements.id')->get(['id']);
-
-            $id = $ligne[0]->id;
-            $abon = Abonnement::find($id);
-
-            if($abon->typePack == 1){
-                $abon->dateFin = date('Y-m-d');
-            }
-            $abon->save();
-
-            $abon =  new Abonnement();
-            $abon->idUser = Auth::user()->id ;
-            $abon->typePack = $hgh->state;
-            $abon->modeEssaie = 0;
-            $abon->transaction_id = $req->transaction_id;
-            $abon->dateDebut = date('Y-m-d') ;
-            $abon->dateFin = date('Y-m-d' , strtotime('+'.$pack_month.' months')) ;
-            $abon->save();
-
-
-            $user = User::find(Auth::user()->id);
-            $user->situation =  $pack_titre;
-            $user->save();
-
-            return redirect()->route('mesAbonnements')->with('msg-success','');
-
-        }elseif( $hgh->status== "TRANSACTION_NOT_FOUND"){
-
-            return redirect()->route('mesAbonnements');
+    public function packSubscription($type, Request $req) {
+        // Vérifiez si transaction_id est présent dans la requête
+        if (!$req->has('transaction_id')) {
+            return redirect()->route('welcome')->with('msg-error', 'ID de transaction manquant.');
         }
-
+    
+        // Configuration de Kkiapay
+        $kkiapay = new \Kkiapay\Kkiapay(
+            "2a9363b7c6c78cf76717f8895a561990f39bac73",
+            "pk_e468b0c18dc058ebd9898cd7886efb85f3a8f3a628d0e3c41ba85feee1fae310",
+            "sk_d8ef36c0362a982cefbaa061a34e68ba9b828f3dbacc8987e45fc2833cd755e5",
+            false // Mode sandbox
+        );
+    
+        // Vérification de la transaction
+        $transactionVerification = $kkiapay->verifyTransaction($req->transaction_id);
+    
+        // Récupération des informations sur le pack
+        $pack = DB::table('packs')->where('payant', 1)->where('id', $transactionVerification->state)->first(['nombre', 'titre']);
+        if (!$pack) {
+            return redirect()->route('welcome')->with('msg-error', 'Pack non trouvé.');
+        }
+        $pack_month = $pack->nombre;
+        $pack_titre = $pack->titre;
+    
+        // Gestion des résultats de la transaction
+        if ($transactionVerification->status == "SUCCESS") {
+            // Récupérer l'abonnement existant de l'utilisateur
+            $abon = Abonnement::where('idUser', Auth::user()->id)->orderByDesc('id')->first();
+    
+            // Si un abonnement existe, mettre à jour sa date de fin
+            if ($abon) {
+                if ($abon->typePack == 1) {
+                    $abon->dateFin = date('Y-m-d'); // Mettre à jour la date de fin
+                    $abon->save(); // Sauvegarder les changements
+                }
+            }
+    
+            // Créer un nouvel abonnement
+            $newAbon = new Abonnement();
+            $newAbon->idUser = Auth::user()->id;
+            $newAbon->typePack = $transactionVerification->state;
+            $newAbon->modeEssaie = 0;
+            $newAbon->transaction_id = $req->transaction_id;
+            $newAbon->dateDebut = date('Y-m-d');
+            $newAbon->dateFin = date('Y-m-d', strtotime('+' . $pack_month . ' months'));
+            $newAbon->save(); // Sauvegarder le nouvel abonnement
+    
+            // Mettre à jour la situation de l'utilisateur
+            $user = User::find(Auth::user()->id);
+            $user->situation = $pack_titre;
+            $user->save();
+    
+            return redirect()->route('welcome')->with('msg-success', 'Abonnement activé avec succès.');
+        } elseif ($transactionVerification->status == "TRANSACTION_NOT_FOUND") {
+            return redirect()->route('welcome')->with('msg-error', 'Transaction introuvable.');
+        }
+    
+        // Gestion d'autres états potentiels de la transaction
+        return redirect()->route('mesAbonnements')->with('msg-error', 'Erreur lors de la vérification de la transaction.');
     }
+    
+    
 
     function EssaieStop(Request $req){
 

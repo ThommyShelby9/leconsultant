@@ -17,70 +17,58 @@
 <!-- Inclure le script SweetAlert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-// Fonction pour charger le script Kkiapay
-function loadKkiapayScript() {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = "https://cdn.kkiapay.me/k.js";
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-    });
-}
+    // Fonction pour charger le script Kkiapay
+    function loadKkiapayScript() {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = "https://cdn.kkiapay.me/k.js";
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+        });
+    }
 
-// Fonction principale
-async function initializePayment() {
-    try {
-        await loadKkiapayScript();
-        
-        // Attendre que Kkiapay soit défini
-        let attempts = 0;
-        while (typeof Kkiapay === 'undefined' && attempts < 10) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-            attempts++;
-        }
+    // Fonction principale
+    async function initializePayment() {
+        try {
+            await loadKkiapayScript();
 
-        if (typeof Kkiapay === 'undefined') {
-            throw new Error("Le SDK Kkiapay n'a pas pu être chargé après plusieurs tentatives");
-        }
+            // Attendre que le composant personnalisé kkiapay-widget soit défini
+            let attempts = 0;
+            while (!customElements.get('kkiapay-widget') && attempts < 10) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                attempts++;
+            }
 
-        // Le reste de votre code ici
-        Swal.fire({
-            title: 'Abonnement requis',
-            text: "Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
-            icon: 'warning',
-            showCancelButton: false,
-            confirmButtonText: 'Souscrire',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            backdrop: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log('Bouton Souscrire cliqué');
-                // Configuration du widget Kkiapay
-                Kkiapay.init({
-                    key: "2a9363b7c6c78cf76717f8895a561990f39bac73",
-                    sandbox: true
-                });
+            if (!customElements.get('kkiapay-widget')) {
+                throw new Error("Le composant kkiapay-widget n'a pas pu être chargé après plusieurs tentatives");
+            }
 
-                // Ouvrir le widget Kkiapay
-                Kkiapay.open({
-                    amount: 1490,
-                    callback: "https://votre-site.com/kkiapay-callback",
-                    data: "Abonnement unique",
-                    theme: "blue",
-                    name: "Paiement de l'abonnement",
-                    description: "Abonnement unique pour accéder à la plateforme",
-                    reason: "Abonnement unique",
-                    currency: "XOF",
-                    countries: ["BJ"],
-                    paymentMethods: ["card", "mobile-money", "direct-debit"],
-                    key: "2a9363b7c6c78cf76717f8895a561990f39bac73"
-                }, 
-                function(response) {
-                    console.log('Réponse de Kkiapay:', response);
-                    if (response.status === 'SUCCESSFUL') {
+            Swal.fire({
+                title: "Abonnement requis! Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
+                text: "Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
+                icon: 'warning',
+                showCancelButton: false,
+                confirmButtonText: 'Souscrire',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                backdrop: true,
+                // Ajout du contenu HTML pour intégrer le widget
+                html: `<kkiapay-widget 
+                    amount="1490" 
+                    key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
+                    data="5"
+                    callback="{{ route('pack.payant' , 10 ) }} "
+                    sandbox="false" 
+               </kkiapay-widget>`,
+
+                onBeforeOpen: () => {
+                    // Initialiser l'événement de succès et d'échec
+                    const widget = document.querySelector('kkiapay-widget');
+
+                    widget.addEventListener('success', function(response) {
+                        console.log('Réponse de Kkiapay:', response.detail);
                         Swal.fire({
                             title: 'Paiement réussi',
                             text: "Votre abonnement a été activé avec succès.",
@@ -89,39 +77,39 @@ async function initializePayment() {
                         }).then(() => {
                             window.location.reload();
                         });
-                    } else {
+                    });
+
+                    widget.addEventListener('failed', function(error) {
+                        console.error('Erreur Kkiapay:', error.detail);
                         Swal.fire({
                             title: 'Erreur',
                             text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
                             icon: 'error',
                             confirmButtonText: 'Réessayer'
                         });
-                    }
-                }, 
-                function(error) {
-                    console.error('Erreur Kkiapay:', error);
-                    Swal.fire({
-                        title: 'Erreur',
-                        text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
-                        icon: 'error',
-                        confirmButtonText: 'Réessayer'
                     });
-                });
-            }
-        });
-    } catch (error) {
-        console.error("Erreur lors de l'initialisation du paiement:", error);
-        Swal.fire({
-            title: 'Erreur',
-            text: "Une erreur est survenue lors de l'initialisation du paiement. Veuillez réessayer plus tard.",
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-    }
-}
 
-// Exécuter la fonction principale lorsque le DOM est chargé
-document.addEventListener('DOMContentLoaded', initializePayment);
+                    // Déclencher le paiement
+                    widget.payment(); // Ouvrir le widget
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('Bouton Souscrire cliqué');
+                }
+            });
+        } catch (error) {
+            console.error("Erreur lors de l'initialisation du paiement:", error);
+            Swal.fire({
+                title: 'Erreur',
+                text: "Une erreur est survenue lors de l'initialisation du paiement. Veuillez réessayer plus tard.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    // Exécuter la fonction principale lorsque le DOM est chargé
+    document.addEventListener('DOMContentLoaded', initializePayment);
 </script>
 
 @endif
@@ -205,23 +193,23 @@ document.addEventListener('DOMContentLoaded', initializePayment);
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             @foreach ($offres as $item)
             <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
-    <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
-        <!-- Image centrée -->
-        <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
-    </div>
-    <div class="w-full lg:w-4/5 lg:pl-6">
-        <a href="#" class="text-xl lg:text-3xl font-bold text-black">{{ $item->titre }}</a>
-        <p class="text-consultant-blue text-xl font-medium">{{ $item->autName }}</p>
-        <hr class="my-2">
-        <div class="text-gray-600 text-sm space-y-1">
-            <p>Catégorie: {{ $item->categTitle }}</p>
-            <p>Type: {{ $item->typeTitle }}</p>
-            <p>Publiée le: {{ date('d M Y', strtotime($item->datePublication)) }}</p>
-            <p>Expire le: {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
-        </div>
-        <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">Télécharger</a>
-    </div>
-</div>
+                <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
+                    <!-- Image centrée -->
+                    <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
+                </div>
+                <div class="w-full lg:w-4/5 lg:pl-6">
+                    <a href="#" class="text-xl lg:text-3xl font-bold text-black">{{ $item->titre }}</a>
+                    <p class="text-consultant-blue text-xl font-medium">{{ $item->autName }}</p>
+                    <hr class="my-2">
+                    <div class="text-gray-600 text-sm space-y-1">
+                        <p>Catégorie: {{ $item->categTitle }}</p>
+                        <p>Type: {{ $item->typeTitle }}</p>
+                        <p>Publiée le: {{ date('d M Y', strtotime($item->datePublication)) }}</p>
+                        <p>Expire le: {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
+                    </div>
+                    <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">Télécharger</a>
+                </div>
+            </div>
 
             @endforeach
         </div>

@@ -124,8 +124,9 @@ Route::middleware(['auth:web' ])->group(function() {
     ->name('essaie.stop');
 
 
-    Route::get('subscription/{type}',[AbonnementController::class, 'packSubscription'] )
+    Route::get('subscription/{type}', [AbonnementController::class, 'packSubscription'])
     ->name('pack.payant');
+
 
 
     Route::get('/ticket-formation/{id}',[ FTController::class, 'ticketFormation'])

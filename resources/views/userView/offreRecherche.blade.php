@@ -70,40 +70,41 @@
         </h2>
 
         <!-- Grid layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12"> <!-- Augmenté de gap-8 à gap-12 pour plus d'espace -->
-            @foreach ($offres as $item)
-            <div class="bg-white shadow-lg rounded-lg p-8 flex space-x-6"> <!-- Ajouté padding plus large et espacement entre logo et contenu -->
-                <!-- Logo centré -->
-                <div class="w-1/5 flex items-center justify-center">
-                    <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
-                </div>
-
-                <!-- Contenu de l'offre -->
-                <div class="w-4/5">
-                    <a href="#" class="text-xl lg:text-3xl font-bold text-black mb-2 block">
-                        {{ $item->titre }}
-                    </a>
-                    <p class="text-consultant-blue text-xl font-medium mb-2">
-                        {{ $item->autName }}
-                    </p>
-                    <hr class="my-4"> <!-- Augmenté l'espace vertical entre les sections -->
-
-                    <!-- Détails de l'offre -->
-                    <div class="text-gray-600 text-sm space-y-2"> <!-- Plus d'espace entre les lignes de texte -->
-                        <p><strong>Catégorie:</strong> {{ $item->categTitle }}</p>
-                        <p><strong>Type:</strong> {{ $item->typeTitle }}</p>
-                        <p><strong>Publiée le:</strong> {{ date('d M Y', strtotime($item->datePublication)) }}</p>
-                        <p><strong>Expire le:</strong> {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
-                    </div>
-
-                    <!-- Bouton Télécharger -->
-                    <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-6 bg-consultant-blue text-white py-3 px-5 rounded-lg block text-center">
-                        Télécharger
-                    </a>
-                </div>
-            </div>
-            @endforeach
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12"> <!-- Gap augmenté à 12 pour plus d'espace -->
+    @foreach ($offres as $item)
+    <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row"> <!-- Padding ajusté et flex pour une disposition en colonne sur mobile et en ligne sur desktop -->
+        <!-- Logo centré -->
+        <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0"> <!-- Ajout de margin pour mobile -->
+            <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-24 lg:w-32 rounded-lg"> <!-- Taille réduite pour l'image -->
         </div>
+
+        <!-- Contenu de l'offre -->
+        <div class="w-full lg:w-4/5 lg:pl-6">
+            <a href="#" class="text-xl lg:text-3xl font-bold text-black mb-2 block">
+                {{ $item->titre }}
+            </a>
+            <p class="text-consultant-blue text-xl font-medium mb-2">
+                {{ $item->autName }}
+            </p>
+            <hr class="my-2"> <!-- Réduit l'espace vertical entre les sections -->
+
+            <!-- Détails de l'offre -->
+            <div class="text-gray-600 text-sm space-y-1"> <!-- Plus d'espace entre les lignes de texte -->
+                <p><strong>Catégorie:</strong> {{ $item->categTitle }}</p>
+                <p><strong>Type:</strong> {{ $item->typeTitle }}</p>
+                <p><strong>Publiée le:</strong> {{ date('d M Y', strtotime($item->datePublication)) }}</p>
+                <p><strong>Expire le:</strong> {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
+            </div>
+
+            <!-- Bouton Télécharger -->
+            <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">
+                Télécharger
+            </a>
+        </div>
+    </div>
+    @endforeach
+</div>
+
     </div>
 </section>
 
