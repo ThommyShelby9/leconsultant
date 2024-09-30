@@ -204,74 +204,26 @@ document.addEventListener('DOMContentLoaded', initializePayment);
         <h2 class="text-consultant-rouge text-3xl lg:text-5xl font-bold mb-8">Les dernières offres publiées</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             @foreach ($offres as $item)
-            <div class="bg-white shadow-lg rounded-lg p-6 flex">
-                <div class="w-1/5 flex items-center justify-center">
-                    <!-- Image centrée -->
-                    <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
-                </div>
-                <div class="w-4/5 pl-6">
-                    <a href="#" class="text-xl lg:text-3xl font-bold text-black">{{ $item->titre }}</a>
-                    <p class="text-consultant-blue text-xl font-medium">{{ $item->autName }}</p>
-                    <hr class="my-2">
-                    <div class="text-gray-600 text-sm space-y-1">
-                        <p>Catégorie: {{ $item->categTitle }}</p>
-                        <p>Type: {{ $item->typeTitle }}</p>
-                        <p>Publiée le: {{ date('d M Y', strtotime($item->datePublication)) }}</p>
-                        <p>Expire le: {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
-                    </div>
-                    <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">Télécharger</a>
-                </div>
-            </div>
-            @endforeach
-        </div>
+            <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
+    <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
+        <!-- Image centrée -->
+        <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
     </div>
-</section>
+    <div class="w-full lg:w-4/5 lg:pl-6">
+        <a href="#" class="text-xl lg:text-3xl font-bold text-black">{{ $item->titre }}</a>
+        <p class="text-consultant-blue text-xl font-medium">{{ $item->autName }}</p>
+        <hr class="my-2">
+        <div class="text-gray-600 text-sm space-y-1">
+            <p>Catégorie: {{ $item->categTitle }}</p>
+            <p>Type: {{ $item->typeTitle }}</p>
+            <p>Publiée le: {{ date('d M Y', strtotime($item->datePublication)) }}</p>
+            <p>Expire le: {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
+        </div>
+        <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">Télécharger</a>
+    </div>
+</div>
 
-
-<!-- Section des actualités -->
-<section id="news" class="relative mb-8">
-    <div class="container">
-        <h2 data-aos="zoom-out" class="lg:text-5xl text-3xl text-consultant-rouge font-bold mb-16 text-center">
-            Actualités
-        </h2>
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-                @if (!empty($news))
-                @foreach ($news as $article)
-                <div class="swiper-slide">
-                    <div class="bg-[#F5FAFE] shadow-lg p-8 rounded-lg w-full">
-                        <div class="w-full">
-                            <!-- Titre de l'article centré -->
-                            <h4 class="text-xl font-semibold text-center mb-4">{{ $article->title }}</h4>
-                            <!-- Description justifiée -->
-                            <p class="text-justify text-lg mb-4">{{ $article->snippet }}</p>
-                            <!-- Lien vers l'article complet centré -->
-                            <div class="text-center mb-4">
-                                <a href="{{ $article->link }}" target="_blank" class="text-consultant-blue underline">Lire l'article complet</a>
-                            </div>
-                            <!-- Image centrée -->
-                            @if (isset($article->thumbnail))
-                            <div class="w-full flex justify-center">
-                                <img src="{{ $article->thumbnail }}" class="lg:w-1/3 w-full object-cover mt-4" alt="Image d'actualité">
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-                @else
-                <div class="swiper-slide">
-                    <p class="text-justify lg:text-lg text-sm">Aucune actualité disponible pour le moment.</p>
-                </div>
-                @endif
-            </div>
-
-            <!-- Add Pagination -->
-            <div class="swiper-pagination"></div>
-
-            <!-- Add Navigation -->
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
+            @endforeach
         </div>
     </div>
 </section>

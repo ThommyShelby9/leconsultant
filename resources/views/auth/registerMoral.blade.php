@@ -25,19 +25,19 @@
 <div class="py-12">
     <div class="container">
         <!-- Contenu de la page d'inscription -->
-        <h3 class="lg:text-2xl text-lg text-consultant-gris text-center font-medium mb-12">
+        <h3 class="lg:text-xl text-base text-consultant-gris text-center font-medium mb-8">
             S'inscrire en tant que personne:
         </h3>
-        <div class="flex flex-wrap justify-center space-x-24 mb-20">
+        <div class="flex flex-wrap justify-center space-x-12 mb-12">
             <!-- Sélection du type d'inscription -->
             <div class="">
-                <a href="{{ Route('register.morale') }} ">
+                <a href="{{ Route('register.morale') }}">
                     <button
-                        class="px-14 py-6 text-white bg-consultant-blue border border-consultant-blue rounded-lg  hover:bg-consultant-blue">
+                        class="px-8 py-3 text-white bg-consultant-blue border border-consultant-blue rounded-lg  hover:bg-consultant-blue">
                         <i class="fi-xtluh4-house-thin"></i>
                     </button>
                 </a>
-                <div class="text-consultant-gris lg:text-2xl text-lg font-medium text-center mt-2">
+                <div class="text-consultant-gris lg:text-xl text-base font-medium text-center mt-2">
                     Morale
                 </div>
             </div>
@@ -45,11 +45,11 @@
             <div class="">
                 <a href="{{ Route('register.physique') }}">
                     <button
-                        class="px-14 py-6 text-black hover:text-white transition active:text-white active:bg-consultant-blue border border-consultant-blue rounded-lg bg-transparent hover:bg-consultant-blue">
+                        class="px-8 py-3 text-black hover:text-white transition active:text-white active:bg-consultant-blue border border-consultant-blue rounded-lg bg-transparent hover:bg-consultant-blue">
                         <i class="fi-ctlux4-user-circle-thin"></i>
                     </button>
                 </a>
-                <div class="text-consultant-gris lg:text-2xl text-lg font-medium text-center mt-2">
+                <div class="text-consultant-gris lg:text-xl text-base font-medium text-center mt-2">
                     Physique
                 </div>
             </div>
@@ -61,20 +61,20 @@
             @csrf
             <input type="hidden" name="typeActor" value="2">
 
-            <select name="societeType" id="societeType" class="inp-sign">
-                <option class="text-2xl" value="Societe">Société</option>
-                <option class="text-2xl" value="SARL">SARL</option>
-                <option class="text-2xl" value="Etablissement">Etablissement</option>
-                <option class="text-2xl" value="Autres">Autres</option>
+            <select name="societeType" id="societeType" class="inp-sign text-sm py-2 px-4">
+                <option class="text-xl" value="Societe">Société</option>
+                <option class="text-xl" value="SARL">SARL</option>
+                <option class="text-xl" value="Etablissement">Etablissement</option>
+                <option class="text-xl" value="Autres">Autres</option>
             </select>
 
             <span class="text-left text-consultant-rouge mb-1 " id="nomSocieteMsg"></span>
-            <input id="nomSociete" type="text" class="inp-sign" name="nomSociete" placeholder="Dénomination sociale *"
-                value="{{ old('nomSociete') }}" autocomplete="nomSociete" autofocus>
+            <input id="nomSociete" type="text" class="inp-sign text-sm py-2 px-4" name="nomSociete"
+                placeholder="Dénomination sociale *" value="{{ old('nomSociete') }}" autocomplete="nomSociete" autofocus>
 
             <span class="text-left text-consultant-rouge mb-1 " id="adresseMsg"></span>
-            <input id="adresse" type="text" class="inp-sign" name="adresse" value="{{ old('adresse') }}"
-                autocomplete="adresse" autofocus placeholder="Adresse de l'entreprise *">
+            <input id="adresse" type="text" class="inp-sign text-sm py-2 px-4" name="adresse"
+                value="{{ old('adresse') }}" autocomplete="adresse" autofocus placeholder="Adresse de l'entreprise *">
 
             <span class="text-left text-consultant-rouge mb-1 " id="telephoneMsg">
                 @error('telephone')
@@ -82,54 +82,56 @@
                 @enderror
             </span>
 
-            <input id="telephone" type="tel" class="inp-sign" name="telephone" value="{{ old('telephone') }}"
-                placeholder="Numéro de téléphone (Ex: +229 61 00 00 00 )*" autocomplete="telephone" autofocus>
+            <input id="telephone" type="tel" class="inp-sign text-sm py-2 px-4" name="telephone"
+                value="{{ old('telephone') }}" placeholder="Numéro de téléphone (Ex: +229 61 00 00 00 )*"
+                autocomplete="telephone" autofocus>
 
             <span class="text-left text-consultant-rouge mb-1 " id="emailMsg">
                 @error('email')
                 <span>Email déjà utilisé</span>
                 @enderror
             </span>
-            <input id="email" type="email" class="inp-sign" placeholder="Votre mail *" name="email"
+            <input id="email" type="email" class="inp-sign text-sm py-2 px-4" placeholder="Votre mail *" name="email"
                 value="{{ old('email') }}" autocomplete="email">
 
             <span class="text-left text-consultant-rouge mb-1 " id="mdp1Msg"></span>
-            <input onkeyup="controlMdp1()" id="password" type="password" class="inp-sign"
+            <input onkeyup="controlMdp1()" id="password" type="password" class="inp-sign text-sm py-2 px-4"
                 placeholder="Définir un mot de passe *" name="password">
 
             <span class="text-left text-consultant-rouge mb-1 " id="mdp2Msg"></span>
-            <input onkeyup="controlMdp1()" id="password-confirm" type="password" class="inp-sign"
+            <input onkeyup="controlMdp1()" id="password-confirm" type="password" class="inp-sign text-sm py-2 px-4"
                 placeholder="Confirmer le mot de passe *" name="password_confirmation">
 
             <div class="lg:w-3/5 w-full flex items-center mb-2">
-                <input type="checkbox" name="" class="border-black w-6 h-6 mr-4">
-                <span class="text-consultant-gris lg:text-lg text-sm font-medium text-left">
+                <input type="checkbox" name="" class="border-black w-5 h-5 mr-4">
+                <span class="text-consultant-gris lg:text-base text-sm font-medium text-left">
                     J'accepte de recevoir des alertes de marchés
                 </span>
             </div>
             <div class="lg:w-3/5 w-full flex items-center mb-5">
-                <input type="checkbox" required name="conditions" class="border-black w-6 h-6 mr-4">
-                <span class="text-consultant-gris lg:text-lg text-sm font-medium text-left">
+                <input type="checkbox" required name="conditions" class="border-black w-5 h-5 mr-4">
+                <span class="text-consultant-gris lg:text-base text-sm font-medium text-left">
                     J'ai lu et accepté les conditions d'utilisation
                 </span>
             </div>
             <div class="text-center">
                 <button type="submit"
-                    class="px-6 py-5 text-white bg-consultant-rouge lg:text-2xl text-lg mb-6 rounded-md font-semibold inline-block">
+                    class="px-4 py-3 text-white bg-consultant-rouge lg:text-xl text-base mb-6 rounded-md font-semibold inline-block">
                     Créer mon compte
                 </button>
             </div>
             <div class="text-center flex items-center">
-                <h3 class="lg:text-2xl text-lg font-medium">
+                <h3 class="lg:text-xl text-base font-medium">
                     J'ai déjà un compte -
                 </h3>
-                <span class="text-consultant-rouge lg:text-2xl ml-2 text-lg font-medium">
+                <span class="text-consultant-rouge lg:text-xl ml-2 text-base font-medium">
                     <a href="{{ Route('login') }}">Me connecter</a>
                 </span>
             </div>
         </form>
     </div>
 </div>
+
 
 @endsection
 

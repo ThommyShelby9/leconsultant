@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
+use App\Models\Autorite;
 use Illuminate\Http\Request;
 
 
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Offre;
+use App\Models\Type;
 
 class OffreController extends Controller
 {
@@ -73,10 +75,14 @@ class OffreController extends Controller
     $res = $query->paginate(4);
 
     // Retourner la vue avec les résultats de recherche
+    $types = Type::where('useFor', 'activite')->get();
+    $ac = Autorite::all();
     return view('userView.offreRecherche', [
         'offres' => $res,
         'search' => $req['search'],
         'categ' => $req['categ'],
+        'types' => $types,
+        'ac' => $ac,
         'type' => $req['type']
     ]);
 }

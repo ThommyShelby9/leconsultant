@@ -3505,20 +3505,21 @@ form .select:nth-child(2) .c-select{
   transition: 0.5s;
 }
 
-.inp-sign{
+.inp-sign {
   transition: 0.5s;
   margin-bottom: 1.5rem;
   width: 100%;
   border-radius: 0.25rem;
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  padding-top: 1.75rem;
-  padding-bottom: 1.75rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-top: 0.75rem;  /* Réduction du padding haut */
+  padding-bottom: 0.75rem; /* Réduction du padding bas */
+  padding-left: 1rem; /* Réduction du padding gauche */
+  padding-right: 1rem; /* Réduction du padding droite */
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+
 
 .inp-sign:focus {
   outline-width: 2px;

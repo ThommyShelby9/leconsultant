@@ -57,7 +57,7 @@
     </div>
     <div class="flex flex-wrap lg:flex-row flex-col justify-center items-center">
         <div class="lg:text-xl text-base text-white">
-            2022 Bénin || Le Consultant || Conçu par Drwintech Bénin
+            2024 Bénin || Le Consultant || Conçu par Le Consultant
         </div>
     </div>
 </div>

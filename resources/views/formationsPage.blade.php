@@ -14,15 +14,12 @@
                 Adapté à vos besoins en marchés publics / appels d'offres
             </h1>
             <p class="text-white text-justify lg:text-lg text-sm mb-3">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                Découvrez une solution conçue pour simplifier la gestion de vos réponses aux appels d'offres publics et privés. Nous mettons à votre disposition une plateforme intuitive qui vous permet d'accéder rapidement aux opportunités les plus pertinentes, adaptées à votre secteur d'activité et à vos besoins spécifiques.
             </p>
             <p class="text-white text-justify lg:text-lg text-sm">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                Que vous soyez une petite ou une grande entreprise, nous vous aidons à rester informé et à saisir les meilleures occasions sur le marché. Profitez d'un service qui optimise vos chances de succès en vous permettant de suivre, analyser et répondre aux appels d'offres en toute simplicité.
             </p>
+
         </div>
     </div>
 </section>

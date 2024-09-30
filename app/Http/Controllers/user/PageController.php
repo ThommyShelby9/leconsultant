@@ -130,9 +130,14 @@ function lesOffres()
 
     // Appel à paginate sur l'instance de QueryBuilder
     $offres = $query->paginate(4);
+    $types = Type::where('useFor', 'activite')->get();
+    $ac = Autorite::all();
 
     // Retourner la vue avec les résultats paginés
-    return view('userView.offre', ['offres' => $offres]);
+    return view('userView.offre', ['offres' => $offres,
+    'types' => $types,
+    'ac' => $ac,
+]);
 }
 
 
@@ -154,108 +159,109 @@ function lesOffres()
     }
 
     function recherche(Request $req){
-        //le search ; categorie ; ac
 
-        //cas où on a le seach
+        // Si un terme de recherche est fourni
         if($req['search'] != null){
-
-            if($req['categorie']==0){
-                //Toutes les categories
-
+    
+            // Si aucune catégorie spécifique n'est sélectionnée (toutes les catégories)
+            if($req['categorie'] == 0){
+    
+                // Filtre selon la présence d'un domaine d'activité (typeMar)
                 if($req['typeMar'] == 0){
-
-                    $req = DB::table('offres')
-                    ->where('titre', 'like' , '%'.$req['search'].'%')
-                    ->get();
-
-                }elseif($req['typeMar'] >= 1){
-
-                    $req = DB::table('offres')
-                    ->where('titre', 'like' , '%'.$req['search'].'%')
-                    ->where('typeMar_id', $req['typeMar'])
-                    ->get();
-
-                }
-
-
-            }elseif($req['categorie'] >= 1){
-                //Une seule categorie
-
-
-                if($req['autorite'] ==0){
-
-
-
-                    if($req['typeMar'] == 0){
-
-                        $req = DB::table('offres')
-                        ->where('titre', 'like' , '%'.$req['search'].'%')
-                        ->where('categ_id', $req['categorie'])
+    
+                    // Rechercher uniquement par le titre
+                    $resultats = DB::table('offres')
+                        ->where('titre', 'like', '%'.$req['search'].'%')
                         ->get();
-
-                    }elseif($req['typeMar'] >= 1){
-
-                        $req = DB::table('offres')
-                        ->where('titre', 'like' , '%'.$req['search'].'%')
-                        ->where('categ_id', $req['categorie'])
+    
+                } elseif($req['typeMar'] >= 1){
+    
+                    // Rechercher par le titre et le domaine d'activité (typeMar)
+                    $resultats = DB::table('offres')
+                        ->where('titre', 'like', '%'.$req['search'].'%')
                         ->where('typeMar_id', $req['typeMar'])
                         ->get();
-
-                    }
-
-
-                }elseif($req['autorite'] >=1 ){
-
+                }
+    
+            } elseif($req['categorie'] >= 1) {
+                // Rechercher dans une catégorie spécifique
+    
+                // Si aucune autorité contractante spécifique n'est sélectionnée (toutes les autorités)
+                if($req['autorite'] == 0){
+    
                     if($req['typeMar'] == 0){
-
-                        $req = DB::table('offres')
-                        ->where('titre', 'like' , '%'.$req['search'].'%')
-                        ->where('categ_id', $req['categorie'])
-                        ->get();
-
-                    }elseif($req['typeMar'] >= 1){
-
-                        $req = DB::table('offres')
-                        ->where('titre', 'like' , '%'.$req['search'].'%')
-                        ->where('categ_id', $req['categorie'])
-                        ->where('typeMar_id', $req['typeMar'])
-                        ->get();
-
+    
+                        // Rechercher par titre et catégorie
+                        $resultats = DB::table('offres')
+                            ->where('titre', 'like', '%'.$req['search'].'%')
+                            ->where('categ_id', $req['categorie'])
+                            ->get();
+    
+                    } elseif($req['typeMar'] >= 1){
+    
+                        // Rechercher par titre, catégorie et domaine d'activité (typeMar)
+                        $resultats = DB::table('offres')
+                            ->where('titre', 'like', '%'.$req['search'].'%')
+                            ->where('categ_id', $req['categorie'])
+                            ->where('typeMar_id', $req['typeMar'])
+                            ->get();
                     }
-
+    
+                } elseif($req['autorite'] >= 1) {
+    
+                    // Rechercher par autorité contractante
+                    if($req['typeMar'] == 0){
+    
+                        // Rechercher par titre, catégorie et autorité contractante
+                        $resultats = DB::table('offres')
+                            ->where('titre', 'like', '%'.$req['search'].'%')
+                            ->where('categ_id', $req['categorie'])
+                            ->where('autorite_id', $req['autorite'])
+                            ->get();
+    
+                    } elseif($req['typeMar'] >= 1){
+    
+                        // Rechercher par titre, catégorie, autorité contractante et domaine d'activité
+                        $resultats = DB::table('offres')
+                            ->where('titre', 'like', '%'.$req['search'].'%')
+                            ->where('categ_id', $req['categorie'])
+                            ->where('autorite_id', $req['autorite'])
+                            ->where('typeMar_id', $req['typeMar'])
+                            ->get();
+                    }
                 }
             }
-
-        }elseif( $req['search'] == null ){
-
-            if($req['categorie']==0){
-                //Toutes les categories
-                $req = DB::table('offres')
-                ->get();
-
-
-            }elseif($req['categorie'] >= 1){
-                //Une seule categorie
-
-
-                if($req['autorite'] ==0){
-
-                    $req = DB::table('offres')
-                    ->where('categ_id', $req['categorie'])
-                    ->get();
-
-                }elseif($req['autorite'] >=1 ){
-
-                    $req = DB::table('offres')
-                    ->where('categ_id', $req['categorie'])
-                    ->get();
-
+    
+        } elseif ($req['search'] == null) {
+            // Si aucun terme de recherche n'est fourni
+    
+            // Si aucune catégorie spécifique n'est sélectionnée
+            if ($req['categorie'] == 0) {
+                // Retourner toutes les offres
+                $resultats = DB::table('offres')->get();
+    
+            } elseif ($req['categorie'] >= 1) {
+                // Rechercher dans une catégorie spécifique
+    
+                if ($req['autorite'] == 0) {
+                    // Rechercher par catégorie uniquement
+                    $resultats = DB::table('offres')
+                        ->where('categ_id', $req['categorie'])
+                        ->get();
+    
+                } elseif ($req['autorite'] >= 1) {
+                    // Rechercher par catégorie et autorité contractante
+                    $resultats = DB::table('offres')
+                        ->where('categ_id', $req['categorie'])
+                        ->where('autorite_id', $req['autorite'])
+                        ->get();
                 }
             }
-
         }
+    
+        return view('resultats', compact('resultats'));
     }
-
+    
 
     function voirFormation($id , $name){
         $form = Formation::find($id);
