@@ -63,6 +63,23 @@ class DataSeeder extends Seeder
             'statut'=>1,
         ]);
 
+        DB::table('types')->insert([
+            'title'=>'Batiment et construction BTP',
+            'useFor'=>'activite',
+            'isDel'=>False
+        ]);
+
+        DB::table('types')->insert([
+            'title'=>'Travaux publics',
+            'useFor'=>'activite',
+            'isDel'=>False
+        ]);
+        DB::table('types')->insert([
+            'title'=>'Hottelerie et Restauration',
+            'useFor'=>'activite',
+            'isDel'=>False
+        ]);
+
 
         Type::create([
             'title'=>'Fourniture',
