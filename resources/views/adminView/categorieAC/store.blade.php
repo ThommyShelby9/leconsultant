@@ -1,4 +1,6 @@
 @extends('layout.adminLayout.template')
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 @section('titre-site')
 <title>Leconsultant| Catég AC </title>
@@ -97,7 +99,7 @@
                         <tr>
                             <td>{{ $item->abreviation }}</td>
                             <td>{{ $item->title }}</td>
-                            <td class="text-center" >
+                            <td class="text-center">
                                 <!--button class="btn btn-primary"><i class="fa-solid fa-eye"></i></button-->
 
                                 <a title="Modifier" href="{{ Route('admin.categorie.edit' , $item->id ) }}">
@@ -105,10 +107,36 @@
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
                                 </a>
-
-                                <button title="Supprimer la catégorie" class="btn btn-danger">
+                                <!-- Bouton de suppression -->
+                                <button class="btn btn-danger" title="Supprimer la catégorie" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
+
+                                <!-- Modal de confirmation -->
+                                <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteCategoryModalLabel">Confirmation de Suppression</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est irréversible.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+                                                <!-- Formulaire de suppression -->
+                                                <form action="{{ route('admin.ca.delete', $item->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </td>
                         </tr>
                         @endforeach
@@ -126,7 +154,7 @@
 
 
 <script>
-    $(function () {
+    $(function() {
         $("#example1").DataTable({
             "responsive": true,
             "autoWidth": false,
@@ -141,7 +169,6 @@
             "responsive": true,
         });
     });
-
 </script>
 
 @endsection

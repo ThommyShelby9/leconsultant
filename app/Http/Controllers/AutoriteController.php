@@ -33,9 +33,9 @@ class AutoriteController extends Controller
 
             $req->validate([
                 'categorie'=>['required',  'numeric'],
-                'nom'=> ['required' , 'string' , 'max:60'],
-                'abrev'=>['required' , 'string' , 'max:8'],
-                'localisation'=> ['required' , 'string' , 'max:35'],
+                'nom'=> ['required' , 'string'],
+                'abrev'=>['required' , 'string'],
+                'localisation'=> ['required' , 'string'],
                 'contact'=> ['required' , 'numeric'],
                 'email'=> ['nullable', 'string' , 'email'],
             ]);
@@ -45,9 +45,9 @@ class AutoriteController extends Controller
 
             $req->validate([
                 'categorie'=>['required',  'numeric'],
-                'nom'=> ['required' , 'string' , 'max:60'],
-                'abrev'=>['required' , 'string' , 'max:8'],
-                'localisation'=> ['required' , 'string' , 'max:35'],
+                'nom'=> ['required' , 'string'],
+                'abrev'=>['required' , 'string'],
+                'localisation'=> ['required' , 'string'],
                 'contact'=> ['required' , 'numeric'],
                 'email'=> ['nullable', 'string' , 'email'],
                 'photo'=>'required|file|mimes:jpg,png|max:5000000',
@@ -86,7 +86,7 @@ class AutoriteController extends Controller
         $au->save();
 
         return redirect()->route('admin.ac.list')
-        ->with('msg-success', "La catégorie d'AC a été bien ajoutée.");
+        ->with('msg-success', "La catégorie d'Autorité Contractante a été bien ajoutée.");
 
     }
 
@@ -106,9 +106,9 @@ class AutoriteController extends Controller
 
             $req->validate([
                 'categorie'=>['required',  'numeric'],
-                'nom'=> ['required' , 'string' , 'max:60'],
-                'abrev'=>['required' , 'string' , 'max:8'],
-                'localisation'=> ['required' , 'string' , 'max:35'],
+                'nom'=> ['required' , 'string'],
+                'abrev'=>['required' , 'string'],
+                'localisation'=> ['required' , 'string'],
                 'contact'=> ['required' , 'numeric'],
                 'email'=> ['nullable', 'string' , 'email'],
             ]);
@@ -118,9 +118,9 @@ class AutoriteController extends Controller
 
             $req->validate([
                 'categorie'=>['required',  'numeric'],
-                'nom'=> ['required' , 'string' , 'max:60'],
-                'abrev'=>['required' , 'string' , 'max:8'],
-                'localisation'=> ['required' , 'string' , 'max:35'],
+                'nom'=> ['required' , 'string'],
+                'abrev'=>['required' , 'string'],
+                'localisation'=> ['required' , 'string'],
                 'contact'=> ['required' , 'numeric'],
                 'email'=> ['nullable', 'string' , 'email'],
                 'photo'=>'required|file|mimes:jpg,png|max:5000000',
@@ -161,7 +161,7 @@ class AutoriteController extends Controller
         $au->save();
 
         return redirect()->route('admin.ac.list')
-        ->with('msg-success', "La catégorie d'AC a été bien ajoutée.");
+        ->with('msg-success', "La catégorie d'Autorité Contractante a été bien ajoutée.");
 
 
     }

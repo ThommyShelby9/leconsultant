@@ -185,7 +185,6 @@
 
 @endsection
 
-
 @section('contenu')
 <section id="offres" class="py-16">
     <div class="container mx-auto">
@@ -194,27 +193,45 @@
             @foreach ($offres as $item)
             <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
                 <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
-                    <!-- Image centrée -->
                     <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
                 </div>
                 <div class="w-full lg:w-4/5 lg:pl-6">
-                    <a href="#" class="text-xl lg:text-3xl font-bold text-black">{{ $item->titre }}</a>
+                    <a href="#" class="text-xl lg:text-3xl font-bold text-black" 
+                        onclick="handleOfferClick('{{ $item->id }}')">
+                        {{ Str::limit($item->titre, 10) }}
+                    </a>
                     <p class="text-consultant-blue text-xl font-medium">{{ $item->autName }}</p>
                     <hr class="my-2">
                     <div class="text-gray-600 text-sm space-y-1">
                         <p>Catégorie: {{ $item->categTitle }}</p>
+                        @if(auth()->check())
                         <p>Type: {{ $item->typeTitle }}</p>
+                        @endif
                         <p>Publiée le: {{ date('d M Y', strtotime($item->datePublication)) }}</p>
                         <p>Expire le: {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
                     </div>
-                    <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">Télécharger</a>
                 </div>
             </div>
-
             @endforeach
         </div>
     </div>
 </section>
+
+<!-- Section pour inciter à s'inscrire et s'abonner -->
+@if(!auth()->check())
+
+<section id="subscription-call" class="py-16 bg-gray-100">
+    <div class="container mx-auto text-center">
+        <h2 class="text-consultant-blue text-3xl lg:text-5xl font-bold mb-4">Accédez pleinement à notre plateforme</h2>
+        <p class="text-gray-700 text-lg lg:text-xl mb-8">
+            Inscrivez-vous dès aujourd'hui et souscrivez à notre abonnement mensuel à seulement 1490 FCFA pour profiter de toutes les fonctionnalités et ne manquer aucune opportunité d'affaires.
+        </p>
+        <a href="{{ route('register') }}" class="bg-consultant-rouge text-white py-3 px-6 rounded-lg text-lg">S'inscrire maintenant</a>
+    </div>
+</section>
+@endif
+
+
 
 <style>
     /* Styles de la section des actualités */
@@ -371,6 +388,85 @@
             disableOnInteraction: false, // Continue l'autoplay même après une interaction utilisateur
         },
     });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    function handleOfferClick(offerId) {
+        @if(!auth()->check())
+            // Si l'utilisateur n'est pas connecté, afficher une alerte d'erreur
+            Swal.fire({
+                title: 'Accès refusé',
+                text: "Vous devez d'abord vous inscrire et souscrire à un abonnement pour voir les détails de cette offre.",
+                icon: 'error',
+                confirmButtonText: 'S\'inscrire maintenant',
+                showCancelButton: true,
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('register') }}";
+                }
+            });
+        @else
+            // Si l'utilisateur est connecté, afficher les détails de l'offre dans un modal
+            fetchOfferDetails(offerId);
+        @endif
+    }
+
+    function fetchOfferDetails(offerId) {
+    $.ajax({
+        url: '/offre/details/' + offerId,
+        method: 'GET',
+        success: function(data) {
+            Swal.fire({
+                title: `<strong class="text-2xl font-bold text-consultant-blue">${data.titre}</strong>`,
+                html: `
+                    <div class="flex flex-col space-y-2">
+                    
+                        <p class="text-lg"><strong>Autorité Contractante:</strong> ${data.autName}</p>
+                        <p class="text-lg"><strong>Catégorie:</strong> ${data.categTitle}</p>
+                        <p class="text-lg"><strong>Type:</strong> ${data.typeTitle}</p>
+                        <p class="text-lg"><strong>Publiée le:</strong> ${data.datePublication}</p>
+                        <p class="text-lg"><strong>Expire le:</strong> ${data.dateExpiration}</p>
+                        ${data.file ? `
+                            <a href="${data.file}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg text-center block transition duration-300 hover:bg-consultant-darkblue">
+                                Télécharger l'offre
+                            </a>
+                        ` : ''}
+                    </div>
+                `,
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonText: 'Fermer',
+                customClass: {
+                    popup: 'bg-white shadow-lg rounded-lg p-6',
+                    title: 'font-bold text-3xl text-center',
+                    html: 'text-lg text-gray-700',
+                    confirmButton: 'bg-consultant-blue text-white py-2 px-4 rounded-lg hover:bg-consultant-darkblue',
+                },
+                backdrop: 'rgba(0,0,0,0.5)', // Fond semi-transparent
+                padding: '2rem', // Espace autour du contenu
+            });
+        },
+        error: function(err) {
+            Swal.fire({
+                title: 'Erreur',
+                text: 'Impossible de récupérer les détails de l\'offre.',
+                icon: 'error',
+                confirmButtonText: 'Fermer',
+                customClass: {
+                    title: 'text-lg font-bold',
+                    confirmButton: 'bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600',
+                },
+            });
+        }
+    });
+}
+
+
+
 </script>
 
 

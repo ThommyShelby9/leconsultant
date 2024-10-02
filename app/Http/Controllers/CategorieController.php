@@ -80,4 +80,16 @@ class CategorieController extends Controller
         }
     }
 
+    public function delete($id)
+    {
+        try {
+            $category = Categorie::findOrFail($id);
+            $category->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
 }

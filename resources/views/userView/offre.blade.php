@@ -102,9 +102,10 @@
             </div>
 
             <!-- Bouton Télécharger -->
-            <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">
-                Télécharger
-            </a>
+            <a href="{{ route('voirFichier', basename($item->fichier)) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">
+    Télécharger
+</a>
+
         </div>
     </div>
     @endforeach

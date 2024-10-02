@@ -174,21 +174,27 @@
                     </div>
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
-                            <label for="fichier">Fichier pdf</label>
+                            <label for="fichier">Fichier PDF</label>
                             <div class="input-group">
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="fichier">
-                                    <label class="custom-file-label" for="logo">Choisir</label>
+                                    <input type="file" class="custom-file-input" name="fichier" id="fichier">
+                                    <label class="custom-file-label" for="fichier">Choisir</label>
                                 </div>
                                 <div class="input-group-append">
-                                    <span class="input-group-text" id="">Chosir</span>
+                                    <span class="input-group-text" id="">Choisir</span>
                                 </div>
                             </div>
                             @error('fichier')
-                            <span class="text-danger">{{ $message}}</span>
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <!-- Barre de progression -->
+                        <div class="progress" style="height: 25px; margin-top: 10px; display: none;" id="progress-bar-container">
+                            <div class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+
                     </div>
+
 
 
                 </div>
@@ -208,6 +214,91 @@
 @endsection
 
 @section('code')
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<script>
+    // Affichage du nom du fichier sélectionné dans l'input
+    document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+        var fileName = document.getElementById("fichier").files[0].name;
+        var nextSibling = e.target.nextElementSibling;
+        nextSibling.innerText = fileName;
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('form').on('submit', function(e) {
+            e.preventDefault(); // Empêche la soumission classique du formulaire
+
+            var formData = new FormData(this);
+            var fileInput = $('#fichier').val();
+
+            if (fileInput) {
+                $('#progress-bar-container').show(); // Afficher la barre de progression
+                console.log("Affichage de la barre de progression");
+
+
+                $.ajax({
+                    xhr: function() {
+                        var xhr = new window.XMLHttpRequest();
+
+                        // Suivre la progression de téléchargement
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = Math.round((evt.loaded / evt.total) * 100);
+                                $('#progress-bar').css('width', percentComplete + '%');
+                                $('#progress-bar').text(percentComplete + '%');
+                                $('#progress-bar').attr('aria-valuenow', percentComplete);
+                            }
+                        }, false);
+
+                        return xhr;
+                    },
+                    type: 'POST',
+                    url: '{{ route("admin.offre.save") }}', // Changez l'URL selon votre route
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        $('#progress-bar').css('width', '100%');
+                        $('#progress-bar').text('100%');
+                        $('#progress-bar').attr('aria-valuenow', 100);
+
+                        // Afficher la notification de succès
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Fichier téléchargé avec succès!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+
+                        // Optionnel : rediriger après un délai
+                        setTimeout(function() {
+                            window.location.href = "{{ route('admin.offre.list') }}";
+                        }, 2000);
+                    },
+                    error: function(response) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur lors du téléchargement',
+                            text: response.responseJSON.message,
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Veuillez sélectionner un fichier à télécharger',
+                });
+            }
+        });
+    });
+</script>
+
 <script>
     function AfficherServ() {
         var idAc = document.getElementById('autorite').value;
@@ -314,4 +405,6 @@
         }
     }
 </script>
+
+
 @endsection

@@ -125,77 +125,79 @@ class OffreController extends Controller
 
     function editer($id)
     {
-        return view('adminView.offre.edit', ['offre' => Offre::find($id)]);
+        $types = Type::where('useFor', 'activite')->get();
+
+        return view('adminView.offre.edit', ['offre' => Offre::find($id)], compact("types"));
     }
 
-    function saveEdit(Request $req)
+    public function saveEdit(Request $req)
     {
-        if ($req['fichier'] == null) {
-
-            $req->validate([
-                'id' => ['required',  'numeric'],
-                'reference' => ['required',  'string', 'max:15'],
-                'titre' => ['required',  'string'],
-                'depot' => ['required',  'string'],
-                'categorie' => ['required',  'numeric'],
-                'autorite' => ['required',  'numeric'],
-                'service' => ['required'],
-                'marche' => ['required',  'numeric'],
-                'dateOuv' => ['required'],
-                'heureOuv' => ['required'],
-                'dateExp' => ['required'],
-            ]);
-        } else {
-            $req->validate([
-                'id' => ['required',  'numeric'],
-                'reference' => ['required',  'string', 'max:15'],
-                'titre' => ['required',  'string'],
-                'depot' => ['required',  'string'],
-                'categorie' => ['required',  'numeric'],
-                'autorite' => ['required',  'numeric'],
-                'service' => ['required'],
-                'marche' => ['required',  'numeric'],
-                'dateOuv' => ['required'],
-                'heureOuv' => ['required'],
-                'dateExp' => ['required'],
-                'fichier' => 'required|file|mimes:pdf|max:5000000',
-            ]);
-
-            $chemin = $req->file('fichier')->store('upload_files', 'public');
-        }
-
-
-
+        // Validation des données
+        $req->validate([
+            'id' => ['required', 'numeric'],
+            'reference' => ['required', 'string', 'max:15'],
+            'titre' => ['required', 'string'],
+            'depot' => ['required', 'string'],
+            'categorie' => ['required', 'numeric'],
+            'autorite' => ['required', 'numeric'],
+            'service' => ['required'],
+            'marche' => ['required', 'array'], // Valider comme un tableau
+            'marche.*' => ['numeric'], // Chaque élément du tableau doit être un nombre
+            'dateOuv' => ['required', 'date'],
+            'heureOuv' => ['required', 'date_format:H:i'],
+            'dateExp' => ['required', 'date'],
+            'fichier' => 'nullable|file|mimes:pdf|max:5000',
+            'domaineActivite' => ['required', 'exists:types,id'], // Validation du domaine d'activité
+        ]);
+    
+        // Récupérer l'offre existante
         $offre = Offre::find($req['id']);
-
+    
+        if (!$offre) {
+            return redirect()->back()->withErrors("L'offre n'existe pas.");
+        }
+    
+        // Mise à jour des champs
         $offre->titre = $req['titre'];
         $offre->reference = $req['reference'];
         $offre->lieu_depot = $req['depot'];
-
         $offre->datePublication = date('Y-m-d');
         $offre->dateExpiration = $req['dateExp'];
         $offre->dateOuverture = $req['dateOuv'];
         $offre->heureOuverture = $req['heureOuv'];
-        $offre->typeMar_id = $req['marche'];
         $offre->categ_id = $req['categorie'];
         $offre->ac_id = $req['autorite'];
         $offre->service = $req['service'];
-
-        if ($req['fichier'] != null) {
-
-            if (file_exists($offre->fichier)) {
-                unlink($offre->fichier);
+        $offre->domaine_activity = $req['domaineActivite']; // Mise à jour du domaine d'activité
+    
+        // Gestion du fichier (si un nouveau fichier est téléchargé)
+        if ($req->hasFile('fichier')) {
+            // Suppression de l'ancien fichier
+            if ($offre->fichier && file_exists(storage_path('app/public/' . $offre->fichier))) {
+                unlink(storage_path('app/public/' . $offre->fichier));
             }
-
+    
+            // Stockage du nouveau fichier
+            $chemin = $req->file('fichier')->store('upload_files', 'public');
             $offre->fichier = $chemin;
         }
-
-
+    
+        // Sauvegarder l'offre
         $offre->save();
-
+    
+        // Mise à jour des types de marché dans la table pivot
+        DB::table('offre_type')->where('offre_id', $offre->id)->delete(); // Suppression des anciennes relations
+        foreach ($req['marche'] as $typeId) {
+            DB::table('offre_type')->insert([
+                'offre_id' => $offre->id,
+                'type_id' => $typeId,
+            ]);
+        }
+    
         return redirect()->route('admin.offre.list')
             ->with('msg-success', "Offre bien modifiée.");
     }
+    
 
     function voir($id)
     {
@@ -220,4 +222,23 @@ class OffreController extends Controller
         // Rediriger avec un message de succès
         return redirect()->route('admin.offre.list')->with('msg-success', 'L\'offre a été supprimée avec succès.');
     }
+
+    public function getOfferDetails($id) {
+        $offre = Offre::find($id);
+    
+        if (!$offre) {
+            return response()->json(['error' => 'Offre introuvable'], 404);
+        }
+    
+        return response()->json([
+            'titre' => $offre->titre,
+            'autName' => $offre->autName,
+            'categTitle' => $offre->categTitle,
+            'typeTitle' => $offre->typeTitle,
+            'datePublication' => date('d M Y', strtotime($offre->datePublication)),
+            'dateExpiration' => date('d M Y', strtotime($offre->dateExpiration)),
+            'fileUrl' => route('voirFichier', $offre->file) // URL pour télécharger l'offre
+        ]);
+    }
+    
 }

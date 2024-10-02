@@ -86,6 +86,38 @@ class OffreController extends Controller
         'type' => $req['type']
     ]);
 }
+public function getOfferDetails($id) {
+    $offre = DB::table('offres')
+        ->join('categories', 'offres.categ_id', 'categories.id')
+        ->join('autorites', 'offres.ac_id', 'autorites.id')
+        ->where('offres.id', $id)
+        ->first([
+            'offres.*', 
+            'categories.title as categTitle', 
+            'autorites.name as autName', 
+            'autorites.abreviation as autAbre',
+            'offres.fichier' // Ajoutez explicitement le champ file ici
+        ]);
+
+    if (!$offre) {
+        return response()->json(['error' => 'Offre introuvable'], 404);
+    }
+
+    // Assurez-vous que le fichier existe dans l'enregistrement de l'offre
+    $fileUrl = $offre->fichier ? route('voirFichier', ['file' => basename($offre->fichier)]) : null;
+
+    return response()->json([
+        'titre' => $offre->titre,
+        'autName' => $offre->autName,
+        'categTitle' => $offre->categTitle,
+        'typeTitle' => $offre->typeTitle ?? 'Non spécifié',  // Si le type n'est pas spécifié
+        'datePublication' => date('d M Y', strtotime($offre->datePublication)),
+        'dateExpiration' => date('d M Y', strtotime($offre->dateExpiration)),
+        'file' => $fileUrl
+    ]);
+}
+
+
 
 
     
