@@ -75,44 +75,56 @@
         </h2>
 
         <!-- Grid layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12"> <!-- Gap augmenté à 12 pour plus d'espace -->
-    @foreach ($offres as $item)
-    <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row"> <!-- Padding ajusté et flex pour une disposition en colonne sur mobile et en ligne sur desktop -->
-        <!-- Logo centré -->
-        <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0"> <!-- Ajout de margin pour mobile -->
-            <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-24 lg:w-32 rounded-lg"> <!-- Taille réduite pour l'image -->
-        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12"> <!-- Augmenter l'espace entre les colonnes -->
 
-        <!-- Contenu de l'offre -->
-        <div class="w-full lg:w-4/5 lg:pl-6">
-            <a href="#" class="text-xl lg:text-3xl font-bold text-black mb-2 block">
-                {{ $item->titre }}
-            </a>
-            <p class="text-consultant-blue text-xl font-medium mb-2">
-                {{ $item->autName }}
-            </p>
-            <hr class="my-2"> <!-- Réduit l'espace vertical entre les sections -->
+            @foreach ($offres as $item)
+            <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row"> <!-- Flex pour responsive -->
+                
+                <!-- Logo centré -->
+                <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0"> <!-- Alignement du logo -->
+                    <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-24 lg:w-32 rounded-lg"> <!-- Taille du logo -->
+                </div>
 
-            <!-- Détails de l'offre -->
-            <div class="text-gray-600 text-sm space-y-1"> <!-- Plus d'espace entre les lignes de texte -->
-                <p><strong>Catégorie:</strong> {{ $item->categTitle }}</p>
-                <p><strong>Type:</strong> {{ $item->typeTitle }}</p>
-                <p><strong>Publiée le:</strong> {{ date('d M Y', strtotime($item->datePublication)) }}</p>
-                <p><strong>Expire le:</strong> {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
+                <!-- Contenu de l'offre -->
+                <div class="w-full lg:w-4/5 lg:pl-6">
+                    <!-- Titre de l'offre -->
+                    <a href="#" class="text-xl lg:text-3xl font-bold text-black mb-2 block">
+                        {{ $item->titre }}
+                    </a>
+                    
+                    <!-- Nom de l'autorité -->
+                    <p class="text-consultant-blue text-xl font-medium mb-2">
+                        {{ $item->autName }}
+                    </p>
+
+                    <hr class="my-2"> <!-- Ligne de séparation -->
+
+                    <!-- Détails de l'offre -->
+                    <div class="text-gray-600 text-sm space-y-1"> <!-- Informations supplémentaires -->
+                        <p><strong>Catégorie:</strong> {{ $item->categTitle }}</p>
+                        <p><strong>Type:</strong> {{ $item->typeTitle }}</p>
+                        <p><strong>Publiée le:</strong> {{ date('d M Y', strtotime($item->datePublication)) }}</p>
+                        <p><strong>Expire le:</strong> {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
+                    </div>
+
+                    <!-- Bouton Télécharger le fichier -->
+                    <a href="{{ route('voirFichier', basename($item->fichier)) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">
+                        Télécharger
+                    </a>
+                </div>
             </div>
-
-            <!-- Bouton Télécharger -->
-            <a href="{{ route('voirFichier', basename($item->fichier)) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">
-    Télécharger
-</a>
+            @endforeach
 
         </div>
-    </div>
-    @endforeach
-</div>
+
+        <!-- Ajouter la pagination -->
+        <div class="mt-8">
+            {{ $offres->links() }} <!-- Pagination avec liens -->
+        </div>
 
     </div>
 </section>
+
 
 
 @endsection

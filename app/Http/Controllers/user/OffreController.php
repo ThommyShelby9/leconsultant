@@ -37,55 +37,56 @@ class OffreController extends Controller
 
     
     public function rechercher(Request $req)
-{
-    // Initialisation de la requête de base
-    $query = DB::table('offres')
-        ->select([
-            'offres.*',
-            'autorites.logo as logo',
-            'types.title as typeTitle',
-            'categories.title as categTitle',
-            'autorites.name as autName',
-            'autorites.abreviation as autAbre'
-        ])
-        ->join('categories', 'offres.categ_id', '=', 'categories.id')
-        ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
-        ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
-        ->leftJoin('types', 'offre_type.type_id', '=', 'types.id');
-
-    // Filtrer par titre si la recherche n'est pas vide
-    if ($req['search'] !== null) {
-        $query->where('offres.titre', 'like', '%' . $req['search'] . '%');
+    {
+        // Initialisation de la requête de base
+        $query = DB::table('offres')
+            ->select([
+                'offres.*',
+                'autorites.logo as logo',
+                'types.title as typeTitle',
+                'categories.title as categTitle',
+                'autorites.name as autName',
+                'autorites.abreviation as autAbre'
+            ])
+            ->join('categories', 'offres.categ_id', '=', 'categories.id')
+            ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+            ->join('types', 'offres.domaine_activity', '=', 'types.id') // Assurez-vous que cette colonne existe dans la table "offres"
+            ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id');
+    
+        // Filtrer par titre si la recherche n'est pas vide
+        if ($req['search'] !== null) {
+            $query->where('offres.titre', 'like', '%' . $req['search'] . '%');
+        }
+    
+        // Filtrer par autorité contractante si un type spécifique est sélectionné
+        if ($req['categ'] > 0) {
+            $query->where('offres.ac_id', '=', $req['categ']);
+        }
+    
+        // Filtrer par domaine d'activité (type d'offre) si un type spécifique est sélectionné
+        if ($req['type'] > 0) {
+            $query->where('types.id', '=', $req['type']); // Modifié ici pour faire référence à la bonne table
+        }
+    
+        // Tri des résultats par ordre décroissant d'ID
+        $query->orderByDesc('offres.id');
+    
+        // Paginer les résultats
+        $res = $query->paginate(4);
+    
+        // Retourner la vue avec les résultats de recherche
+        $types = Type::where('useFor', 'activite')->get();
+        $ac = Autorite::all();
+        return view('userView.offreRecherche', [
+            'offres' => $res,
+            'search' => $req['search'],
+            'categ' => $req['categ'],
+            'types' => $types,
+            'ac' => $ac,
+            'type' => $req['type']
+        ]);
     }
-
-    // Filtrer par autorité contractante si un type spécifique est sélectionné
-    if ($req['categ'] > 0) {
-        $query->where('offres.ac_id', '=', $req['categ']);
-    }
-
-    // Filtrer par domaine d'activité (type d'offre) si un type spécifique est sélectionné
-    if ($req['type'] > 0) {
-        $query->where('offre_type.type_id', '=', $req['type']);
-    }
-
-    // Tri des résultats par ordre décroissant d'ID
-    $query->orderByDesc('offres.id');
-
-    // Paginer les résultats
-    $res = $query->paginate(4);
-
-    // Retourner la vue avec les résultats de recherche
-    $types = Type::where('useFor', 'activite')->get();
-    $ac = Autorite::all();
-    return view('userView.offreRecherche', [
-        'offres' => $res,
-        'search' => $req['search'],
-        'categ' => $req['categ'],
-        'types' => $types,
-        'ac' => $ac,
-        'type' => $req['type']
-    ]);
-}
+    
 public function getOfferDetails($id) {
     $offre = DB::table('offres')
         ->join('categories', 'offres.categ_id', 'categories.id')

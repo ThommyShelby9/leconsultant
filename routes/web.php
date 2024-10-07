@@ -68,7 +68,7 @@ Route::post('apels-doffres-filtres',[ OffreController::class, 'rechercher'])
 
 //Route::get('home', function(){ return view('userView.home'); })->middleware(['auth:web', 'verified']);
 
-Route::middleware(['auth:web' ])->group(function() {
+Route::middleware(['auth:web', 'subscription' ])->group(function() {
 
     Route::get('home', [PageController::class, 'welcome'] )
     ->name('home');

@@ -53,92 +53,93 @@ class PageController extends Controller
             return [];
         }
     }
+    public function welcome()
+    {
+        $user = null;
+        $hasActiveSubscription = false;
+        $types = Type::where('useFor', 'activite')->get();
+        $ac = Autorite::all();
     
-public function welcome()
-{
-    $user = null;
-    $hasActiveSubscription = false;
-    $types = Type::where('useFor', 'activite')->get();
-    $ac = Autorite::all();
-
-
-    // Vérifier si l'utilisateur est connecté
-    if (Auth::check()) {
-        $user = Auth::user();
-
-        // Vérifier si l'utilisateur a un abonnement actif
-        $hasActiveSubscription = DB::table('abonnements')
-            ->where('idUser', $user->id)
-            ->where('dateFin', '>=', now())  // Vérifie si la date de fin est dans le futur
-            ->where('stop', false)  // Vérifie que l'abonnement n'est pas arrêté
-            ->exists();
+        if (Auth::check()) {
+            $user = Auth::user();
+            $hasActiveSubscription = DB::table('abonnements')
+                ->where('idUser', $user->id)
+                ->where('dateFin', '>=', now())
+                ->where('stop', false)
+                ->exists();
+        }
+    
+        // Récupérer toutes les offres
+        $allOffres = DB::table('offres')
+            ->join('categories', 'offres.categ_id', '=', 'categories.id')
+            ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+            ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
+            ->leftJoin('types', 'offre_type.type_id', '=', 'types.id')
+            ->where('offres.dateExpiration', '>=', date('Y-m-d'))
+            ->orderBy('offres.dateExpiration')
+            ->get(['offres.*', 'types.title as typeTitle', 'categories.title as categTitle', 'autorites.name as autName', 'autorites.logo as logo', 'autorites.abreviation as autAbre']);
+    
+        // Limiter l'affichage à 4 offres pour le premier affichage
+        $offresAffichees = $allOffres->take(4);
+    
+        $news = $this->getBeninNews(); 
+    
+        return view('welcome', [
+            'offres' => $offresAffichees,
+            'allOffres' => $allOffres, // Passer toutes les offres à la vue
+            'types' => $types,
+            'ac' => $ac,
+            'hasActiveSubscription' => $hasActiveSubscription,
+            'user' => $user,
+            'news' => $news,
+            'totalOffres' => $allOffres->count(), // Passer le nombre total d'offres
+        ]);
     }
-
-    // Requête pour récupérer les offres
-    $offres = DB::table('offres')
-        ->join('categories', 'offres.categ_id', '=', 'categories.id')
-        ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
-        ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
-        ->leftJoin('types', 'offre_type.type_id', '=', 'types.id')
-        ->where('offres.dateExpiration', '>=', date('Y-m-d'))
-        ->limit(4)
-        ->orderBy('offres.dateExpiration')
-        ->get(['offres.*', 'types.title as typeTitle', 'categories.title as categTitle', 'autorites.name as autName', 'autorites.logo as logo', 'autorites.abreviation as autAbre']);
-
-    $news = $this->getBeninNews(); // Appeler la méthode dans le même contrôleur
-
-    return view('welcome', [
-        'offres' => $offres,
-        'types' => $types,
-        'ac' => $ac,
-        'hasActiveSubscription' => $hasActiveSubscription,
-        'user' => $user,
-        'news' => $news, // Passer les actualités à la vue
-    ]);
-}
-
-function lesOffres()
-{
-    // Création d'une instance de QueryBuilder pour construire la requête
-    $query = DB::table('offres')
-        ->select([
-            'offres.id',
-            'offres.titre',
-            'offres.reference',
-            'offres.lieu_depot',
-            'offres.datePublication',
-            'offres.dateExpiration',
-            'offres.dateOuverture',
-            'offres.heureOuverture',
-            'offres.categ_id',
-            'offres.ac_id',
-            'offres.service',
-            'offres.writeBy',
-            'offres.fichier',
-            'categories.title as categTitle',
-            'autorites.logo as logo',
-            'autorites.name as autName',
-            'types.title as typeTitle'
-        ])
-        ->join('categories', 'offres.categ_id', '=', 'categories.id')
-        ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
-        ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
-        ->leftJoin('types', 'offre_type.type_id', '=', 'types.id')
-        ->where('offres.dateExpiration', '>=', date('Y-m-d'))
-        ->orderBy('offres.dateExpiration')
-        ->groupBy('offres.id'); // Assurez-vous que les résultats sont correctement groupés
-
-    // Appel à paginate sur l'instance de QueryBuilder
-    $offres = $query->paginate(4);
-    $types = Type::where('useFor', 'activite')->get();
-    $ac = Autorite::all();
-
-    // Retourner la vue avec les résultats paginés
-    return view('userView.offre', ['offres' => $offres,
-    'types' => $types,
-    'ac' => $ac,
-]);
-}
+    
+    function lesOffres()
+    {
+        // Construction de la requête
+        $query = DB::table('offres')
+            ->select([
+                'offres.id',
+                'offres.titre',
+                'offres.reference',
+                'offres.lieu_depot',
+                'offres.datePublication',
+                'offres.dateExpiration',
+                'offres.dateOuverture',
+                'offres.heureOuverture',
+                'offres.categ_id',
+                'offres.ac_id',
+                'offres.service',
+                'offres.writeBy',
+                'offres.fichier',
+                'categories.title as categTitle',
+                'autorites.logo as logo',
+                'autorites.name as autName',
+                'types.title as typeTitle'
+            ])
+            ->join('categories', 'offres.categ_id', '=', 'categories.id')
+            ->join('autorites', 'offres.ac_id', '=', 'autorites.id')
+            ->leftJoin('offre_type', 'offres.id', '=', 'offre_type.offre_id')
+            ->leftJoin('types', 'offre_type.type_id', '=', 'types.id')
+            ->where('offres.dateExpiration', '>=', date('Y-m-d'))
+            ->orderBy('offres.dateExpiration')
+            ->groupBy('offres.id'); // Groupe par id pour éviter les duplications
+    
+        // Paginer les offres
+        $offres = $query->paginate(4);
+        $types = Type::where('useFor', 'activite')->get();
+        $ac = Autorite::all();
+    
+        // Retourner la vue avec les données
+        return view('userView.offre', [
+            'offres' => $offres,
+            'types' => $types,
+            'ac' => $ac,
+        ]);
+    }
+    
 
 
 
@@ -158,109 +159,63 @@ function lesOffres()
         return view('formationsPage',['formations'=>$form]);
     }
 
-    function recherche(Request $req){
+    public function recherche(Request $req)
+{
+    // Initialisation de la requête de base
+    $query = DB::table('offres')
+        ->select([
+            'offres.*',
+            'autorites.logo as logo',
+            'types.title as typeTitle',
+            'categories.title as categTitle',
+            'autorites.name as autName',
+            'autorites.abreviation as autAbre'
+        ])
+        ->join('categories', 'offres.categ_id', '=', 'categories.id')
+        ->join('autorites', 'offres.autorite_id', '=', 'autorites.id') // Assurez-vous que c'est le bon champ pour l'autorité
+        ->join('types', 'offres.domaine_activity', '=', 'types.id'); // Assurez-vous que c'est le bon champ pour le type de marché
 
-        // Si un terme de recherche est fourni
-        if($req['search'] != null){
-    
-            // Si aucune catégorie spécifique n'est sélectionnée (toutes les catégories)
-            if($req['categorie'] == 0){
-    
-                // Filtre selon la présence d'un domaine d'activité (typeMar)
-                if($req['typeMar'] == 0){
-    
-                    // Rechercher uniquement par le titre
-                    $resultats = DB::table('offres')
-                        ->where('titre', 'like', '%'.$req['search'].'%')
-                        ->get();
-    
-                } elseif($req['typeMar'] >= 1){
-    
-                    // Rechercher par le titre et le domaine d'activité (typeMar)
-                    $resultats = DB::table('offres')
-                        ->where('titre', 'like', '%'.$req['search'].'%')
-                        ->where('typeMar_id', $req['typeMar'])
-                        ->get();
-                }
-    
-            } elseif($req['categorie'] >= 1) {
-                // Rechercher dans une catégorie spécifique
-    
-                // Si aucune autorité contractante spécifique n'est sélectionnée (toutes les autorités)
-                if($req['autorite'] == 0){
-    
-                    if($req['typeMar'] == 0){
-    
-                        // Rechercher par titre et catégorie
-                        $resultats = DB::table('offres')
-                            ->where('titre', 'like', '%'.$req['search'].'%')
-                            ->where('categ_id', $req['categorie'])
-                            ->get();
-    
-                    } elseif($req['typeMar'] >= 1){
-    
-                        // Rechercher par titre, catégorie et domaine d'activité (typeMar)
-                        $resultats = DB::table('offres')
-                            ->where('titre', 'like', '%'.$req['search'].'%')
-                            ->where('categ_id', $req['categorie'])
-                            ->where('typeMar_id', $req['typeMar'])
-                            ->get();
-                    }
-    
-                } elseif($req['autorite'] >= 1) {
-    
-                    // Rechercher par autorité contractante
-                    if($req['typeMar'] == 0){
-    
-                        // Rechercher par titre, catégorie et autorité contractante
-                        $resultats = DB::table('offres')
-                            ->where('titre', 'like', '%'.$req['search'].'%')
-                            ->where('categ_id', $req['categorie'])
-                            ->where('autorite_id', $req['autorite'])
-                            ->get();
-    
-                    } elseif($req['typeMar'] >= 1){
-    
-                        // Rechercher par titre, catégorie, autorité contractante et domaine d'activité
-                        $resultats = DB::table('offres')
-                            ->where('titre', 'like', '%'.$req['search'].'%')
-                            ->where('categ_id', $req['categorie'])
-                            ->where('autorite_id', $req['autorite'])
-                            ->where('typeMar_id', $req['typeMar'])
-                            ->get();
-                    }
-                }
-            }
-    
-        } elseif ($req['search'] == null) {
-            // Si aucun terme de recherche n'est fourni
-    
-            // Si aucune catégorie spécifique n'est sélectionnée
-            if ($req['categorie'] == 0) {
-                // Retourner toutes les offres
-                $resultats = DB::table('offres')->get();
-    
-            } elseif ($req['categorie'] >= 1) {
-                // Rechercher dans une catégorie spécifique
-    
-                if ($req['autorite'] == 0) {
-                    // Rechercher par catégorie uniquement
-                    $resultats = DB::table('offres')
-                        ->where('categ_id', $req['categorie'])
-                        ->get();
-    
-                } elseif ($req['autorite'] >= 1) {
-                    // Rechercher par catégorie et autorité contractante
-                    $resultats = DB::table('offres')
-                        ->where('categ_id', $req['categorie'])
-                        ->where('autorite_id', $req['autorite'])
-                        ->get();
-                }
-            }
-        }
-    
-        return view('resultats', compact('resultats'));
+    // Filtrer par titre si la recherche n'est pas vide
+    if ($req['search'] != null) {
+        $query->where('offres.titre', 'like', '%' . $req['search'] . '%');
     }
+
+    // Filtrer par catégorie si une catégorie spécifique est sélectionnée
+    if ($req['categorie'] > 0) {
+        $query->where('offres.categ_id', '=', $req['categorie']);
+    }
+
+    // Filtrer par autorité si une autorité spécifique est sélectionnée
+    if ($req['autorite'] > 0) {
+        $query->where('offres.autorite_id', '=', $req['autorite']);
+    }
+
+    // Filtrer par domaine d'activité (typeMar) si un type spécifique est sélectionné
+    if ($req['typeMar'] > 0) {
+        $query->where('types.id', '=', $req['typeMar']);
+    }
+
+    // Tri des résultats par ordre décroissant d'ID
+    $query->orderByDesc('offres.id');
+
+    // Paginer les résultats
+    $resultats = $query->paginate(4);
+
+    // Récupérer les types et les autorités pour la vue
+    $types = Type::where('useFor', 'activite')->get();
+    $ac = Autorite::all();
+
+    // Retourner la vue avec les résultats de recherche
+    return view('resultats', [
+        'offres' => $resultats,
+        'search' => $req['search'],
+        'categ' => $req['categorie'],
+        'types' => $types,
+        'ac' => $ac,
+        'type' => $req['typeMar'],
+    ]);
+}
+
     
 
     function voirFormation($id , $name){

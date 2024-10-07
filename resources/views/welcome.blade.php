@@ -45,8 +45,8 @@
             }
 
             Swal.fire({
-                title: "Abonnement requis! Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
-                text: "Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
+                title: "Abonnement requis! Veuillez souscrire à l'abonnement mensuel de 1490 FCFA afin de pouvoir accéder à la plateforme.",
+                text: "Veuillez souscrire à l'abonnement mensuel de 1490 FCFA afin de pouvoir accéder à la plateforme.",
                 icon: 'warning',
                 showCancelButton: false,
                 confirmButtonText: 'Souscrire',
@@ -189,9 +189,9 @@
 <section id="offres" class="py-16">
     <div class="container mx-auto">
         <h2 class="text-consultant-rouge text-3xl lg:text-5xl font-bold mb-8">Les dernières offres publiées</h2>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div id="offre-list" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             @foreach ($offres as $item)
-            <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
+            <div class="offre-item bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
                 <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
                     <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
                 </div>
@@ -214,8 +214,19 @@
             </div>
             @endforeach
         </div>
+
+        <!-- Ajouter le bouton "Voir plus" si le nombre total d'offres est supérieur à 4 -->
+        @if ($totalOffres > 4)
+            <div class="mt-8 text-center">
+                <button id="load-more" class="bg-consultant-rouge text-white px-6 py-2 rounded-lg" 
+                    onclick="loadMoreOffres()">Voir plus</button>
+                <button id="load-less" class="bg-gray-500 text-white px-6 py-2 rounded-lg" 
+                    style="display:none;" onclick="loadLessOffres()">Voir moins</button>
+            </div>
+        @endif
     </div>
 </section>
+
 
 <!-- Section pour inciter à s'inscrire et s'abonner -->
 @if(!auth()->check())
@@ -365,6 +376,24 @@
         margin-bottom: 4rem;
         /* au lieu de 16rem */
     }
+
+    /* Animation de fade-in lors de l'affichage des nouvelles offres */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Classe appliquée pour l'animation */
+.offre-item {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
 </style>
 
 
@@ -469,5 +498,84 @@
 
 </script>
 
+
+<script>
+    let allOffres = @json($allOffres); // Passer toutes les offres en JavaScript
+let displayedOffres = {{ count($offres) }}; // Nombre d'offres actuellement affichées
+let totalOffres = {{ $totalOffres }}; // Nombre total d'offres
+
+function loadMoreOffres() {
+    const offreList = document.getElementById('offre-list');
+    const loadMoreButton = document.getElementById('load-more');
+    const loadLessButton = document.getElementById('load-less');
+
+    // Afficher une animation de chargement
+    loadMoreButton.innerText = "Chargement...";
+    loadMoreButton.disabled = true;
+
+    // Charger 4 offres supplémentaires
+    const nextOffres = allOffres.slice(displayedOffres, displayedOffres + 4);
+
+    setTimeout(() => {
+        nextOffres.forEach(offre => {
+            let offreItem = `
+                <div class="offre-item bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
+                    <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
+                        <img src="${offre.logo ? '/storage/' + offre.logo : '/default_offres.jpg'}" alt="logo" class="w-full rounded-lg">
+                    </div>
+                    <div class="w-full lg:w-4/5 lg:pl-6">
+                        <a href="#" class="text-xl lg:text-3xl font-bold text-black" 
+                            onclick="handleOfferClick('${offre.id}')">
+                            ${offre.titre.slice(0, 10)}...
+                        </a>
+                        <p class="text-consultant-blue text-xl font-medium">${offre.autName}</p>
+                        <hr class="my-2">
+                        <div class="text-gray-600 text-sm space-y-1">
+                            <p>Catégorie: ${offre.categTitle}</p>
+                            @if(auth()->check())
+                            <p>Type: ${offre.typeTitle}</p>
+                            @endif
+                            <p>Publiée le: ${new Date(offre.datePublication).toLocaleDateString()}</p>
+                            <p>Expire le: ${new Date(offre.dateExpiration).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            offreList.insertAdjacentHTML('beforeend', offreItem);
+        });
+
+        displayedOffres += nextOffres.length;
+
+        // Si toutes les offres sont chargées, masquer le bouton "Voir plus"
+        if (displayedOffres >= totalOffres) {
+            loadMoreButton.style.display = 'none';
+        } else {
+            loadMoreButton.innerText = "Voir plus";
+            loadMoreButton.disabled = false;
+        }
+
+        loadLessButton.style.display = 'inline'; // Afficher le bouton "Voir moins" si des offres supplémentaires sont chargées
+    }, 500); // Temporisation pour simuler le temps de chargement
+}
+
+function loadLessOffres() {
+    const offreList = document.getElementById('offre-list');
+    const loadMoreButton = document.getElementById('load-more');
+    const loadLessButton = document.getElementById('load-less');
+
+    // Réinitialiser l'affichage aux premières 4 offres
+    const offreItems = document.querySelectorAll('.offre-item');
+    offreItems.forEach((item, index) => {
+        if (index >= 4) {
+            item.remove();
+        }
+    });
+
+    displayedOffres = 4;
+    loadMoreButton.style.display = 'inline'; // Réafficher le bouton "Voir plus"
+    loadLessButton.style.display = 'none'; // Masquer le bouton "Voir moins"
+}
+
+</script>
 
 @endsection

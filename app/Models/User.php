@@ -61,4 +61,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Alerte::class, 'idUser');  // 'user_id' est la clé étrangère dans la table 'alertes'
     }
+
+    public function hasValidSubscription()
+{
+    // Vérifier s'il existe un abonnement actif pour l'utilisateur connecté
+    $has_valid_subscription = Abonnement::where('idUser', auth()->id())
+        ->where('dateFin', '>', now()) // Comparer la date de fin avec la date actuelle
+        ->exists(); // Vérifie si un tel abonnement existe
+
+    return $has_valid_subscription;
+}
+
 }
