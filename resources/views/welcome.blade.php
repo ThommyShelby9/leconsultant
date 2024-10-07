@@ -191,12 +191,12 @@
         <h2 class="text-consultant-rouge text-3xl lg:text-5xl font-bold mb-8">Les dernières offres publiées</h2>
         <div id="offre-list" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             @foreach ($offres as $item)
-            <div class="offre-item bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
+            <div class="offre-item bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row h-80">
                 <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
                     <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg">
                 </div>
-                <div class="w-full lg:w-4/5 lg:pl-6">
-                    <a href="#" class="text-xl lg:text-3xl font-bold text-black" 
+                <div class="w-full lg:w-4/5 lg:pl-6 flex flex-col justify-between">
+                    <a href="javascript:void(0);" class="text-xl lg:text-3xl font-bold text-black" 
                         onclick="handleOfferClick('{{ $item->id }}')">
                         {{ Str::limit($item->titre, 10) }}
                     </a>
@@ -219,7 +219,7 @@
         @if ($totalOffres > 4)
             <div class="mt-8 text-center">
                 <button id="load-more" class="bg-consultant-rouge text-white px-6 py-2 rounded-lg" 
-                    onclick="loadMoreOffres()">Voir plus</button>
+                    onclick="handleLoadMore()">Voir plus</button>
                 <button id="load-less" class="bg-gray-500 text-white px-6 py-2 rounded-lg" 
                     style="display:none;" onclick="loadLessOffres()">Voir moins</button>
             </div>
@@ -419,163 +419,45 @@
     });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+</script>
+<!-- Inclure SweetAlert via CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
 <script>
-    function handleOfferClick(offerId) {
-        @if(!auth()->check())
-            // Si l'utilisateur n'est pas connecté, afficher une alerte d'erreur
-            Swal.fire({
-                title: 'Accès refusé',
-                text: "Vous devez d'abord vous inscrire et souscrire à un abonnement pour voir les détails de cette offre.",
-                icon: 'error',
-                confirmButtonText: 'S\'inscrire maintenant',
-                showCancelButton: true,
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "{{ route('register') }}";
+    function handleLoadMore() {
+        // Vérifie si l'utilisateur est connecté
+        const isLoggedIn = @json(auth()->check());
+
+        if (!isLoggedIn) {
+            // Si l'utilisateur n'est pas connecté, affiche un message SweetAlert
+            swal({
+                title: "Erreur",
+                text: "Vous devez être connecté et avoir un abonnement pour voir plus d'offres.",
+                icon: "warning",
+                buttons: {
+                    cancel: "Annuler",
+                    confirm: {
+                        text: "Se connecter",
+                        value: true,
+                        visible: true,
+                        className: "bg-consultant-rouge text-white",
+                    },
+                },
+            }).then((willRedirect) => {
+                if (willRedirect) {
+                    // Redirige vers la page de connexion ou d'abonnement
+                    window.location.href = '/register'; // Remplace par l'URL de la page de connexion
                 }
             });
-        @else
-            // Si l'utilisateur est connecté, afficher les détails de l'offre dans un modal
-            fetchOfferDetails(offerId);
-        @endif
-    }
-
-    function fetchOfferDetails(offerId) {
-    $.ajax({
-        url: '/offre/details/' + offerId,
-        method: 'GET',
-        success: function(data) {
-            Swal.fire({
-                title: `<strong class="text-2xl font-bold text-consultant-blue">${data.titre}</strong>`,
-                html: `
-                    <div class="flex flex-col space-y-2">
-                    
-                        <p class="text-lg"><strong>Autorité Contractante:</strong> ${data.autName}</p>
-                        <p class="text-lg"><strong>Catégorie:</strong> ${data.categTitle}</p>
-                        <p class="text-lg"><strong>Type:</strong> ${data.typeTitle}</p>
-                        <p class="text-lg"><strong>Publiée le:</strong> ${data.datePublication}</p>
-                        <p class="text-lg"><strong>Expire le:</strong> ${data.dateExpiration}</p>
-                        ${data.file ? `
-                            <a href="${data.file}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg text-center block transition duration-300 hover:bg-consultant-darkblue">
-                                Télécharger l'offre
-                            </a>
-                        ` : ''}
-                    </div>
-                `,
-                icon: 'info',
-                showCancelButton: false,
-                confirmButtonText: 'Fermer',
-                customClass: {
-                    popup: 'bg-white shadow-lg rounded-lg p-6',
-                    title: 'font-bold text-3xl text-center',
-                    html: 'text-lg text-gray-700',
-                    confirmButton: 'bg-consultant-blue text-white py-2 px-4 rounded-lg hover:bg-consultant-darkblue',
-                },
-                backdrop: 'rgba(0,0,0,0.5)', // Fond semi-transparent
-                padding: '2rem', // Espace autour du contenu
-            });
-        },
-        error: function(err) {
-            Swal.fire({
-                title: 'Erreur',
-                text: 'Impossible de récupérer les détails de l\'offre.',
-                icon: 'error',
-                confirmButtonText: 'Fermer',
-                customClass: {
-                    title: 'text-lg font-bold',
-                    confirmButton: 'bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600',
-                },
-            });
-        }
-    });
-}
-
-
-
-</script>
-
-
-<script>
-    let allOffres = @json($allOffres); // Passer toutes les offres en JavaScript
-let displayedOffres = {{ count($offres) }}; // Nombre d'offres actuellement affichées
-let totalOffres = {{ $totalOffres }}; // Nombre total d'offres
-
-function loadMoreOffres() {
-    const offreList = document.getElementById('offre-list');
-    const loadMoreButton = document.getElementById('load-more');
-    const loadLessButton = document.getElementById('load-less');
-
-    // Afficher une animation de chargement
-    loadMoreButton.innerText = "Chargement...";
-    loadMoreButton.disabled = true;
-
-    // Charger 4 offres supplémentaires
-    const nextOffres = allOffres.slice(displayedOffres, displayedOffres + 4);
-
-    setTimeout(() => {
-        nextOffres.forEach(offre => {
-            let offreItem = `
-                <div class="offre-item bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row">
-                    <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
-                        <img src="${offre.logo ? '/storage/' + offre.logo : '/default_offres.jpg'}" alt="logo" class="w-full rounded-lg">
-                    </div>
-                    <div class="w-full lg:w-4/5 lg:pl-6">
-                        <a href="#" class="text-xl lg:text-3xl font-bold text-black" 
-                            onclick="handleOfferClick('${offre.id}')">
-                            ${offre.titre.slice(0, 10)}...
-                        </a>
-                        <p class="text-consultant-blue text-xl font-medium">${offre.autName}</p>
-                        <hr class="my-2">
-                        <div class="text-gray-600 text-sm space-y-1">
-                            <p>Catégorie: ${offre.categTitle}</p>
-                            @if(auth()->check())
-                            <p>Type: ${offre.typeTitle}</p>
-                            @endif
-                            <p>Publiée le: ${new Date(offre.datePublication).toLocaleDateString()}</p>
-                            <p>Expire le: ${new Date(offre.dateExpiration).toLocaleDateString()}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            offreList.insertAdjacentHTML('beforeend', offreItem);
-        });
-
-        displayedOffres += nextOffres.length;
-
-        // Si toutes les offres sont chargées, masquer le bouton "Voir plus"
-        if (displayedOffres >= totalOffres) {
-            loadMoreButton.style.display = 'none';
         } else {
-            loadMoreButton.innerText = "Voir plus";
-            loadMoreButton.disabled = false;
+            // Si l'utilisateur est connecté, redirige vers la page d'appel d'offres
+            window.location.href = '/appels-d-offres'; // Remplace par l'URL de la page d'appel d'offres
         }
-
-        loadLessButton.style.display = 'inline'; // Afficher le bouton "Voir moins" si des offres supplémentaires sont chargées
-    }, 500); // Temporisation pour simuler le temps de chargement
-}
-
-function loadLessOffres() {
-    const offreList = document.getElementById('offre-list');
-    const loadMoreButton = document.getElementById('load-more');
-    const loadLessButton = document.getElementById('load-less');
-
-    // Réinitialiser l'affichage aux premières 4 offres
-    const offreItems = document.querySelectorAll('.offre-item');
-    offreItems.forEach((item, index) => {
-        if (index >= 4) {
-            item.remove();
-        }
-    });
-
-    displayedOffres = 4;
-    loadMoreButton.style.display = 'inline'; // Réafficher le bouton "Voir plus"
-    loadLessButton.style.display = 'none'; // Masquer le bouton "Voir moins"
-}
-
+    }
 </script>
+
 
 @endsection

@@ -31,7 +31,7 @@ class CreateNewUser implements CreatesNewUsers
             'nom' => ['required', 'string', 'max:255'],
             'prenoms' => ['required', 'string', 'max:255'],
             'adresse' => ['required', 'string', 'max:255'],
-            'telephone' => ['required', 'regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10', 'max:15'],
+            'telephone' => ['required', 'regex:/^(0|(\+?[1-9]\d{0,2})? ?[0-9]{1,4}(?: ?[0-9]{2,3}){3})$/', 'max:15'],
             'email' => [
                 'required',
                 'string',
@@ -62,15 +62,15 @@ class CreateNewUser implements CreatesNewUsers
             ['email' => $user->email]  // Utilisez ->email pour accéder à l'email de l'objet utilisateur
         );
 
-        // Mail::send('emails.mail', [
-        //     'url' => $url, 
-        //     'nom' => $user->nom 
-        // ], function ($message) use ($user) {
-        //     $config = config('mail');
-        //     $message->subject('Registration verification !')
-        //         ->from($config['from']['address'], $config['from']['name'])
-        //         ->to($user->email, $user->nom );
-        // });
+        Mail::send('emails.mail', [
+            'url' => $url, 
+            'nom' => $user->nom 
+        ], function ($message) use ($user) {
+            $config = config('mail');
+            $message->subject('Registration verification !')
+                ->from($config['from']['address'], $config['from']['name'])
+                ->to($user->email, $user->nom );
+        });
 
         return $user;  // Retournez l'objet utilisateur complet
     } elseif ($input['typeActor'] == 2) {
@@ -79,7 +79,7 @@ class CreateNewUser implements CreatesNewUsers
             'societeType' => ['required'],
             'nomSociete' => ['required', 'string', 'max:255'],
             'adresse' => ['required', 'string', 'max:255'],
-            'telephone' => ['required', 'regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10', 'max:15'],
+            'telephone' => ['required', 'regex:/^(0|(\+?[1-9]\d{0,2})? ?[0-9]{1,4}(?: ?[0-9]{2,3}){3})$/', 'max:15'],
             'email' => [
                 'required',
                 'string',
