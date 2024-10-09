@@ -185,7 +185,7 @@ class AlerteController extends Controller
         ->exists(); // Vérifie si un tel abonnement existe
     
     
-        if ($has_valid_subscription) {
+        if (!$has_valid_subscription) {
             return redirect()->route('home')->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette page.');
         }
         $ac = Autorite::all();

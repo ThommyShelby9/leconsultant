@@ -108,12 +108,12 @@ class PageController extends Controller
     $user = auth()->user();
 
     // Vérifiez si l'utilisateur a un abonnement actif
-    $has_valid_subscription = Abonnement::where('idUser', $user->id)
+    $has_valid_subscription = Abonnement::where('idUser', auth()->id())
     ->where('dateFin', '>', now()) // Comparer la date de fin avec la date actuelle
     ->exists(); // Vérifie si un tel abonnement existe
 
 
-    if ($has_valid_subscription) {
+    if (!$has_valid_subscription) {
         return redirect()->route('home')->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette page.');
     }
 
@@ -194,7 +194,7 @@ class PageController extends Controller
     ->exists(); // Vérifie si un tel abonnement existe
 
 
-    if ($has_valid_subscription) {
+    if (!$has_valid_subscription) {
         return redirect()->route('home')->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette page.');
     }
     $query = DB::table('offres')
