@@ -1,7 +1,14 @@
 @extends('layout.userLayout.template-auth')
 
 @section('titre')
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+
+<!-- SweetAlert JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
 <title>Le consultant | Inscription - Entreprise</title>
+
 @endsection
 
 @section('banner')
@@ -19,6 +26,43 @@
 @section('contenu')
 <div class="py-12">
 <div class="container">
+     <!-- Notification de succès ou d'erreurs -->
+     @if(session('success'))
+    <script>
+        swal({
+            title: "Succès!",
+            text: "{{ session('success') }}",
+            type: "success",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+
+@if(session('status'))
+    <script>
+        swal({
+            title: "Info",
+            text: "{{ session('status') }}",
+            type: "info",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        swal({
+            title: "Erreur",
+            text: "{{ session('error') }}",
+            type: "error",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+
     <h3 class="lg:text-xl text-base text-consultant-gris text-center font-medium mb-8">
         S'inscrire en tant que personne:
     </h3>
@@ -47,7 +91,7 @@
         </div>
     </div>
 
-    <form name="PhysForm" method="POST" onsubmit="return verificationPhysique()" action="{{ route('register') }}" class="flex flex-col items-center">
+    <form name="PhysForm" method="POST" onsubmit="return verificationPhysique()" action="{{ route('registration') }}" class="flex flex-col items-center">
         @csrf
         <input type="hidden" name="typeActor" value="1">
 

@@ -33,7 +33,8 @@ Route::get('/exemple',function(){ return view('component.testPDF');});
 Route::get('/', [PageController::class, 'welcome'])
 ->name('welcome');
 
-
+Route::post('/register', [UserController::class, 'create'])
+    ->name('registration');
 
 
 Route::group(['prefix'=>'register' , 'middleware'=>'verAuthGroup' ], function(){

@@ -5,6 +5,11 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+
+<!-- SweetAlert JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
 <title>Le consultant | Inscription - Entreprise</title>
 @endsection
@@ -24,6 +29,43 @@
 @section('contenu')
 <div class="py-12">
     <div class="container">
+         <!-- Notification de succès ou d'erreurs -->
+         @if(session('success'))
+    <script>
+        swal({
+            title: "Succès!",
+            text: "{{ session('success') }}",
+            type: "success",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+
+@if(session('status'))
+    <script>
+        swal({
+            title: "Info",
+            text: "{{ session('status') }}",
+            type: "info",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        swal({
+            title: "Erreur",
+            text: "{{ session('error') }}",
+            type: "error",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+
         <!-- Contenu de la page d'inscription -->
         <h3 class="lg:text-xl text-base text-consultant-gris text-center font-medium mb-8">
             S'inscrire en tant que personne:
@@ -56,7 +98,7 @@
         </div>
 
         <!-- Formulaire d'inscription -->
-        <form method="POST" name="MoralForm" id="registerForm" action="{{ route('register') }}"
+        <form method="POST" name="MoralForm" id="registerForm" action="{{ route('registration') }}"
             class="flex flex-col items-center">
             @csrf
             <input type="hidden" name="typeActor" value="2">

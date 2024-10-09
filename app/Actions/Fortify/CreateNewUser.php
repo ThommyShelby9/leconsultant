@@ -72,7 +72,8 @@ class CreateNewUser implements CreatesNewUsers
                 ->to($user->email, $user->nom );
         });
 
-        return $user;  // Retournez l'objet utilisateur complet
+        return redirect()->route('register')->with('status', 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.');
+
     } elseif ($input['typeActor'] == 2) {
 
         Validator::make($input, [
@@ -120,27 +121,26 @@ class CreateNewUser implements CreatesNewUsers
                 ->to($user->email, $user->nomSociete);
         });
 
-        return $user;  // Retournez l'objet utilisateur complet
+        return redirect()->route('register')->with('status', 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.');
+
     }
 }
 
 
-    public function verify(Request $request, $email)
-    {
-        $user = User::where('email', $email)->first();
-        if (!$user) {
-            abort(404);
-        };
+public function verify(Request $request, $email)
+{
+    $user = User::where('email', $email)->first();
 
-        if (!$request->hasValidSignature()) {
-            abort(404);
-        };
-
-        $user->update([
-            'email_verified_at' => now(),
-        ]);
-        return redirect()->route('login')->with('success', "Compte activé avec succès!");
+    if (!$user || !$request->hasValidSignature()) {
+        abort(404);
     }
+
+    $user->update([
+        'email_verified_at' => now(),
+    ]);
+
+    return redirect()->route('login')->with('success', 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.');
+}
 
 
   

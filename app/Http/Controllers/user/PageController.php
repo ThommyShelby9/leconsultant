@@ -98,6 +98,25 @@ class PageController extends Controller
     
     function lesOffres()
     {
+
+            // Vérifiez si l'utilisateur est authentifié
+    if (!auth()->check()) {
+        return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder à cette page.');
+    }
+
+    // Récupérer l'utilisateur authentifié
+    $user = auth()->user();
+
+    // Vérifiez si l'utilisateur a un abonnement actif
+    $has_valid_subscription = Abonnement::where('idUser', $user->id)
+    ->where('dateFin', '>', now()) // Comparer la date de fin avec la date actuelle
+    ->exists(); // Vérifie si un tel abonnement existe
+
+
+    if ($has_valid_subscription) {
+        return redirect()->route('home')->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette page.');
+    }
+
         // Construction de la requête
         $query = DB::table('offres')
             ->select([
@@ -162,6 +181,22 @@ class PageController extends Controller
     public function recherche(Request $req)
 {
     // Initialisation de la requête de base
+    if (!auth()->check()) {
+        return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder à cette page.');
+    }
+
+    // Récupérer l'utilisateur authentifié
+    $user = auth()->user();
+
+    // Vérifiez si l'utilisateur a un abonnement actif
+    $has_valid_subscription = Abonnement::where('idUser', $user->id)
+    ->where('dateFin', '>', now()) // Comparer la date de fin avec la date actuelle
+    ->exists(); // Vérifie si un tel abonnement existe
+
+
+    if ($has_valid_subscription) {
+        return redirect()->route('home')->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette page.');
+    }
     $query = DB::table('offres')
         ->select([
             'offres.*',

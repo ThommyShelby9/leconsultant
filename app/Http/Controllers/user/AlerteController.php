@@ -4,6 +4,7 @@ namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
 use App\Mail\AlerteNotification;
+use App\Models\Abonnement;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
@@ -171,6 +172,22 @@ class AlerteController extends Controller
     
 
     public function alertePage() {
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder à cette page.');
+        }
+    
+        // Récupérer l'utilisateur authentifié
+        $user = auth()->user();
+    
+        // Vérifiez si l'utilisateur a un abonnement actif
+        $has_valid_subscription = Abonnement::where('idUser', $user->id)
+        ->where('dateFin', '>', now()) // Comparer la date de fin avec la date actuelle
+        ->exists(); // Vérifie si un tel abonnement existe
+    
+    
+        if ($has_valid_subscription) {
+            return redirect()->route('home')->with('error', 'Vous devez avoir un abonnement actif pour accéder à cette page.');
+        }
         $ac = Autorite::all();
         $marches = Type::where('useFor', '!=', 'activite')->get();
         $domainesActivite = Type::where('useFor', 'activite')->get();
