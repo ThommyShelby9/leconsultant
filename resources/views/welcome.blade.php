@@ -56,7 +56,7 @@
                 backdrop: true,
                 // Ajout du contenu HTML pour intégrer le widget
                 html: `<kkiapay-widget 
-                    amount="1490" 
+                    amount="1" 
                     key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
                     data="1"
                     callback="{{ route('pack.payant' , 10 ) }} "
