@@ -58,7 +58,7 @@
                 html: `<kkiapay-widget 
                     amount="1" 
                     key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
-                    data="1"
+                    data="1490"
                     callback="{{ route('pack.payant' , 10 ) }} "
                     sandbox="false" 
                </kkiapay-widget>`,
@@ -237,7 +237,7 @@
         <p class="text-gray-700 text-lg lg:text-xl mb-8">
             Inscrivez-vous dès aujourd'hui et souscrivez à notre abonnement mensuel à seulement 1490 FCFA pour profiter de toutes les fonctionnalités et ne manquer aucune opportunité d'affaires.
         </p>
-        <a href="{{ route('register') }}" class="bg-consultant-rouge text-white py-3 px-6 rounded-lg text-lg">S'inscrire maintenant</a>
+        <a href="{{ route('register.morale') }}" class="bg-consultant-rouge text-white py-3 px-6 rounded-lg text-lg">S'inscrire maintenant</a>
     </div>
 </section>
 @endif
@@ -427,36 +427,73 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
 <script>
-    function handleLoadMore() {
-        // Vérifie si l'utilisateur est connecté
-        const isLoggedIn = @json(auth()->check());
+function handleLoadMore() {
+    // Vérifie si l'utilisateur est connecté
+    const isLoggedIn = @json(auth()->check());
+    console.log('Utilisateur connecté:', isLoggedIn); // Debugging
 
-        if (!isLoggedIn) {
-            // Si l'utilisateur n'est pas connecté, affiche un message SweetAlert
-            swal({
-                title: "Erreur",
-                text: "Vous devez être connecté et avoir un abonnement pour voir plus d'offres.",
-                icon: "warning",
-                buttons: {
-                    cancel: "Annuler",
-                    confirm: {
-                        text: "Se connecter",
-                        value: true,
-                        visible: true,
-                        className: "bg-consultant-rouge text-white",
-                    },
-                },
-            }).then((willRedirect) => {
-                if (willRedirect) {
-                    // Redirige vers la page de connexion ou d'abonnement
-                    window.location.href = '/register'; // Remplace par l'URL de la page de connexion
-                }
-            });
-        } else {
-            // Si l'utilisateur est connecté, redirige vers la page d'appel d'offres
-            window.location.href = '/appels-d-offres'; // Remplace par l'URL de la page d'appel d'offres
-        }
+    if (!isLoggedIn) {
+        console.log('Utilisateur non connecté, affichage de SweetAlert'); // Debugging
+        // Si l'utilisateur n'est pas connecté, affiche un message SweetAlert
+        swal({
+            title: "Abonnement requis! Veuillez souscrire à l'abonnement mensuel de 1490 FCFA afin de pouvoir accéder à cette fonctionnalité!",
+            icon: 'warning',
+            showCancelButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            backdrop: true,
+            // Ajout du contenu HTML pour intégrer le widget
+            html: `<kkiapay-widget 
+                amount="1" 
+                key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
+                data="1490"
+                callback="{{ route('pack.payant', 10) }}"
+                sandbox="false" 
+            </kkiapay-widget>`,
+
+            onBeforeOpen: () => {
+                // Initialiser l'événement de succès et d'échec
+                const widget = document.querySelector('kkiapay-widget');
+                console.log(widget)
+                widget.addEventListener('success', function(response) {
+                    console.log('Réponse de Kkiapay:', response.detail);
+                    Swal.fire({
+                        title: 'Paiement réussi',
+                        text: "Votre abonnement a été activé avec succès.",
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                });
+
+                widget.addEventListener('failed', function(error) {
+                    console.error('Erreur Kkiapay:', error.detail);
+                    Swal.fire({
+                        title: 'Erreur',
+                        text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
+                        icon: 'error',
+                        confirmButtonText: 'Réessayer'
+                    });
+                });
+
+                // Déclencher le paiement
+                widget.payment(); // Ouvrir le widget
+            },
+        }).then((willRedirect) => {
+            if (willRedirect) {
+                // Redirige vers la page de connexion ou d'abonnement
+                window.location.href = '/login'; // Remplace par l'URL de la page de connexion
+            }
+        });
+    } else {
+        console.log('Utilisateur connecté, redirection'); // Debugging
+        // Si l'utilisateur est connecté, redirige vers la page d'appel d'offres
+        window.location.href = '/appels-d-offres'; // Remplace par l'URL de la page d'appel d'offres
     }
+}
+
 </script>
 
 
