@@ -28,16 +28,6 @@
             Appel d'Offres
         </a>
     </li>
-    <li class="text-consultant-blue text-lg font-medium px-7 py-2">
-        <a href="{{ Route('pageFormation') }}">
-            Formations
-        </a>
-    </li>
-    <li class="text-consultant-blue text-lg font-medium px-7 py-2">
-        <a href="{{ Route('pageService') }}">
-            Nos services
-        </a>
-    </li>
 
     @auth
 
