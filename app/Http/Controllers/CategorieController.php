@@ -83,13 +83,25 @@ class CategorieController extends Controller
     public function delete($id)
     {
         try {
+            // Trouver la catégorie par son ID
             $category = Categorie::findOrFail($id);
+    
+            // Supprimer la catégorie
             $category->delete();
-            return response()->json(['success' => true]);
+    
+            // Rediriger avec un message de succès
+            return redirect()->route('admin.categorie.list')->with('msg-success', 'La catégorie a été supprimée avec succès.');
+    
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Si la catégorie n'est pas trouvée, rediriger avec un message d'erreur
+            return redirect()->route('admin.categorie.list')->with('msg-error', 'La catégorie n\'existe pas.');
+    
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            // Rediriger avec un message d'erreur si une autre erreur survient
+            return redirect()->route('admin.categorie.list')->with('msg-error', 'Erreur lors de la suppression : ' . $e->getMessage());
         }
     }
+    
 
 
 }

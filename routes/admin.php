@@ -15,6 +15,8 @@ use App\Http\Controllers\OffreController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\PageserviceController;
+use App\Http\Controllers\OffreController as ControllersOffreController;
+
 
 Route::prefix('admin')->name('admin.')->group(function(){
 
@@ -65,6 +67,11 @@ Route::prefix('admin')->name('admin.')->group(function(){
         Route::post('save', [CategorieController::class , 'edit_save'] )
             ->middleware('auth:admin')
             ->name('categorie.edit.save');
+
+        Route::delete('admin/delete/{id}', [CategorieController::class, 'delete'])
+        ->middleware('auth:admin')
+        ->name('ca.delete');
+
     });
 
     //Les autorités contractantes
@@ -203,6 +210,13 @@ Route::prefix('admin')->name('admin.')->group(function(){
             ->middleware('auth:admin')
             ->name('type.save.edit');
 
+
+        Route::delete('/admin/type/delete/{id}', [TypeController::class, 'delete'])
+        ->middleware('auth:admin')
+        ->name('da.delete');
+
+
+
     });
 
     //Les abonnements
@@ -255,6 +269,11 @@ Route::prefix('admin')->name('admin.')->group(function(){
             ->middleware('auth:admin')
             ->name('offre.see')
             ->where("id","[0-9]+");
+        
+        Route::delete('/admin/offre/delete/{id}', [OffreController::class, 'delete'])
+        ->middleware('auth:admin')
+        ->name('offre.delete');
+
 
     });
 

@@ -18,6 +18,7 @@ use App\Models\Type;
 use App\Models\Type_Offre;
 use App\Models\User;
 use App\Notifications\OffreCorrespondante;
+use Illuminate\Support\Facades\Log;
 
 class OffreController extends Controller
 {
@@ -211,17 +212,23 @@ class OffreController extends Controller
         return view('adminView.offre.voir', ['offre' => $offre]);
     }
 
-    public function delete_offre($id)
+    public function delete($id)
     {
-        // Trouver l'offre par son ID
-        $offre = Offre::findOrFail($id);
-
-        // Supprimer l'offre
-        $offre->delete();
-
-        // Rediriger avec un message de succès
-        return redirect()->route('admin.offre.list')->with('msg-success', 'L\'offre a été supprimée avec succès.');
+        try {
+            // Trouver l'offre par son ID
+            $offre = Offre::findOrFail($id);
+            // Supprimer l'offre
+            $offre->delete();
+            // Rediriger avec un message de succès
+            return redirect()->route('admin.offre.list')->with('msg-success', 'L\'offre a été supprimée avec succès.');
+        } catch (\Exception $e) {
+            // Affichez l'erreur dans les logs
+            Log::error('Erreur de suppression : '.$e->getMessage());
+            // Rediriger avec un message d'erreur
+            return redirect()->route('admin.offre.list')->with('msg-error', 'Erreur lors de la suppression de l\'offre.');
+        }
     }
+    
 
     public function getOfferDetails($id) {
         $offre = Offre::find($id);

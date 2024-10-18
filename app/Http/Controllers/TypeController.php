@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Administrateur;
 use App\Models\Type;
+use Illuminate\Support\Facades\Log;
 
 class TypeController extends Controller
 {
@@ -55,6 +56,27 @@ class TypeController extends Controller
         return redirect()->route('admin.type.list')
                 ->with('msg-success', "Donnée bien modfiée.");
     }
+
+
+    public function delete($id)
+{
+    try {
+        // Trouver l'offre par son ID
+        $offre = Type::findOrFail($id);
+
+        // Supprimer l'offre
+        $offre->delete();
+
+        // Rediriger avec un message de succès
+        return redirect()->route('admin.type.list')->with('msg-success', 'L\'élément a été supprimé avec succès.');
+    } catch (\Exception $e) {
+        // Affichez l'erreur dans les logs pour le suivi
+        Log::error('Erreur lors de la suppression de l\'offre : '.$e->getMessage());
+
+        // Rediriger avec un message d'erreur
+        return redirect()->route('admin.type.list')->with('msg-error', 'Erreur lors de la suppression de l\'offre.');
+    }
+}
 
 
 }
