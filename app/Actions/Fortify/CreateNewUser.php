@@ -126,19 +126,23 @@ class CreateNewUser implements CreatesNewUsers
     }
 }
 
-
 public function verify(Request $request, $email)
 {
+    // Récupérer l'utilisateur correspondant à l'email
     $user = User::where('email', $email)->first();
 
+    // Vérifier si l'utilisateur existe et si le lien est valide
     if (!$user || !$request->hasValidSignature()) {
         abort(404);
     }
 
-    $user->update([
-        'email_verified_at' => now(),
-    ]);
+    // Mettre à jour l'email_verified_at
+    $user->email_verified_at = now();
+    
+    // Sauvegarder les modifications
+    $user->save();
 
+    // Rediriger vers la page de connexion avec un message de succès
     return redirect()->route('login')->with('success', 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.');
 }
 

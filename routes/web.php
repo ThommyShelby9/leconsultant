@@ -148,7 +148,6 @@ Route::middleware(['auth:web' ])->group(function() {
     Route::get('/settings',[CompteController::class , 'mesSettings'])
     ->name('mesSetting');
 
-    Route::get('/email/verify/{email}', [CreateNewUser::class, 'verify'])->name('email_verified');
 
     Route::post('/save-transaction', [AbonnementController::class, 'handleCallback'])->name('save-transaction');
 
@@ -159,6 +158,9 @@ Route::middleware(['auth:web' ])->group(function() {
 
 
 });
+
+Route::get('/email/verify/{email}', [CreateNewUser::class, 'verify'])->name('email_verified');
+
 
 require __DIR__.'/admin.php';
 

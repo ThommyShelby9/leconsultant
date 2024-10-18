@@ -58,7 +58,7 @@
                 html: `<kkiapay-widget 
                     amount="1" 
                     key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
-                    data="1490"
+                    data="1"
                     callback="{{ route('pack.payant' , 10 ) }} "
                     sandbox="false" 
                </kkiapay-widget>`,
@@ -447,8 +447,8 @@ function handleLoadMore() {
             html: `<kkiapay-widget 
                 amount="1" 
                 key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
-                data="1490"
-                callback="{{ route('pack.payant', 10) }}"
+                data="1"
+                callback="/subscription"
                 sandbox="false" 
             </kkiapay-widget>`,
 
