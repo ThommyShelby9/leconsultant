@@ -299,112 +299,61 @@
     });
 </script>
 
+
 <script>
+    function sendAjaxRequest(url, data, targetElement, defaultOption, errorMessage) {
+        var _token = '{{ csrf_token() }}';
+
+        $.ajax({
+            url: url,
+            data: { ...data, _token },
+            dataType: 'JSON',
+            type: 'POST',
+            success: function(response) {
+                $(targetElement).empty().append(`<option value="null">${defaultOption}</option>`);
+                response.forEach(element => {
+                    var option = `<option value="${element['id'] || element['abreviation']}">${element['name']}</option>`;
+                    $(targetElement).append(option);
+                });
+            },
+            error: function() {
+                alert(errorMessage);
+            }
+        });
+    }
+
     function AfficherServ() {
         var idAc = document.getElementById('autorite').value;
-
-
         if (idAc != 0) {
-
-            col = '<option value="Toutes les directions">Toutes les directions</option>';
-            $("#service").empty();
-            $("#service").append(col);
-
-            $(function() {
-
-                var _token = '<?php echo csrf_token(); ?>';
-
-
-                $.ajax({
-
-                    url: '{{ route("afficher-direction") }}',
-                    data: {
-                        idAc: idAc,
-                        _token
-                    },
-                    dataType: 'JSON',
-                    type: 'POST',
-                    encode: true,
-                    success: function(data) {
-                        //alert(data);
-                        //console.log("Debut");
-                        var col;
-                        data.forEach(element => {
-
-
-
-                            col = '<option value="' + element['abreviation'] + '">' + element['name'] + '</option>';
-
-                            $("#service").append(col);
-                            console.log(col);
-
-                        });
-                        //console.log("Fin debug");
-
-                    },
-                    failure: function() {
-                        alert("Error Direc");
-                    }
-                });
-
-            })
-
+            sendAjaxRequest(
+                '{{ route("afficher-direction") }}', 
+                { idAc: idAc },
+                '#service', 
+                'Toutes les directions', 
+                'Erreur lors du chargement des directions'
+            );
         } else {
-
             $("#service").empty();
         }
     }
-
 
     function AfficherAC() {
         var idCateg = document.getElementById('categorie').value;
-
         if (idCateg != 0) {
-
-            col = '<option value="null">Choisir A.C</option>';
-            $("#autorite").empty();
-            $("#autorite").append(col);
-
-            $(function() {
-                var _token = '<?php echo csrf_token(); ?>';
-                console.log("AC Debut ajax");
-                $.ajax({
-                    url: '{{ route("ajax-ac") }}',
-                    data: {
-                        idCateg: idCateg,
-                        _token
-                    },
-                    dataType: 'JSON',
-                    type: 'POST',
-                    encode: true,
-                    success: function(data) {
-                        //console.log("AC Ca marche 1");
-                        var col;
-                        data.forEach(element => {
-                            col = '<option value="' + element['id'] + '">' + element['name'] + '</option>';
-
-
-                            $("#autorite").append(col);
-                            //console.log(col);
-
-
-                        });
-
-                    },
-                    failure: function() {
-                        alert("Error AC");
-                    }
-                });
-                //console.log("AC Fin ajax");
-            })
-
-        } else {
-
-            $("#autorite").empty();
+            sendAjaxRequest(
+                '{{ route("ajax-ac") }}', 
+                { idCateg: idCateg }, 
+                '#autorite', 
+                'Choisir A.C', 
+                'Erreur lors du chargement des autorités compétentes'
+            );
             $("#service").empty();
+        } else {
+            $("#autorite, #service").empty();
         }
     }
 </script>
+
 
 
 @endsection
