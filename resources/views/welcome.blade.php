@@ -45,8 +45,8 @@
             }
 
             Swal.fire({
-                title: "Abonnement requis! Veuillez souscrire à l'abonnement mensuel de 1490 FCFA afin de pouvoir accéder à la plateforme.",
-                text: "Veuillez souscrire à l'abonnement mensuel de 1490 FCFA afin de pouvoir accéder à la plateforme.",
+                title: "Abonnement requis! Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
+                text: "Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
                 icon: 'warning',
                 showCancelButton: false,
                 confirmButtonText: 'Souscrire',
@@ -56,9 +56,9 @@
                 backdrop: true,
                 // Ajout du contenu HTML pour intégrer le widget
                 html: `<kkiapay-widget 
-                    amount="1490" 
+                    amount="1" 
                     key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
-                    data="1490"
+                    data="1"
                     callback="{{ route('pack.payant' , 10 ) }} "
                     sandbox="false" 
                </kkiapay-widget>`,
@@ -444,43 +444,7 @@ function handleLoadMore() {
             allowEnterKey: false,
             backdrop: true,
             // Ajout du contenu HTML pour intégrer le widget
-            html: `<kkiapay-widget 
-                amount="1490" 
-                key="2a9363b7c6c78cf76717f8895a561990f39bac73" 
-                data="1490"
-                callback="/subscription"
-                sandbox="false" 
-            </kkiapay-widget>`,
-
-            onBeforeOpen: () => {
-                // Initialiser l'événement de succès et d'échec
-                const widget = document.querySelector('kkiapay-widget');
-                console.log(widget)
-                widget.addEventListener('success', function(response) {
-                    console.log('Réponse de Kkiapay:', response.detail);
-                    Swal.fire({
-                        title: 'Paiement réussi',
-                        text: "Votre abonnement a été activé avec succès.",
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                });
-
-                widget.addEventListener('failed', function(error) {
-                    console.error('Erreur Kkiapay:', error.detail);
-                    Swal.fire({
-                        title: 'Erreur',
-                        text: "Une erreur est survenue lors du paiement. Veuillez réessayer.",
-                        icon: 'error',
-                        confirmButtonText: 'Réessayer'
-                    });
-                });
-
-                // Déclencher le paiement
-                widget.payment(); // Ouvrir le widget
-            },
+           ,
         }).then((willRedirect) => {
             if (willRedirect) {
                 // Redirige vers la page de connexion ou d'abonnement
