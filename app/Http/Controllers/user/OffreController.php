@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
+use App\Models\Abonnement;
 use App\Models\Autorite;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Offre;
 use App\Models\Type;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class OffreController extends Controller
 {
@@ -37,7 +39,27 @@ class OffreController extends Controller
 
     
     public function rechercher(Request $req)
+
     {
+
+            // Vérifier si l'utilisateur est connecté
+    if (!auth()->check()) {
+        // Afficher une alerte SweetAlert pour inviter à se connecter
+        Alert::error('Non connecté', 'Vous devez vous connecter pour effectuer une recherche.');
+        return redirect()->back();
+    }
+
+    // Vérifier si l'utilisateur a un abonnement valide
+    $user = auth()->user();
+     // Vérifiez si l'utilisateur a un abonnement actif
+     $has_valid_subscription = Abonnement::where('idUser', $user->id)
+     ->where('dateFin', '>', now()) // Comparer la date de fin avec la date actuelle
+     ->exists(); // Vérifie si un tel abonnement existe
+    if (!$user->$has_valid_subscription) {
+        // Afficher une alerte SweetAlert pour informer de l'abonnement nécessaire
+        Alert::warning('Abonnement requis', 'Vous devez avoir un abonnement actif pour effectuer une recherche.');
+        return redirect()->back();
+    }
         // Initialisation de la requête de base
         $query = DB::table('offres')
             ->select([

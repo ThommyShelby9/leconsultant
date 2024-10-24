@@ -115,7 +115,10 @@
 @endif
 @endif
 
+@include('sweetalert::alert') <!-- Inclus pour afficher les alertes -->
 
+<!-- Vos scripts -->
+<script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
 <section id="banner" class="relative overflow-hidden">
     <div class="bg-consultant-blue lg:pt-32 lg:pb-48 pt-6 pb-6">
         <div class="container mx-auto px-0 lg:px-0">
@@ -134,7 +137,7 @@
             </div>
         </div>
     </div>
-    @if($user)
+
     <div class="bg-consultant-rouge lg:pt-12 lg:pb-12 py-6">
         <div class="container mx-auto px-0 lg:px-0">
             <div class="flex flex-wrap">
@@ -176,7 +179,6 @@
         </div>
     </div>
 
-    @endif
     <div data-aos="fade-left" class="absolute lg:right-[-30%] xl:right-[0%] xl:top-0 lg:bottom-0 lg:block hidden">
         <img src="{{ asset('assets/img/Photo%201.png') }}" alt="" class="xl:w-full lg:w-3/5">
     </div>
