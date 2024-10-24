@@ -49,7 +49,6 @@
                 text: "Veuillez souscrire à l'abonnement unique de 1490 FCFA afin de pouvoir accéder à la plateforme.",
                 icon: 'warning',
                 showCancelButton: false,
-                confirmButtonText: 'Souscrire',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 allowEnterKey: false,
