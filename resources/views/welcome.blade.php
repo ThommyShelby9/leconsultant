@@ -134,7 +134,7 @@
             </div>
         </div>
     </div>
-
+    @if($user)
     <div class="bg-consultant-rouge lg:pt-12 lg:pb-12 py-6">
         <div class="container mx-auto px-0 lg:px-0">
             <div class="flex flex-wrap">
@@ -176,7 +176,7 @@
         </div>
     </div>
 
-
+    @endif
     <div data-aos="fade-left" class="absolute lg:right-[-30%] xl:right-[0%] xl:top-0 lg:bottom-0 lg:block hidden">
         <img src="{{ asset('assets/img/Photo%201.png') }}" alt="" class="xl:w-full lg:w-3/5">
     </div>
@@ -435,16 +435,6 @@ function handleLoadMore() {
     if (!isLoggedIn) {
         console.log('Utilisateur non connecté, affichage de SweetAlert'); // Debugging
         // Si l'utilisateur n'est pas connecté, affiche un message SweetAlert
-        swal({
-            title: "Abonnement requis! Veuillez souscrire à l'abonnement mensuel de 1490 FCFA afin de pouvoir accéder à cette fonctionnalité!",
-            icon: 'warning',
-            showCancelButton: false,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            backdrop: true,
-            // Ajout du contenu HTML pour intégrer le widget
-           ,
         }).then((willRedirect) => {
             if (willRedirect) {
                 // Redirige vers la page de connexion ou d'abonnement

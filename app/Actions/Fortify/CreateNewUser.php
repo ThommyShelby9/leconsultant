@@ -111,15 +111,22 @@ class CreateNewUser implements CreatesNewUsers
             ['email' => $user->email]  // Utilisez ->email pour accéder à l'email de l'objet utilisateur
         );
 
-        Mail::send('emails.company_mail', [
-            'url' => $url, 
-            'nomSociete' => $user->nomSociete
-        ], function ($message) use ($user) {
-            $config = config('mail');
-            $message->subject('Registration verification !')
-                ->from($config['from']['address'], $config['from']['name'])
-                ->to($user->email, $user->nomSociete);
-        });
+        try {
+            Mail::send('emails.company_mail', [
+                'url' => $url,
+                'nomSociete' => $user->nomSociete
+            ], function ($message) use ($user) {
+                $config = config('mail');
+                $message->subject('Registration verification!')
+                    ->from($config['from']['address'], $config['from']['name'])
+                    ->to($user->email, $user->nomSociete);
+            });
+            
+            return 'E-mail envoyé !';
+        } catch (\Exception $e) {
+            return 'Erreur lors de l\'envoi : ' . $e->getMessage();
+        }
+        
 
         return redirect()->route('register')->with('status', 'Un email de confirmation vous a été envoyé. Veuillez vérifier votre boîte de réception.');
 
