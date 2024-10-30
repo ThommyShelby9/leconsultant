@@ -127,6 +127,7 @@ class AbonnementController extends Controller
             $newAbon->dateDebut = date('Y-m-d');
             $newAbon->dateFin = date('Y-m-d', strtotime('+' . $pack_month . ' months'));
             $newAbon->save(); // Sauvegarder le nouvel abonnement
+
     
             // Mettre à jour la situation de l'utilisateur
             $user = User::find(Auth::user()->id);
