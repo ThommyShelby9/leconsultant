@@ -90,7 +90,7 @@
                 <div class="w-full lg:w-4/5 lg:pl-6">
                     <a href="javascript:void(0);" class="text-xl lg:text-3xl font-bold text-black mb-2 block" 
                         onclick="handleOfferClick('{{ $item->id }}')">
-                        {{ $item->titre }}
+                        {{ Str::limit($item->titre, 10) }}
                     </a>
                     
                     <p class="text-consultant-blue text-xl font-medium mb-2">
