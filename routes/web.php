@@ -151,6 +151,9 @@ Route::middleware(['auth:web' ])->group(function() {
 
     Route::post('/save-transaction', [AbonnementController::class, 'handleCallback'])->name('save-transaction');
 
+    // Nouvelles routes PayPlus
+    Route::post('/subscription/initiate/{packId}', [AbonnementController::class, 'initiateSubscription'])->name('subscription.initiate');
+    Route::post('/formation/initiate/{formationId}', [\App\Http\Controllers\user\FormationTicketController::class, 'initiateFormationPayment'])->name('formation.initiate');
 
     Route::delete('admin/delete/{id}', [CategorieController::class, 'delete'])->name('admin.ca.delete');
 

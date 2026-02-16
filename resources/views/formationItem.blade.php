@@ -90,17 +90,29 @@
             <hr class="lg:w-4/5 w-full my-6">
         </div>
         <div class="mt-12">
-
-
             @auth
-                <kkiapay-widget
-                    amount="{{$formation->prix}}"
-                    key="85abcb60ae8311ecb9755de712bc9e4f"
-                    url="<url-vers-votre-logo>"
-                        position="center" sandbox="true"
-                        data=""
-                    callback="{{ route('ticket.formation', $formation->id ) }} ">
-                </kkiapay-widget>
+            <div class="bg-white shadow-lg rounded-lg p-8 max-w-md">
+                <h3 class="text-2xl font-bold text-consultant-blue mb-4">Inscription à la formation</h3>
+                <div class="mb-4">
+                    <p class="text-3xl font-bold text-consultant-rouge">{{ $formation->prix }} FCFA</p>
+                </div>
+                <form action="{{ route('formation.initiate', ['formationId' => $formation->id]) }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Numéro de téléphone Mobile Money</label>
+                        <input type="tel"
+                               name="phone"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-consultant-rouge focus:border-transparent"
+                               placeholder="Ex: 97000000"
+                               pattern="[0-9]{8,15}"
+                               required>
+                        <small class="text-gray-500 text-xs">Format: 8 à 15 chiffres</small>
+                    </div>
+                    <button type="submit" class="w-full bg-consultant-rouge text-white py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-300 font-semibold text-lg">
+                        Payer et obtenir mon ticket
+                    </button>
+                </form>
+            </div>
             @else
             <a href="{{ route('login') }}">
                 <button class="inline-block lg:text-2xl text-lg text-consultant-rouge font-semibold border border-consultant-rouge bg-white rounded px-12 py-4 hover:bg-consultant-rouge hover:text-white transition">
@@ -115,6 +127,6 @@
 @endsection
 
 @section('code')
-<script src="https://cdn.kkiapay.me/k.js"></script>
+{{-- PayPlus - Pas de script nécessaire --}}
 @endsection
 

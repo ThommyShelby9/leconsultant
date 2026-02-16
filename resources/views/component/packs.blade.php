@@ -34,14 +34,27 @@
                         </ul>
                     </div>
                     <div class="text-center my-4">
-                        <kkiapay-widget
-                            amount="{{$item->prix}}"
-                            key="85abcb60ae8311ecb9755de712bc9e4f"
-                            url="<url-vers-votre-logo>"
-                                position="center" sandbox="true"
-                                data="{{$item->id}}"
-                            callback="{{ route('pack.payant' , 10 ) }} ">
-                        </kkiapay-widget>
+                        @auth
+                        <form action="{{ route('subscription.initiate', ['packId' => $item->id]) }}" method="POST" class="space-y-3">
+                            @csrf
+                            <div>
+                                <input type="tel"
+                                       name="phone"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-consultant-rouge focus:border-transparent"
+                                       placeholder="Numéro : 97000000"
+                                       pattern="[0-9]{8,15}"
+                                       required>
+                                <small class="text-gray-500 text-xs">Format: 8 à 15 chiffres</small>
+                            </div>
+                            <button type="submit" class="w-full bg-consultant-rouge text-white py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-300 font-semibold">
+                                Souscrire - {{$item->prix}} FCFA
+                            </button>
+                        </form>
+                        @else
+                        <a href="{{ route('login') }}" class="block w-full bg-consultant-blue text-white py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-300 font-semibold">
+                            Se connecter pour souscrire
+                        </a>
+                        @endauth
                     </div>
                     <!--div class="flex mt-24 mb-12">
                         <a href="" class="py-4 px-16 border text-center border-consultant-rouge2 rounded-full w-full bg-white">

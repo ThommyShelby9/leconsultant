@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 use App\Models\Formationticket;
+use App\Models\Formation;
 use App\Models\User;
+use App\Services\PaymentService;
+use RealRashid\SweetAlert\Facades\Alert;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -20,6 +23,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class FormationTicketController extends Controller
 {
+    protected $paymentService;
+
+    public function __construct(PaymentService $paymentService)
+    {
+        $this->paymentService = $paymentService;
+    }
     function exemple(){
         $data = [
             'title' => 'Welcome to Tutsmake.com',
@@ -92,6 +101,50 @@ class FormationTicketController extends Controller
             return redirect()->route('mesformations')->with();
         }
 
+    }
+
+    /**
+     * Initier le paiement d'une formation avec PayPlus
+     */
+    public function initiateFormationPayment(Request $request, $formationId)
+    {
+        try {
+            // Valider les données
+            $request->validate([
+                'phone' => 'required|string|regex:/^[0-9]{8,15}$/',
+            ]);
+
+            // Récupérer la formation
+            $formation = Formation::find($formationId);
+
+            if (!$formation) {
+                Alert::error('Erreur', 'Formation introuvable');
+                return redirect()->back();
+            }
+
+            // Montant de la formation
+            $amount = $formation->prix;
+
+            // Initier le paiement via PayPlus
+            $result = $this->paymentService->initiateFormationPayment(
+                Auth::user()->id,
+                $amount,
+                $request->input('phone'),
+                $formationId
+            );
+
+            if ($result['success']) {
+                // Rediriger vers la page PayPlus
+                return redirect()->away($result['redirect_url']);
+            } else {
+                Alert::error('Erreur', $result['message']);
+                return redirect()->back();
+            }
+
+        } catch (\Exception $e) {
+            Alert::error('Erreur', 'Une erreur est survenue lors de l\'initialisation du paiement');
+            return redirect()->back();
+        }
     }
 
     function DownTicket(Request $req){

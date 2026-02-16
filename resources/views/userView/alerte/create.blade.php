@@ -70,5 +70,5 @@
 @endsection
 
 @section('code')
-    <script src="https://cdn.kkiapay.me/k.js"></script>
+    {{-- Pas de script nécessaire --}}
 @endsection

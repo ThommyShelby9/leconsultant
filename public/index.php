@@ -1,5 +1,8 @@
 <?php
 
+// Masquer les avertissements de dépréciation PHP 8.2
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 

@@ -1,8 +1,7 @@
 @extends('layout.userLayout.template-profil')
 
 @section('titre')
-<script src="https://cdn.kkiapay.me/k.js"></script>
-<title>Le consultant | Appels d'Offres</title>
+<title>Le consultant | Mes Abonnements</title>
 @endsection
 
 @section('banner')
@@ -106,5 +105,5 @@
 @endsection
 
 @section('code')
-<script src="https://cdn.kkiapay.me/k.js"></script>
+{{-- PayPlus - Pas de script nécessaire ici --}}
 @endsection
