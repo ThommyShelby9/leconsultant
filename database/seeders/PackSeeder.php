@@ -16,14 +16,14 @@ class PackSeeder extends Seeder
 {
     public function run()
     {
-
-        Pack::create([
-            'titre' => 'Unique',
-            'payant' => true,
-            'prix' => 1490,
-            'nombre' => 1,
-            'modalite' => "Mois"
-        ]);
-
+        Pack::updateOrCreate(
+            ['titre' => 'Unique'],
+            [
+                'payant' => true,
+                'prix' => 1490,
+                'nombre' => 1,
+                'modalite' => "Mois"
+            ]
+        );
     }
 }
