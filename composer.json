@@ -19,7 +19,8 @@
         "livewire/livewire": "^2.10",
         "realrashid/sweet-alert": "^7.2",
         "serpapi/google-search-results-php": "^1.2",
-        "simplesoftwareio/simple-qrcode": "^4.2"
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "symfony/css-selector": "^7.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
