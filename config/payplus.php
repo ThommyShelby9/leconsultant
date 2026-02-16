@@ -46,10 +46,10 @@ return [
 
     // Montants des packs (en FCFA)
     'packs' => [
-        'essai' => 0, // Gratuit
-        'mensuel' => 50, // TEST
-        '3_mois' => 50, // TEST
-        '6_mois' => 50, // TEST
-        '12_mois' => 50, // TEST
+        'essai' => 0,
+        'mensuel' => 1490,
+        '3_mois' => 4000,
+        '6_mois' => 7500,
+        '12_mois' => 14000,
     ],
 ];

@@ -47,8 +47,8 @@
                             <small class="text-gray-500">Format: 8 à 15 chiffres</small>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-blue-600 mb-2">50 FCFA</p>
-                            <p class="text-sm text-gray-600">Abonnement mensuel (TEST)</p>
+                            <p class="text-2xl font-bold text-blue-600 mb-2">1490 FCFA</p>
+                            <p class="text-sm text-gray-600">Abonnement mensuel</p>
                         </div>
                     </form>
                 </div>

@@ -154,8 +154,7 @@ class PaymentService
                 'amount' => $amount
             ]);
 
-            $response = Http::withoutVerifying() // ⚠️ Désactive SSL pour développement local
-                ->timeout(30)
+            $response = Http::timeout(30)
                 ->withHeaders($headers)
                 ->post($this->payPlusBaseUrl . $endpoint, $payload);
 
@@ -320,8 +319,7 @@ class PaymentService
             // Appeler l'API PayPlus pour vérifier le statut
             $endpoint = '/pay/v01/redirect/checkout-invoice/confirm';
 
-            $response = Http::withoutVerifying() // ⚠️ Désactive SSL pour développement local
-                ->timeout(15)
+            $response = Http::timeout(15)
                 ->withHeaders([
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Bearer ' . $this->payPlusApiToken,
