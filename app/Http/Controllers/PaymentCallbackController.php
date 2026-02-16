@@ -24,10 +24,12 @@ class PaymentCallbackController extends Controller
      */
     public function handleCallback(Request $request, $type, $transactionId)
     {
-        Log::info('PayPlus callback received', [
+        Log::info('🔔 PayPlus callback received', [
             'type' => $type,
             'transaction_id' => $transactionId,
-            'data' => $request->all()
+            'data' => $request->all(),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent()
         ]);
 
         // Traiter le callback
@@ -37,16 +39,30 @@ class PaymentCallbackController extends Controller
         );
 
         if ($success) {
+            Log::info('✅ Callback processed successfully', [
+                'transaction_id' => $transactionId
+            ]);
+
             // Récupérer la transaction
             $transaction = PaymentTransaction::find($transactionId);
 
             if ($transaction && $transaction->isCompleted()) {
+                Log::info('🎯 Transaction completed, activating service', [
+                    'transaction_id' => $transactionId,
+                    'type' => $type
+                ]);
+
                 // Activer l'abonnement ou la formation selon le type
                 if ($type === 'subscription') {
                     $this->activateSubscription($transaction);
                 } elseif ($type === 'formation') {
                     $this->activateFormation($transaction);
                 }
+            } else {
+                Log::warning('⚠️ Transaction not completed after callback', [
+                    'transaction_id' => $transactionId,
+                    'status' => $transaction ? $transaction->status : 'NOT_FOUND'
+                ]);
             }
 
             return response()->json([
@@ -54,6 +70,10 @@ class PaymentCallbackController extends Controller
                 'message' => 'Callback processed successfully'
             ], 200);
         }
+
+        Log::error('❌ Callback processing failed', [
+            'transaction_id' => $transactionId
+        ]);
 
         return response()->json([
             'status' => 'error',
@@ -70,12 +90,25 @@ class PaymentCallbackController extends Controller
             $packId = $transaction->related_id;
             $userId = $transaction->user_id;
 
+            Log::info('🚀 Starting subscription activation', [
+                'transaction_id' => $transaction->id,
+                'user_id' => $userId,
+                'pack_id' => $packId,
+                'amount' => $transaction->amount
+            ]);
+
             // Calculer les dates selon le pack
             $dateDebut = Carbon::now();
             $dateFin = $this->calculateSubscriptionEnd($packId);
 
+            Log::info('📅 Subscription dates calculated', [
+                'dateDebut' => $dateDebut->toDateTimeString(),
+                'dateFin' => $dateFin->toDateTimeString(),
+                'pack_id' => $packId
+            ]);
+
             // Créer ou mettre à jour l'abonnement
-            Abonnement::create([
+            $abonnement = Abonnement::create([
                 'idUser' => $userId,
                 'idPack' => $packId,
                 'montant' => $transaction->amount,
@@ -85,16 +118,22 @@ class PaymentCallbackController extends Controller
                 'transaction_id' => $transaction->id,
             ]);
 
-            Log::info('✅ Subscription activated', [
+            Log::info('✅ Subscription activated successfully', [
                 'transaction_id' => $transaction->id,
                 'user_id' => $userId,
-                'pack_id' => $packId
+                'pack_id' => $packId,
+                'abonnement_id' => $abonnement->id ?? 'N/A',
+                'dateDebut' => $dateDebut->toDateString(),
+                'dateFin' => $dateFin->toDateString()
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Subscription activation failed', [
+            Log::error('❌ Subscription activation failed', [
                 'transaction_id' => $transaction->id,
-                'error' => $e->getMessage()
+                'user_id' => $transaction->user_id ?? 'N/A',
+                'pack_id' => $transaction->related_id ?? 'N/A',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
     }
@@ -149,6 +188,32 @@ class PaymentCallbackController extends Controller
     }
 
     /**
+     * Page d'attente de confirmation de paiement
+     */
+    public function waitingPage($transactionId)
+    {
+        $transaction = PaymentTransaction::find($transactionId);
+
+        if (!$transaction) {
+            Log::error('❌ Transaction not found in waiting page', [
+                'transaction_id' => $transactionId
+            ]);
+            return redirect()->route('moncompte')
+                ->with('error', 'Transaction introuvable');
+        }
+
+        Log::info('📄 User on waiting page', [
+            'transaction_id' => $transactionId,
+            'status' => $transaction->status,
+            'user_id' => $transaction->user_id
+        ]);
+
+        return view('payment.waiting', [
+            'transaction' => $transaction
+        ]);
+    }
+
+    /**
      * Endpoint de test pour vérifier que les callbacks sont accessibles
      */
     public function testCallback()
@@ -161,47 +226,111 @@ class PaymentCallbackController extends Controller
     }
 
     /**
+     * Test simple pour vérifier le routage JSON
+     */
+    public function testJson()
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'JSON endpoint works',
+            'timestamp' => now()->toDateTimeString(),
+        ], 200);
+    }
+
+    /**
      * Vérifier le statut d'une transaction
      */
     public function checkStatus($transactionId)
     {
-        $transaction = PaymentTransaction::find($transactionId);
+        // Force JSON response headers
+        header('Content-Type: application/json');
 
-        if (!$transaction) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Transaction not found'
-            ], 404);
-        }
+        try {
+            Log::info('🔍 Checking transaction status', [
+                'transaction_id' => $transactionId
+            ]);
 
-        // Vérifier auprès de PayPlus si la transaction est en attente
-        if ($transaction->isPending()) {
-            $statusCheck = $this->paymentService->checkTransactionStatus($transactionId);
+            $transaction = PaymentTransaction::find($transactionId);
 
-            if ($statusCheck['success'] && $statusCheck['status'] === 'completed') {
-                // La transaction est complétée chez PayPlus mais pas chez nous
-                // Traiter le callback manuellement
-                $this->paymentService->processPaymentCallback($transactionId, [
-                    'response_code' => '00',
-                    'description' => 'completed',
-                    'auto_checked' => true,
+            if (!$transaction) {
+                Log::warning('❌ Transaction not found for status check', [
+                    'transaction_id' => $transactionId
                 ]);
 
-                // Recharger la transaction
-                $transaction->refresh();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Transaction not found'
+                ], 404);
             }
-        }
 
-        return response()->json([
-            'success' => true,
-            'transaction' => [
-                'id' => $transaction->id,
+            Log::info('📊 Transaction found', [
                 'status' => $transaction->status,
-                'amount' => $transaction->amount,
-                'type' => $transaction->type,
-                'created_at' => $transaction->created_at,
-                'completed_at' => $transaction->completed_at,
-            ]
-        ]);
+                'amount' => $transaction->amount
+            ]);
+
+            // Vérifier auprès de PayPlus si la transaction est en attente
+            if ($transaction->isPending()) {
+                Log::info('⏳ Transaction is pending, checking with PayPlus', [
+                    'transaction_id' => $transactionId
+                ]);
+
+                try {
+                    $statusCheck = $this->paymentService->checkTransactionStatus($transactionId);
+
+                    if ($statusCheck['success'] && isset($statusCheck['status']) && $statusCheck['status'] === 'completed') {
+                        Log::info('✅ PayPlus confirms completion, processing callback', [
+                            'transaction_id' => $transactionId
+                        ]);
+
+                        // La transaction est complétée chez PayPlus mais pas chez nous
+                        // Traiter le callback manuellement
+                        $this->paymentService->processPaymentCallback($transactionId, [
+                            'response_code' => '00',
+                            'description' => 'completed',
+                            'auto_checked' => true,
+                        ]);
+
+                        // Recharger la transaction
+                        $transaction->refresh();
+                    }
+                } catch (\Exception $payPlusError) {
+                    Log::warning('⚠️ Error checking with PayPlus', [
+                        'error' => $payPlusError->getMessage()
+                    ]);
+                    // Continue même si PayPlus check échoue
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'transaction' => [
+                    'id' => $transaction->id,
+                    'status' => $transaction->status,
+                    'amount' => $transaction->amount,
+                    'type' => $transaction->type,
+                    'created_at' => $transaction->created_at ? $transaction->created_at->toDateTimeString() : null,
+                    'completed_at' => $transaction->completed_at ? $transaction->completed_at->toDateTimeString() : null,
+                ]
+            ], 200);
+
+        } catch (\Throwable $e) {
+            Log::error('❌ Error in checkStatus', [
+                'transaction_id' => $transactionId ?? 'N/A',
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la vérification du statut',
+                'error' => $e->getMessage(),
+                'debug' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
+            ], 500);
+        }
     }
 }

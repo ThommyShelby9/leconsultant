@@ -1,141 +1,89 @@
-                                                     composer show laravel/framework
-PS O:\Projets\consultant\leconsultant>  composer show laravel/framework                                                                                                                                   
-name     : laravel/framework
-descrip. : The Laravel Framework.
-keywords : framework, laravel
-versions : * v8.83.29
-released : 2024-11-20, 1 year ago
-type     : library
-license  : MIT License (MIT) (OSI approved) https://spdx.org/licenses/MIT.html#licenseText
-homepage : https://laravel.com
-source   : [git] https://github.com/laravel/framework.git d841a226a50c715431952a10260ba4fac9e91cc4
-dist     : [zip] https://api.github.com/repos/laravel/framework/zipball/d841a226a50c715431952a10260ba4fac9e91cc4 d841a226a50c715431952a10260ba4fac9e91cc4
-path     : O:\Projets\consultant\leconsultant\vendor\laravel\framework
-names    : laravel/framework, psr/container-implementation, psr/simple-cache-implementation, illuminate/auth, illuminate/broadcasting, illuminate/bus, illuminate/cache, illuminate/collections, illuminate/config, illuminate/console, illuminate/container, illuminate/contracts, illuminate/cookie, illuminate/database, illuminate/encryption, illuminate/events, illuminate/filesystem, illuminate/hashing, illuminate/http, illuminate/log, illuminate/macroable, illuminate/mail, illuminate/notifications, illuminate/pagination, illuminate/pipeline, illuminate/queue, illuminate/redis, illuminate/routing, illuminate/session, illuminate/support, illuminate/testing, illuminate/translation, illuminate/validation, illuminate/view
 
-support
-issues : https://github.com/laravel/framework/issues
-source : https://github.com/laravel/framework
-
-autoload
-files
-psr-4
-Illuminate\ => src/Illuminate/
-Illuminate\Support\ => src/Illuminate/Macroable/, src/Illuminate/Collections/
-
-requires
-doctrine/inflector ^1.4|^2.0
-dragonmantank/cron-expression ^3.0.2
-egulias/email-validator ^2.1.10
-ext-json *
-ext-mbstring *
-ext-openssl *
-laravel/serializable-closure ^1.0
-league/commonmark ^1.3|^2.0.2
-league/flysystem ^1.1
-monolog/monolog ^2.0
-nesbot/carbon ^2.53.1
-opis/closure ^3.6
-php ^7.3|^8.0
-psr/container ^1.0
-psr/log ^1.0|^2.0
-psr/simple-cache ^1.0
-ramsey/uuid ^4.2.2
-swiftmailer/swiftmailer ^6.3
-symfony/console ^5.4
-symfony/error-handler ^5.4
-symfony/finder ^5.4
-symfony/http-foundation ^5.4
-symfony/http-kernel ^5.4
-symfony/mime ^5.4
-symfony/process ^5.4
-symfony/routing ^5.4
-symfony/var-dumper ^5.4
-tijsverkoyen/css-to-inline-styles ^2.2.2
-vlucas/phpdotenv ^5.4.1
-voku/portable-ascii ^1.6.1
-
-requires (dev)
-aws/aws-sdk-php ^3.198.1
-doctrine/dbal ^2.13.3|^3.1.4
-filp/whoops ^2.14.3
-guzzlehttp/guzzle ^6.5.5|^7.0.1
-league/flysystem-cached-adapter ^1.0
-mockery/mockery ^1.4.4
-orchestra/testbench-core ^6.27
-pda/pheanstalk ^4.0
-phpunit/phpunit ^8.5.19|^9.5.8
-predis/predis ^1.1.9
-symfony/cache ^5.4
-
-suggests
-ably/ably-php Required to use the Ably broadcast driver (^1.0).
-aws/aws-sdk-php Required to use the SQS queue driver, DynamoDb failed job storage and SES mail driver (^3.198.1).
-brianium/paratest Required to run tests in parallel (^6.0).
-doctrine/dbal Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).
-ext-bcmath Required to use the multiple_of validation rule.
-ext-ftp Required to use the Flysystem FTP driver.
-ext-gd Required to use Illuminate\Http\Testing\FileFactory::image().
-ext-memcached Required to use the memcache cache driver.
-ext-pcntl Required to use all features of the queue worker.
-ext-posix Required to use all features of the queue worker.
-ext-redis Required to use the Redis cache and queue drivers (^4.0|^5.0).
-fakerphp/faker Required to use the eloquent factory builder (^1.9.1).
-filp/whoops Required for friendly error pages in development (^2.14.3).
-guzzlehttp/guzzle Required to use the HTTP Client, Mailgun mail driver and the ping methods on schedules (^6.5.5|^7.0.1).
-laravel/tinker Required to use the tinker console command (^2.0).
-league/flysystem-aws-s3-v3 Required to use the Flysystem S3 driver (^1.0).
-league/flysystem-cached-adapter Required to use the Flysystem cache (^1.0).
-league/flysystem-sftp Required to use the Flysystem SFTP driver (^1.0).
-mockery/mockery Required to use mocking (^1.4.4).
-nyholm/psr7 Required to use PSR-7 bridging features (^1.2).
-pda/pheanstalk Required to use the beanstalk queue driver (^4.0).
-phpunit/phpunit Required to use assertions and run tests (^8.5.19|^9.5.8).
-predis/predis Required to use the predis connector (^1.1.9).
-psr/http-message Required to allow Storage::put to accept a StreamInterface (^1.0).
-pusher/pusher-php-server Required to use the Pusher broadcast driver (^4.0|^5.0|^6.0|^7.0).
-symfony/cache Required to PSR-6 cache bridge (^5.4).
-symfony/filesystem Required to enable support for relative symbolic links (^5.4).
-symfony/psr-http-message-bridge Required to use PSR-7 bridging features (^2.0).
-wildbit/swiftmailer-postmark Required to use Postmark mail driver (^3.0).
-
-provides
-psr/container-implementation 1.0
-psr/simple-cache-implementation 1.0
-
-conflicts
-tightenco/collect <5.5.33
-
-replaces
-illuminate/auth self.version
-illuminate/broadcasting self.version
-illuminate/bus self.version
-illuminate/cache self.version
-illuminate/collections self.version
-illuminate/config self.version
-illuminate/console self.version
-illuminate/container self.version
-illuminate/contracts self.version
-illuminate/cookie self.version
-illuminate/database self.version
-illuminate/encryption self.version
-illuminate/events self.version
-illuminate/filesystem self.version
-illuminate/hashing self.version
-illuminate/http self.version
-illuminate/log self.version
-illuminate/macroable self.version
-illuminate/mail self.version
-illuminate/notifications self.version
-illuminate/pagination self.version
-illuminate/pipeline self.version
-illuminate/queue self.version
-illuminate/redis self.version
-illuminate/routing self.version
-illuminate/session self.version
-illuminate/support self.version
-illuminate/testing self.version
-illuminate/translation self.version
-illuminate/validation self.version
-illuminate/view self.version
-PS O:\Projets\consultant\leconsultant> 
+[2026-02-16 16:17:58] local.ERROR: Erreur lors de la récupération des actualités: Invalid Country Identifier Provided  
+[2026-02-16 16:18:08] local.INFO: 🎫 User initiating subscription {"user_id":1,"pack_id":"10","phone":"61368424"} 
+[2026-02-16 16:18:08] local.ERROR: ❌ Pack not found {"pack_id":"10"} 
+[2026-02-16 16:18:08] local.ERROR: Erreur lors de la récupération des actualités: Invalid Country Identifier Provided  
+[2026-02-16 16:18:55] local.ERROR: Erreur lors de la récupération des actualités: Invalid Country Identifier Provided  
+[2026-02-16 16:19:01] local.INFO: 🎫 User initiating subscription {"user_id":1,"pack_id":"10","phone":"0161368424"} 
+[2026-02-16 16:19:01] local.ERROR: ❌ Pack not found {"pack_id":"10"} 
+[2026-02-16 16:19:02] local.ERROR: Erreur lors de la récupération des actualités: Invalid Country Identifier Provided  
+[2026-02-16 16:25:22] local.ERROR: Erreur lors de la récupération des actualités: Invalid Country Identifier Provided  
+[2026-02-16 16:25:29] local.INFO: 🎫 User initiating subscription {"user_id":1,"pack_id":"1","phone":"0161368424"} 
+[2026-02-16 16:25:29] local.INFO: 💵 Pack details {"pack_id":"1","amount":1490,"pack_name":"N/A"} 
+[2026-02-16 16:25:30] local.INFO: PayPlus Request {"endpoint":"https://app.payplus.africa/pay/v01/redirect/checkout-invoice/create","transaction_id":"3d1103ec-56d1-4f33-90e9-44e17b09224e","amount":1490} 
+[2026-02-16 16:25:31] local.ERROR: PayPlus initiation error {"error":"cURL error 60: SSL certificate problem: self-signed certificate in certificate chain (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://app.payplus.africa/pay/v01/redirect/checkout-invoice/create","trace":"#0 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Handler\\CurlFactory.php(207): GuzzleHttp\\Handler\\CurlFactory::createRejection(Object(GuzzleHttp\\Handler\\EasyHandle), Array)
+#1 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Handler\\CurlFactory.php(159): GuzzleHttp\\Handler\\CurlFactory::finishError(Object(GuzzleHttp\\Handler\\CurlHandler), Object(GuzzleHttp\\Handler\\EasyHandle), Object(GuzzleHttp\\Handler\\CurlFactory))
+#2 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Handler\\CurlHandler.php(47): GuzzleHttp\\Handler\\CurlFactory::finish(Object(GuzzleHttp\\Handler\\CurlHandler), Object(GuzzleHttp\\Handler\\EasyHandle), Object(GuzzleHttp\\Handler\\CurlFactory))
+#3 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Handler\\Proxy.php(28): GuzzleHttp\\Handler\\CurlHandler->__invoke(Object(GuzzleHttp\\Psr7\\Request), Array)
+#4 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Handler\\Proxy.php(48): GuzzleHttp\\Handler\\Proxy::{closure:GuzzleHttp\\Handler\\Proxy::wrapSync():27}(Object(GuzzleHttp\\Psr7\\Request), Array)
+#5 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Client\\PendingRequest.php(945): GuzzleHttp\\Handler\\Proxy::{closure:GuzzleHttp\\Handler\\Proxy::wrapStreaming():47}(Object(GuzzleHttp\\Psr7\\Request), Array)
+#6 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Client\\PendingRequest.php(915): Illuminate\\Http\\Client\\PendingRequest->{closure:{closure:Illuminate\\Http\\Client\\PendingRequest::buildStubHandler():936}:937}(Object(GuzzleHttp\\Psr7\\Request), Array)
+#7 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Client\\PendingRequest.php(901): Illuminate\\Http\\Client\\PendingRequest->{closure:{closure:Illuminate\\Http\\Client\\PendingRequest::buildRecorderHandler():913}:914}(Object(GuzzleHttp\\Psr7\\Request), Array)
+#8 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\PrepareBodyMiddleware.php(64): Illuminate\\Http\\Client\\PendingRequest->{closure:{closure:Illuminate\\Http\\Client\\PendingRequest::buildBeforeSendingHandler():899}:900}(Object(GuzzleHttp\\Psr7\\Request), Array)
+#9 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Middleware.php(38): GuzzleHttp\\PrepareBodyMiddleware->__invoke(Object(GuzzleHttp\\Psr7\\Request), Array)
+#10 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\RedirectMiddleware.php(71): GuzzleHttp\\Middleware::{closure:{closure:GuzzleHttp\\Middleware::cookies():28}:29}(Object(GuzzleHttp\\Psr7\\Request), Array)
+#11 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Middleware.php(63): GuzzleHttp\\RedirectMiddleware->__invoke(Object(GuzzleHttp\\Psr7\\Request), Array)
+#12 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\HandlerStack.php(75): GuzzleHttp\\Middleware::{closure:{closure:GuzzleHttp\\Middleware::httpErrors():60}:61}(Object(GuzzleHttp\\Psr7\\Request), Array)
+#13 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Client.php(333): GuzzleHttp\\HandlerStack->__invoke(Object(GuzzleHttp\\Psr7\\Request), Array)
+#14 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Client.php(169): GuzzleHttp\\Client->transfer(Object(GuzzleHttp\\Psr7\\Request), Array)
+#15 O:\\Projets\\consultant\\leconsultant\\vendor\\guzzlehttp\\guzzle\\src\\Client.php(189): GuzzleHttp\\Client->requestAsync('POST', Object(GuzzleHttp\\Psr7\\Uri), Array)
+#16 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Client\\PendingRequest.php(767): GuzzleHttp\\Client->request('POST', 'https://app.pay...', Array)
+#17 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Client\\PendingRequest.php(699): Illuminate\\Http\\Client\\PendingRequest->sendRequest('POST', 'https://app.pay...', Array)
+#18 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\helpers.php(234): Illuminate\\Http\\Client\\PendingRequest->{closure:Illuminate\\Http\\Client\\PendingRequest::send():697}(1)
+#19 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Client\\PendingRequest.php(697): retry(0, Object(Closure), 100, NULL)
+#20 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Client\\PendingRequest.php(595): Illuminate\\Http\\Client\\PendingRequest->send('POST', 'https://app.pay...', Array)
+#21 O:\\Projets\\consultant\\leconsultant\\app\\Services\\PaymentService.php(159): Illuminate\\Http\\Client\\PendingRequest->post('https://app.pay...', Array)
+#22 O:\\Projets\\consultant\\leconsultant\\app\\Services\\PaymentService.php(36): App\\Services\\PaymentService->initiatePayment(1, 1490, '0161368424', 'subscription', '1')
+#23 O:\\Projets\\consultant\\leconsultant\\app\\Http\\Controllers\\user\\AbonnementController.php(122): App\\Services\\PaymentService->initiateSubscriptionPayment(1, 1490, '0161368424', '1')
+#24 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\user\\AbonnementController->initiateSubscription(Object(Illuminate\\Http\\Request), '1')
+#25 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(45): Illuminate\\Routing\\Controller->callAction('initiateSubscri...', Array)
+#26 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(261): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\user\\AbonnementController), 'initiateSubscri...')
+#27 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#28 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(721): Illuminate\\Routing\\Route->run()
+#29 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Routing\\Router->{closure:Illuminate\\Routing\\Router::runRouteWithinStack():719}(Object(Illuminate\\Http\\Request))
+#30 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():126}(Object(Illuminate\\Http\\Request))
+#31 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(44): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#33 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'web')
+#34 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#35 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#36 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#37 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#38 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#39 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#40 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#41 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#42 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#44 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#46 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(719): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#47 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(698): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#48 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(662): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#49 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(651): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#50 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(167): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#51 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Foundation\\Http\\Kernel->{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():164}(Object(Illuminate\\Http\\Request))
+#52 O:\\Projets\\consultant\\leconsultant\\vendor\\livewire\\livewire\\src\\DisableBrowserCache.php(19): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():126}(Object(Illuminate\\Http\\Request))
+#53 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Livewire\\DisableBrowserCache->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#54 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#55 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#56 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#57 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#58 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#59 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#60 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#61 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#62 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#63 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#64 O:\\Projets\\consultant\\leconsultant\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php(38): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#65 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Fruitcake\\Cors\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#66 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#67 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#68 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():142}:143}(Object(Illuminate\\Http\\Request))
+#69 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(142): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#70 O:\\Projets\\consultant\\leconsultant\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(111): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#71 O:\\Projets\\consultant\\leconsultant\\public\\index.php(54): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#72 O:\\Projets\\consultant\\leconsultant\\server.php(21): require_once('O:\\\\Projets\\\\cons...')
+#73 {main}"} 
+[2026-02-16 16:25:31] local.ERROR: ❌ Payment initiation failed {"user_id":1,"pack_id":"1","message":"Une erreur est survenue lors de l'initialisation du paiement"} 
+[2026-02-16 16:25:32] local.ERROR: Erreur lors de la récupération des actualités: Invalid Country Identifier Provided  

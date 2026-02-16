@@ -34,7 +34,7 @@
             html: `
                 <div class="p-4">
                     <p class="mb-4">Pour continuer, veuillez entrer votre numéro de téléphone Mobile Money</p>
-                    <form id="subscription-form" action="{{ route('subscription.initiate', ['packId' => 10]) }}" method="POST">
+                    <form id="subscription-form" action="{{ route('subscription.initiate', ['packId' => 1]) }}" method="POST">
                         @csrf
                         <div class="mb-4">
                             <input type="tel"
@@ -47,8 +47,8 @@
                             <small class="text-gray-500">Format: 8 à 15 chiffres</small>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-blue-600 mb-2">1490 FCFA</p>
-                            <p class="text-sm text-gray-600">Abonnement mensuel</p>
+                            <p class="text-2xl font-bold text-blue-600 mb-2">50 FCFA</p>
+                            <p class="text-sm text-gray-600">Abonnement mensuel (TEST)</p>
                         </div>
                     </form>
                 </div>
@@ -63,6 +63,11 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
+                // Afficher le loader
+                if (typeof window.showLoader === 'function') {
+                    window.showLoader('Initialisation du paiement...');
+                }
+
                 // Soumettre le formulaire
                 document.getElementById('subscription-form').submit();
             }

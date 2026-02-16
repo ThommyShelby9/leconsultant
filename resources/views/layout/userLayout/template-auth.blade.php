@@ -92,6 +92,7 @@
 
     @yield('code')
 
+    @include('components.loader')
 
 </body>
 

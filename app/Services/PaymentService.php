@@ -124,7 +124,7 @@ class PaymentService
                     ],
                     'actions' => [
                         'cancel_url' => config('payplus.callbacks.cancel_url'),
-                        'return_url' => config('payplus.callbacks.return_url'),
+                        'return_url' => route('payment.waiting', ['transaction' => $transactionId]),
                         'callback_url' => route('payment.callback', ['type' => $type, 'transaction' => $transactionId]),
                         'callback_url_method' => 'post_json'
                     ],
@@ -154,7 +154,8 @@ class PaymentService
                 'amount' => $amount
             ]);
 
-            $response = Http::timeout(30)
+            $response = Http::withoutVerifying() // ⚠️ Désactive SSL pour développement local
+                ->timeout(30)
                 ->withHeaders($headers)
                 ->post($this->payPlusBaseUrl . $endpoint, $payload);
 
@@ -213,20 +214,36 @@ class PaymentService
     public function processPaymentCallback($transactionId, $data)
     {
         try {
+            Log::info('🔄 Processing payment callback', [
+                'transaction_id' => $transactionId,
+                'callback_data' => $data
+            ]);
+
             $transaction = PaymentTransaction::find($transactionId);
 
             if (!$transaction) {
-                Log::error('Transaction not found', ['transaction_id' => $transactionId]);
+                Log::error('❌ Transaction not found in callback', [
+                    'transaction_id' => $transactionId
+                ]);
                 return false;
             }
 
-            Log::info('Processing payment callback', [
+            Log::info('📦 Transaction found', [
                 'transaction_id' => $transactionId,
-                'data' => $data
+                'current_status' => $transaction->status,
+                'amount' => $transaction->amount,
+                'user_id' => $transaction->user_id,
+                'type' => $transaction->type
             ]);
 
             // Vérifier le statut du paiement
             if (isset($data['description']) && $data['description'] === 'completed') {
+                Log::info('💰 Payment marked as completed by PayPlus', [
+                    'transaction_id' => $transactionId,
+                    'description' => $data['description'] ?? 'N/A',
+                    'response_code' => $data['response_code'] ?? 'N/A'
+                ]);
+
                 // Paiement réussi
                 $transaction->update([
                     'status' => 'COMPLETED',
@@ -234,29 +251,38 @@ class PaymentService
                     'gateway_response' => json_encode($data)
                 ]);
 
-                Log::info('✅ Payment completed', [
+                Log::info('✅ Payment completed and saved to DB', [
                     'transaction_id' => $transactionId,
                     'amount' => $transaction->amount,
-                    'type' => $transaction->type
+                    'type' => $transaction->type,
+                    'user_id' => $transaction->user_id,
+                    'completed_at' => Carbon::now()->toDateTimeString()
                 ]);
 
                 return true;
             } else {
                 // Paiement échoué
+                Log::warning('⚠️ Payment NOT completed', [
+                    'transaction_id' => $transactionId,
+                    'description' => $data['description'] ?? 'N/A',
+                    'response_code' => $data['response_code'] ?? 'N/A',
+                    'full_data' => $data
+                ]);
+
                 $transaction->markAsFailed();
 
-                Log::warning('Payment failed', [
-                    'transaction_id' => $transactionId,
-                    'data' => $data
+                Log::info('❌ Payment marked as failed', [
+                    'transaction_id' => $transactionId
                 ]);
 
                 return false;
             }
 
         } catch (\Exception $e) {
-            Log::error('Callback processing error', [
+            Log::error('❌ Callback processing error', [
                 'transaction_id' => $transactionId,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return false;
@@ -294,7 +320,8 @@ class PaymentService
             // Appeler l'API PayPlus pour vérifier le statut
             $endpoint = '/pay/v01/redirect/checkout-invoice/confirm';
 
-            $response = Http::timeout(15)
+            $response = Http::withoutVerifying() // ⚠️ Désactive SSL pour développement local
+                ->timeout(15)
                 ->withHeaders([
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Bearer ' . $this->payPlusApiToken,

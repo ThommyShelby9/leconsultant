@@ -20,7 +20,7 @@ class PackSeeder extends Seeder
         Pack::create([
             'titre' => 'Unique',
             'payant' => true,
-            'prix' => 1490,
+            'prix' => 50, // TEST
             'nombre' => 1,
             'modalite' => "Mois"
         ]);

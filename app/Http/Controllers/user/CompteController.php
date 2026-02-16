@@ -14,7 +14,37 @@ use App\Models\User;
 class CompteController extends Controller
 {
     function account(){
+        \Log::info('👤 User accessing account page', [
+            'user_id' => Auth::user()->id,
+            'payment_status' => request()->get('payment'),
+            'url' => request()->fullUrl(),
+            'referer' => request()->header('referer')
+        ]);
+
         $user = user::find(Auth::user()->id);
+
+        // Vérifier si l'utilisateur a un abonnement actif
+        $activeSubscription = DB::table('abonnements')
+            ->where('idUser', Auth::user()->id)
+            ->where('dateFin', '>=', date('Y-m-d'))
+            ->where('stop', 0)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        \Log::info('📋 User subscription status', [
+            'user_id' => Auth::user()->id,
+            'has_active_subscription' => $activeSubscription ? 'YES' : 'NO',
+            'subscription_end' => $activeSubscription->dateFin ?? 'N/A'
+        ]);
+
+        // 🐛 DEBUG: Décommenter la ligne ci-dessous pour voir les détails
+        // dd([
+        //     'user' => $user,
+        //     'active_subscription' => $activeSubscription,
+        //     'payment_status' => request()->get('payment'),
+        //     'all_subscriptions' => DB::table('abonnements')->where('idUser', Auth::user()->id)->get()
+        // ]);
+
         //return $user;
         return view('userView.account.monCompte' , ['infos'=>$user] );
     }

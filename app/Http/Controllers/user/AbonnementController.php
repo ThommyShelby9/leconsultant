@@ -89,6 +89,12 @@ class AbonnementController extends Controller
     public function initiateSubscription(Request $request, $packId)
     {
         try {
+            \Log::info('🎫 User initiating subscription', [
+                'user_id' => Auth::user()->id,
+                'pack_id' => $packId,
+                'phone' => $request->input('phone')
+            ]);
+
             // Valider les données
             $request->validate([
                 'phone' => 'required|string|regex:/^[0-9]{8,15}$/',
@@ -98,12 +104,19 @@ class AbonnementController extends Controller
             $pack = Pack::find($packId);
 
             if (!$pack) {
+                \Log::error('❌ Pack not found', ['pack_id' => $packId]);
                 Alert::error('Erreur', 'Pack introuvable');
                 return redirect()->back();
             }
 
             // Montant du pack
-            $amount = $pack->montant ?? config('payplus.packs.mensuel', 1490);
+            $amount = $pack->prix ?? $pack->montant ?? config('payplus.packs.mensuel', 50);
+
+            \Log::info('💵 Pack details', [
+                'pack_id' => $packId,
+                'amount' => $amount,
+                'pack_name' => $pack->libelle ?? 'N/A'
+            ]);
 
             // Initier le paiement via PayPlus
             $result = $this->paymentService->initiateSubscriptionPayment(
@@ -114,14 +127,32 @@ class AbonnementController extends Controller
             );
 
             if ($result['success']) {
+                \Log::info('✅ Payment initiation successful', [
+                    'transaction_id' => $result['transaction_id'] ?? 'N/A',
+                    'redirect_url' => $result['redirect_url'] ?? 'N/A'
+                ]);
+
                 // Rediriger vers la page PayPlus
                 return redirect()->away($result['redirect_url']);
             } else {
+                \Log::error('❌ Payment initiation failed', [
+                    'user_id' => Auth::user()->id,
+                    'pack_id' => $packId,
+                    'message' => $result['message'] ?? 'Unknown error'
+                ]);
+
                 Alert::error('Erreur', $result['message']);
                 return redirect()->back();
             }
 
         } catch (\Exception $e) {
+            \Log::error('❌ Exception in subscription initiation', [
+                'user_id' => Auth::user()->id ?? 'N/A',
+                'pack_id' => $packId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             Alert::error('Erreur', 'Une erreur est survenue lors de l\'initialisation du paiement');
             return redirect()->back();
         }

@@ -40,16 +40,16 @@ return [
     'callbacks' => [
         'subscription_success' => env('APP_URL') . '/payment/callback/subscription/{transaction}',
         'formation_success' => env('APP_URL') . '/payment/callback/formation/{transaction}',
-        'return_url' => env('APP_URL') . '/compte?payment=success',
+        'return_url' => env('APP_URL') . '/payment/waiting/{transaction}',
         'cancel_url' => env('APP_URL') . '/compte?payment=cancelled',
     ],
 
     // Montants des packs (en FCFA)
     'packs' => [
         'essai' => 0, // Gratuit
-        'mensuel' => 1490,
-        '3_mois' => 4000,
-        '6_mois' => 7000,
-        '12_mois' => 12000,
+        'mensuel' => 50, // TEST
+        '3_mois' => 50, // TEST
+        '6_mois' => 50, // TEST
+        '12_mois' => 50, // TEST
     ],
 ];
