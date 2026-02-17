@@ -297,6 +297,20 @@ class PaymentCallbackController extends Controller
 
                         // Recharger la transaction
                         $transaction->refresh();
+
+                        // Activer l'abonnement/formation si la transaction est complétée
+                        if ($transaction->isCompleted()) {
+                            Log::info('🎯 Auto-check completed, activating service', [
+                                'transaction_id' => $transactionId,
+                                'type' => $transaction->type
+                            ]);
+
+                            if ($transaction->type === 'subscription') {
+                                $this->activateSubscription($transaction);
+                            } elseif ($transaction->type === 'formation') {
+                                $this->activateFormation($transaction);
+                            }
+                        }
                     } else {
                         Log::info('⏳ PayPlus says transaction still pending or failed', [
                             'transaction_id' => $transactionId,
