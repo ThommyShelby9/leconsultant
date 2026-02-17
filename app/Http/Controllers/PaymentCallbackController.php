@@ -277,6 +277,11 @@ class PaymentCallbackController extends Controller
                 try {
                     $statusCheck = $this->paymentService->checkTransactionStatus($transactionId);
 
+                    Log::info('🔎 PayPlus status check result', [
+                        'transaction_id' => $transactionId,
+                        'status_check' => $statusCheck
+                    ]);
+
                     if ($statusCheck['success'] && isset($statusCheck['status']) && $statusCheck['status'] === 'completed') {
                         Log::info('✅ PayPlus confirms completion, processing callback', [
                             'transaction_id' => $transactionId
@@ -292,10 +297,16 @@ class PaymentCallbackController extends Controller
 
                         // Recharger la transaction
                         $transaction->refresh();
+                    } else {
+                        Log::info('⏳ PayPlus says transaction still pending or failed', [
+                            'transaction_id' => $transactionId,
+                            'payplus_status' => $statusCheck['status'] ?? 'unknown'
+                        ]);
                     }
                 } catch (\Exception $payPlusError) {
                     Log::warning('⚠️ Error checking with PayPlus', [
-                        'error' => $payPlusError->getMessage()
+                        'error' => $payPlusError->getMessage(),
+                        'trace' => $payPlusError->getTraceAsString()
                     ]);
                     // Continue même si PayPlus check échoue
                 }
