@@ -331,7 +331,7 @@ class PaymentService
                     'Authorization' => 'Bearer ' . $this->payPlusApiToken,
                     'Apikey' => $this->payPlusApiKey
                 ])
-                ->post($url);
+                ->get($url);
 
             Log::info('📥 PayPlus status response', [
                 'status_code' => $response->status(),
