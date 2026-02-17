@@ -318,6 +318,12 @@ class PaymentService
 
             // Appeler l'API PayPlus pour vérifier le statut
             $endpoint = '/pay/v01/redirect/checkout-invoice/confirm';
+            $url = $this->payPlusBaseUrl . $endpoint . '?invoiceToken=' . $payPlusToken;
+
+            Log::info('🔍 Checking PayPlus transaction status', [
+                'url' => $url,
+                'token' => substr($payPlusToken, 0, 20) . '...'
+            ]);
 
             $response = Http::timeout(15)
                 ->withHeaders([
@@ -325,13 +331,21 @@ class PaymentService
                     'Authorization' => 'Bearer ' . $this->payPlusApiToken,
                     'Apikey' => $this->payPlusApiKey
                 ])
-                ->get($this->payPlusBaseUrl . $endpoint, [
-                    'invoiceToken' => $payPlusToken
-                ]);
+                ->post($url);
+
+            Log::info('📥 PayPlus status response', [
+                'status_code' => $response->status(),
+                'body' => $response->body()
+            ]);
 
             if ($response->successful()) {
                 $responseData = $response->json();
                 $status = $responseData['description'] ?? 'unknown';
+
+                Log::info('✅ PayPlus status check successful', [
+                    'status' => $status,
+                    'response_code' => $responseData['response_code'] ?? 'N/A'
+                ]);
 
                 return [
                     'success' => true,
@@ -341,9 +355,15 @@ class PaymentService
                 ];
             }
 
+            Log::warning('⚠️ PayPlus status check failed', [
+                'status_code' => $response->status(),
+                'body' => $response->body()
+            ]);
+
             return [
                 'success' => false,
-                'message' => 'Impossible de vérifier le statut'
+                'message' => 'Impossible de vérifier le statut',
+                'http_status' => $response->status()
             ];
 
         } catch (\Exception $e) {
