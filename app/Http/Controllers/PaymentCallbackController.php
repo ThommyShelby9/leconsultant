@@ -110,8 +110,7 @@ class PaymentCallbackController extends Controller
             // Créer ou mettre à jour l'abonnement
             $abonnement = Abonnement::create([
                 'idUser' => $userId,
-                'idPack' => $packId,
-                'montant' => $transaction->amount,
+                'typePack' => $packId,
                 'dateDebut' => $dateDebut,
                 'dateFin' => $dateFin,
                 'stop' => false,
