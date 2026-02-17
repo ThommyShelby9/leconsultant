@@ -340,7 +340,7 @@ class PaymentService
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                $status = $responseData['description'] ?? 'unknown';
+                $status = $responseData['status'] ?? $responseData['description'] ?? 'unknown';
 
                 Log::info('✅ PayPlus status check successful', [
                     'status' => $status,
