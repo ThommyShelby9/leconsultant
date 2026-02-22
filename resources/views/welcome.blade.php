@@ -871,7 +871,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Search bar -->
     <div class="search-section">
         <div class="container mx-auto px-4">
-<form action="{{ route('offre') }}" method="GET" class="search-card">
+            <form action="{{ route('offre.recherche') }}" method="post" class="search-card">
                 @csrf
                 <select name="categ">
                     <option value="0">Toutes les Autorités Contractantes</option>
@@ -910,7 +910,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <div class="section-head" data-aos="fade-up">
             <h2 class="section-title">Dernières offres <span>publiées</span></h2>
-            <a href="{{ route('offre.recherche') }}" class="see-all">
+            <a href="{{ route('offre') }}" class="see-all">
                 Voir toutes les offres
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
