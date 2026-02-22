@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
     :root {
-        --blue: #0B2D5E;
+        --blue: #0136ba;
         --rouge: #C8102E;
         --bg: #F5F4F0;
         --card-bg: #FFFFFF;

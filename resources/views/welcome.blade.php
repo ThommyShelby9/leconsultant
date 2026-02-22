@@ -17,7 +17,7 @@
 <style>
 :root {
     --blue:    #0136ba;
-    --rouge:   #C8102E;
+    --rouge:   #c8102f48;
     --bg:      #F5F4F0;
     --card-bg: #FFFFFF;
     --muted:   #6B7280;
