@@ -1,188 +1,584 @@
 @extends('layout.userLayout.template')
 
 @section('titre')
-<!-- Inclure jQuery -->
+<title>Le Consultant | Appels d'Offres</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 
-<!-- Inclure SweetAlert -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-<title>Le consultant | Appels d'Offres</title>
+<style>
+:root {
+    --blue:   #0136ba;
+    --rouge:  #C8102E;
+    --bg:     #F5F4F0;
+    --white:  #FFFFFF;
+    --muted:  #6B7280;
+    --border: #E5E3DC;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); }
+
+/* ── BANNER ──────────────────────────────────────── */
+#banner {
+    background: var(--blue);
+    padding: 4rem 0 3.5rem;
+    position: relative;
+    overflow: hidden;
+}
+#banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 75% 50%, rgba(200,16,46,0.15) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.banner-eyebrow {
+    display: inline-flex;
+    align-items: center; gap: 0.5rem;
+    background: rgba(200,16,46,0.2);
+    border: 1px solid rgba(200,16,46,0.4);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.3rem 0.85rem; border-radius: 50px;
+    margin-bottom: 1rem;
+}
+.banner-eyebrow span { width: 6px; height: 6px; background: var(--rouge); border-radius: 50%; display: inline-block; }
+
+.banner-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    color: #fff; line-height: 1.1; margin: 0 0 0.85rem;
+}
+.banner-title em { color: var(--rouge); font-style: italic; }
+
+.banner-sub {
+    color: rgba(255,255,255,0.62);
+    font-size: 0.9rem; line-height: 1.7;
+    max-width: 520px; margin-bottom: 2rem;
+}
+
+/* ── SEARCH CARD ─────────────────────────────────── */
+.search-card {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    max-width: 760px;
+}
+
+.search-card select,
+.search-card input[type="search"] {
+    background: rgba(255,255,255,0.95);
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--blue);
+    outline: none;
+    flex: 1 1 200px;
+    transition: box-shadow 0.2s;
+}
+.search-card select:focus,
+.search-card input:focus { box-shadow: 0 0 0 3px rgba(200,16,46,0.3); }
+
+.search-row { display: flex; gap: 0.6rem; flex: 1 1 100%; }
+.search-card input[type="search"] { flex: 1; }
+
+.btn-search {
+    background: var(--rouge);
+    color: #fff; border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    display: flex; align-items: center; gap: 0.35rem;
+    transition: background 0.2s;
+}
+.btn-search:hover { background: #a50d26; }
+
+.btn-alerte {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 10px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.82rem; font-weight: 600;
+    text-decoration: none; white-space: nowrap;
+    transition: background 0.2s;
+}
+.btn-alerte:hover { background: rgba(255,255,255,0.22); }
+
+/* ── OFFERS SECTION ──────────────────────────────── */
+#offres { padding: 4rem 0 5rem; }
+
+.section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    color: var(--blue); margin: 0;
+}
+.section-title span { color: var(--rouge); }
+
+.result-count {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* ── OFFER CARDS ─────────────────────────────────── */
+.offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+
+.offer-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+.offer-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 48px rgba(11,45,94,0.11);
+    border-color: rgba(200,16,46,0.25);
+}
+
+.card-header {
+    padding: 1.25rem 1.5rem 1rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-logo {
+    width: 50px; height: 50px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 4px; flex-shrink: 0;
+}
+
+.card-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.05rem;
+    color: var(--blue); line-height: 1.35;
+    margin: 0 0 0.2rem;
+    transition: color 0.2s;
+}
+.offer-card:hover .card-title { color: var(--rouge); }
+.card-ac { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+
+.card-body { padding: 1rem 1.5rem; flex: 1; }
+
+.card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.tag {
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 0.25rem 0.65rem; border-radius: 50px;
+}
+.tag-categ { background: #EEF2FF; color: #3730A3; }
+.tag-type  { background: #FEF3C7; color: #92400E; }
+
+.card-dates { display: flex; justify-content: space-between; gap: 0.5rem; }
+.date-item  { font-size: 0.8rem; }
+.date-label { color: var(--muted); display: block; margin-bottom: 0.1rem; font-size: 0.72rem; }
+.date-value { color: var(--blue); font-weight: 600; }
+.date-value.expired { color: var(--rouge); }
+
+.card-footer {
+    padding: 0.9rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.75rem;
+}
+
+.btn-details {
+    background: var(--blue); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.82rem; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; flex: 1;
+    transition: background 0.2s;
+}
+.btn-details:hover { background: #0d3978; }
+
+.btn-dl {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    background: transparent; color: var(--rouge);
+    border: 1.5px solid var(--rouge);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem; font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+.btn-dl:hover { background: var(--rouge); color: #fff; }
+
+/* ── PAGINATION ──────────────────────────────────── */
+.pagination-wrap {
+    margin-top: 3rem;
+    display: flex; justify-content: center;
+}
+
+/* ── EMPTY STATE ─────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: var(--muted);
+}
+.empty-state svg { margin: 0 auto 1.25rem; display: block; opacity: 0.3; }
+.empty-state p { font-size: 1rem; }
+
+/* ── MODAL ───────────────────────────────────────── */
+.swal2-popup.offer-modal {
+    border-radius: 20px !important;
+    padding: 0 !important;
+    max-width: 560px !important;
+    overflow: hidden !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+.modal-inner { display: flex; flex-direction: column; }
+.modal-top {
+    background: var(--blue);
+    padding: 1.75rem 2rem 1.5rem;
+    position: relative;
+}
+.modal-top::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: var(--rouge);
+}
+.modal-badge {
+    display: inline-block;
+    background: rgba(200,16,46,0.25);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.25rem 0.7rem; border-radius: 50px; margin-bottom: 0.65rem;
+}
+.modal-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.5rem; color: #fff;
+    line-height: 1.3; margin: 0; text-align: left;
+}
+.modal-ac { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 0.4rem; text-align: left; }
+.modal-body { padding: 1.5rem 2rem; }
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+.modal-field { display: flex; flex-direction: column; gap: 0.2rem; }
+.modal-field-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.modal-field-value { font-size: 0.92rem; color: var(--blue); font-weight: 500; }
+.modal-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 1.25rem; }
+.modal-dates {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    background: var(--bg); border-radius: 12px;
+    padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+}
+.date-block { display: flex; flex-direction: column; gap: 0.15rem; }
+.date-block .lbl { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.date-block .val { font-size: 0.95rem; font-weight: 600; color: var(--blue); }
+.date-block.expire .val { color: var(--rouge); }
+.modal-actions { display: flex; gap: 0.75rem; }
+.modal-btn-primary {
+    flex: 1; background: var(--blue); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+}
+.modal-btn-primary:hover { background: #0d3978; }
+.modal-btn-download {
+    flex: 1; background: var(--rouge); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    transition: background 0.2s;
+}
+.modal-btn-download:hover { background: #a50d26; }
+
+/* spinner */
+.modal-loading {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 3rem 2rem;
+    gap: 1rem; color: var(--muted); font-size: 0.9rem;
+}
+.spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 768px) {
+    #banner         { padding: 2.5rem 0 2rem; }
+    .banner-sub     { font-size: 0.875rem; }
+    .search-card    { padding: 1rem; gap: 0.6rem; }
+    .search-card select,
+    .search-card input[type="search"] { flex: 1 1 100%; }
+    .search-row     { flex-direction: column; }
+    .btn-search     { width: 100%; justify-content: center; }
+    .btn-alerte     { width: 100%; justify-content: center; }
+    #offres         { padding: 2.5rem 0 3rem; }
+    .offers-grid    { grid-template-columns: 1fr; }
+    .section-head   { flex-direction: column; align-items: flex-start; }
+    .swal2-popup.offer-modal { max-width: 95vw !important; }
+    .modal-grid,
+    .modal-dates    { grid-template-columns: 1fr; }
+    .modal-actions  { flex-direction: column-reverse; }
+    .modal-body     { padding: 1.25rem; }
+    .modal-top      { padding: 1.25rem; }
+    .card-footer    { flex-direction: column; }
+    .btn-details, .btn-dl { width: 100%; justify-content: center; }
+}
+</style>
 @endsection
 
 
 @section('banner')
-<section id="banner" class="relative overflow-hidden">
-    <div class="bg-consultant-blue pt-10 lg:pt-32 pb-20 lg:pb-48">
-        <div class="container mx-auto">
-            <div class="flex flex-wrap">
-                <!-- Texte principal -->
-                <div class="lg:w-2/3 w-full">
-                    <h1 class="text-white font-bold text-4xl lg:text-6xl mb-8">
-                        Toutes les offres publiées
-                    </h1>
-                    <p class="text-white text-justify mb-8 lg:w-4/5">
-                        Découvrez toutes les opportunités disponibles sur notre plateforme. Que vous soyez une entreprise en quête de nouveaux marchés ou un entrepreneur à la recherche de projets à développer, nous mettons à votre disposition une sélection d'appels d'offres publics et privés. Explorez dès maintenant les différentes offres et trouvez celles qui correspondent à vos besoins et ambitions. Restez à l'affût des meilleures occasions pour faire croître votre activité.
-                    </p>
-
-                    <!-- Formulaire de recherche -->
-                    <form action="{{ route('offre.recherche') }}" method="post" class="flex flex-wrap justify-center lg:w-2/3 w-full">
-                        @csrf
-                        <!-- Sélecteur des Autorités Contractantes -->
-                        <div class="w-full lg:w-1/3 px-1 mb-4">
-                            <select name="categ" class="w-full bg-white bg-opacity-75 border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-consultant-rouge focus:border-transparent">
-                                <option selected value="0">Toutes les Autorités Contractantes</option>
-                                @foreach ($ac as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <!-- Sélecteur des Domaines d'Activité (Types) -->
-                        <div class="w-full lg:w-1/3 px-1 mb-4">
-                            <select name="type" class="w-full bg-white bg-opacity-75 border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-consultant-rouge focus:border-transparent">
-                                <option value="0" selected>Tous les Domaines d'Activités</option>
-                                @foreach ($types as $item)
-                                <option value="{{ $item->id }}">{{ $item->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <!-- Zone de recherche -->
-                        <div class="w-full relative mb-4">
-                            <input type="search" name="search" placeholder="Que cherchez-vous ?" class="w-full px-4 py-2 bg-white bg-opacity-75 rounded-lg border border-gray-300 focus:ring-2 focus:ring-consultant-rouge" />
-                            <button type="submit" class="absolute right-0 top-0 bottom-0 bg-consultant-blue text-white py-2 px-6 rounded-lg" style="background-color: red;">
-                                Rechercher
-                            </button>
-                        </div>
-                        <!-- Lien créer une alerte -->
-                        <div class="w-full text-center">
-                            <a href="{{ route('alerte') }}" class="bg-red-600 text-white py-2 px-4 rounded-lg" style="background-color: red;">Créer une alerte</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<section id="banner">
+    <div class="container mx-auto px-4" style="position:relative; z-index:1;">
+        <div class="banner-eyebrow">
+            <span></span> Appels d'offres — Bénin
         </div>
+        <h1 class="banner-title">
+            Toutes les offres<br><em>publiées</em>
+        </h1>
+        <p class="banner-sub">
+            Découvrez toutes les opportunités disponibles. Que vous soyez une entreprise en quête de marchés ou un entrepreneur en quête de projets, explorez notre sélection d'appels d'offres publics et privés.
+        </p>
+
+        <form action="{{ route('offre.recherche') }}" method="post" class="search-card">
+            @csrf
+            <select name="categ">
+                <option value="0">Toutes les Autorités Contractantes</option>
+                @foreach ($ac as $item)
+                <option value="{{ $item->id }}" {{ (isset($categ) && $categ == $item->id) ? 'selected' : '' }}>
+                    {{ $item->name }}
+                </option>
+                @endforeach
+            </select>
+
+            <select name="type">
+                <option value="0">Tous les Domaines d'Activités</option>
+                @foreach ($types as $item)
+                <option value="{{ $item->id }}" {{ (isset($type) && $type == $item->id) ? 'selected' : '' }}>
+                    {{ $item->title }}
+                </option>
+                @endforeach
+            </select>
+
+            <div class="search-row">
+                <input type="search" name="search" value="{{ $search ?? '' }}" placeholder="Que cherchez-vous ?" />
+                <button type="submit" class="btn-search">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    Rechercher
+                </button>
+            </div>
+
+            <a href="{{ route('alerte') }}" class="btn-alerte">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Créer une alerte
+            </a>
+        </form>
     </div>
 </section>
-
-
 @endsection
 
 
 @section('contenu')
-<section id="offres" class="py-16">
-    <div class="container mx-auto">
-        <h2 class="text-consultant-rouge text-3xl lg:text-5xl font-bold mb-8">
-            Les dernières offres publiées
-        </h2>
+<section id="offres">
+    <div class="container mx-auto px-4">
 
-        <!-- Grid layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12"> <!-- Gap augmenté à 12 pour plus d'espace -->
-    @foreach ($offres as $item)
-    <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col lg:flex-row"> <!-- Padding ajusté et flex pour une disposition en colonne sur mobile et en ligne sur desktop -->
-        <!-- Logo centré -->
-        <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0"> <!-- Ajout de margin pour mobile -->
-            <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-24 lg:w-32 rounded-lg"> <!-- Taille réduite pour l'image -->
+        <div class="section-head">
+            <h2 class="section-title">Dernières offres <span>publiées</span></h2>
+            @if(isset($offres) && method_exists($offres, 'total'))
+                <span class="result-count">{{ $offres->total() }} offre{{ $offres->total() > 1 ? 's' : '' }} trouvée{{ $offres->total() > 1 ? 's' : '' }}</span>
+            @endif
         </div>
 
-        <!-- Contenu de l'offre -->
-        <div class="w-full lg:w-4/5 lg:pl-6">
-        <a href="javascript:void(0);" class="text-xl lg:text-3xl font-bold text-black mb-2 block" 
-                        onclick="handleOfferClick('{{ $item->id }}')">
-                        {{ Str::limit($item->titre, 10) }}
-                    </a>
-            <p class="text-consultant-blue text-xl font-medium mb-2">
-                {{ $item->autName }}
-            </p>
-            <hr class="my-2"> <!-- Réduit l'espace vertical entre les sections -->
+        @if(isset($offres) && $offres->count())
+            <div class="offers-grid">
+                @foreach ($offres as $item)
+                <div class="offer-card" onclick="handleOfferClick('{{ $item->id }}')">
 
-            <!-- Détails de l'offre -->
-            <div class="text-gray-600 text-sm space-y-1"> <!-- Plus d'espace entre les lignes de texte -->
-                <p><strong>Catégorie:</strong> {{ $item->categTitle }}</p>
-                <p><strong>Type:</strong> {{ $item->typeTitle }}</p>
-                <p><strong>Publiée le:</strong> {{ date('d M Y', strtotime($item->datePublication)) }}</p>
-                <p><strong>Expire le:</strong> {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
+                    <div class="card-header">
+                        <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}"
+                             alt="logo" class="card-logo">
+                        <div style="flex:1; min-width:0;">
+                            <div class="card-title">{{ Str::limit($item->titre, 65) }}</div>
+                            <div class="card-ac">{{ $item->autName }}</div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-tags">
+                            @if($item->categTitle)
+                                <span class="tag tag-categ">{{ $item->categTitle }}</span>
+                            @endif
+                            @if($item->typeTitle)
+                                <span class="tag tag-type">{{ $item->typeTitle }}</span>
+                            @endif
+                        </div>
+                        <div class="card-dates">
+                            <div class="date-item">
+                                <span class="date-label">Publiée le</span>
+                                <span class="date-value">{{ date('d M Y', strtotime($item->datePublication)) }}</span>
+                            </div>
+                            <div class="date-item" style="text-align:right;">
+                                <span class="date-label">Expire le</span>
+                                <span class="date-value expired">{{ date('d M Y', strtotime($item->dateExpiration)) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button class="btn-details" onclick="event.stopPropagation(); handleOfferClick('{{ $item->id }}')">
+                            Voir les détails
+                        </button>
+                        <a href="{{ route('voirFichier', basename($item->fichier)) }}"
+                           class="btn-dl"
+                           onclick="event.stopPropagation();">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Télécharger
+                        </a>
+                    </div>
+
+                </div>
+                @endforeach
             </div>
 
-            <!-- Bouton Télécharger -->
-            <a href="{{ route('voirFichier', $file ?? '' ) }}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg block text-center">
-                Télécharger
-            </a>
-        </div>
-    </div>
-    @endforeach
-</div>
+            <div class="pagination-wrap">
+                {{ $offres->links() }}
+            </div>
+
+        @else
+            <div class="empty-state">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <p>Aucune offre disponible pour le moment.</p>
+            </div>
+        @endif
 
     </div>
 </section>
+@endsection
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+@section('code')
 <script>
-    function handleOfferClick(offerId) {
-        @if(!auth()->check())
-            // Si l'utilisateur n'est pas connecté, afficher une alerte d'erreur
-            Swal.fire({
-                title: 'Accès refusé',
-                text: "Vous devez d'abord vous inscrire et souscrire à un abonnement pour voir les détails de cette offre.",
-                icon: 'error',
-                confirmButtonText: 'S\'inscrire maintenant',
-                showCancelButton: true,
-                cancelButtonText: 'Annuler'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "{{ route('register') }}";
-                }
-            });
-        @else
-            // Si l'utilisateur est connecté, afficher les détails de l'offre dans un modal
-            fetchOfferDetails(offerId);
-        @endif
-    }
-     function fetchOfferDetails(offerId) {
+function handleOfferClick(offerId) {
+    @if(!auth()->check())
+        Swal.fire({
+            html: `<div style="font-family:'DM Sans',sans-serif;padding:0.5rem 0;">
+                <p style="font-size:1.05rem;font-weight:600;color:#0B2D5E;margin-bottom:0.5rem;">Accès restreint</p>
+                <p style="color:#6B7280;font-size:0.875rem;">Inscrivez-vous et souscrivez à un abonnement pour consulter les détails.</p>
+            </div>`,
+            confirmButtonText: "S'inscrire maintenant",
+            confirmButtonColor: '#0B2D5E',
+            showCancelButton: true,
+            cancelButtonText: 'Annuler',
+        }).then(r => { if (r.isConfirmed) window.location.href = "{{ route('register') }}"; });
+    @else
+        fetchOfferDetails(offerId);
+    @endif
+}
+
+function fetchOfferDetails(offerId) {
+    Swal.fire({
+        html: `<div class="modal-loading"><div class="spinner"></div><span>Chargement…</span></div>`,
+        showConfirmButton: false,
+        customClass: { popup: 'offer-modal' },
+        allowOutsideClick: false,
+    });
+
     $.ajax({
         url: '/offre/details/' + offerId,
         method: 'GET',
         success: function(data) {
+            const fileBtn = data.file
+                ? `<a href="${data.file}" target="_blank" class="modal-btn-download">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Télécharger le dossier
+                   </a>`
+                : `<span style="flex:1;text-align:center;color:#9CA3AF;font-size:0.82rem;">Aucun fichier disponible</span>`;
+
             Swal.fire({
-                title: `<strong class="text-2xl font-bold text-consultant-blue">${data.titre}</strong>`,
                 html: `
-                    <div class="flex flex-col space-y-2">
-                    
-                        <p class="text-lg"><strong>Autorité Contractante:</strong> ${data.autName}</p>
-                        <p class="text-lg"><strong>Catégorie:</strong> ${data.categTitle}</p>
-                        <p class="text-lg"><strong>Type:</strong> ${data.typeTitle}</p>
-                        <p class="text-lg"><strong>Publiée le:</strong> ${data.datePublication}</p>
-                        <p class="text-lg"><strong>Expire le:</strong> ${data.dateExpiration}</p>
-                        ${data.file ? `
-                            <a href="${data.file}" class="mt-4 bg-consultant-blue text-white py-2 px-4 rounded-lg text-center block transition duration-300 hover:bg-consultant-darkblue">
-                                Télécharger l'offre
-                            </a>
-                        ` : ''}
+                    <div class="modal-inner">
+                        <div class="modal-top">
+                            <div class="modal-badge">Appel d'offres</div>
+                            <div class="modal-title">${data.titre}</div>
+                            <div class="modal-ac">${data.autName ?? '—'}</div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-grid">
+                                <div class="modal-field">
+                                    <span class="modal-field-label">Catégorie</span>
+                                    <span class="modal-field-value">${data.categTitle ?? '—'}</span>
+                                </div>
+                                <div class="modal-field">
+                                    <span class="modal-field-label">Type de marché</span>
+                                    <span class="modal-field-value">${data.typeTitle ?? 'Non spécifié'}</span>
+                                </div>
+                            </div>
+                            <hr class="modal-divider">
+                            <div class="modal-dates">
+                                <div class="date-block">
+                                    <span class="lbl">Date de publication</span>
+                                    <span class="val">${data.datePublication}</span>
+                                </div>
+                                <div class="date-block expire">
+                                    <span class="lbl">Date d'expiration</span>
+                                    <span class="val">${data.dateExpiration}</span>
+                                </div>
+                            </div>
+                            <div class="modal-actions">
+                                ${fileBtn}
+                                <button class="modal-btn-primary" onclick="Swal.close()">Fermer</button>
+                            </div>
+                        </div>
                     </div>
                 `,
-                icon: 'info',
-                showCancelButton: false,
-                confirmButtonText: 'Fermer',
-                customClass: {
-                    popup: 'bg-white shadow-lg rounded-lg p-6',
-                    title: 'font-bold text-3xl text-center',
-                    html: 'text-lg text-gray-700',
-                    confirmButton: 'bg-consultant-blue text-white py-2 px-4 rounded-lg hover:bg-consultant-darkblue',
-                },
-                backdrop: 'rgba(0,0,0,0.5)', // Fond semi-transparent
-                padding: '2rem', // Espace autour du contenu
+                showConfirmButton: false,
+                customClass: { popup: 'offer-modal' },
+                backdrop: 'rgba(11,45,94,0.45)',
             });
         },
-        error: function(err) {
+        error: function() {
             Swal.fire({
                 title: 'Erreur',
-                text: 'Impossible de récupérer les détails de l\'offre.',
+                text: "Impossible de récupérer les détails de l'offre.",
                 icon: 'error',
+                confirmButtonColor: '#0B2D5E',
                 confirmButtonText: 'Fermer',
-                customClass: {
-                    title: 'text-lg font-bold',
-                    confirmButton: 'bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600',
-                },
             });
         }
     });
