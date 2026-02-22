@@ -45,23 +45,23 @@ class OffreController extends Controller
         return view('adminView.offre.create', compact('types'));
     }
 
-    public function saveOffre(Request $req)
+   public function saveOffre(Request $req)
 {
     // Validation des données
     $req->validate([
-        'reference' => ['required', 'string', 'max:15'],
-        'titre' => ['required', 'string'],
-        'depot' => ['required', 'string'],
-        'categorie' => ['required', 'numeric'],
-        'autorite' => ['required', 'numeric'],
-        'service' => ['required'],
-        'marche' => ['required', 'array'], // Valider comme un tableau
-        'marche.*' => ['numeric'], // Chaque élément du tableau doit être un nombre
-        'dateOuv' => ['required', 'date'],
-        'heureOuv' => ['required', 'date_format:H:i'],
-        'dateExp' => ['required', 'date'],
-        'fichier' => 'required|file|mimes:pdf|max:5000',
-        'domaineActivite' => ['required', 'exists:types,id'], // Validation du domaine d'activité
+        'reference'       => ['required', 'string', 'max:15'],
+        'titre'           => ['required', 'string'],
+        'depot'           => ['required', 'string'],
+        'categorie'       => ['required', 'numeric'],
+        'autorite'        => ['required', 'numeric'],
+        'service'         => ['required'],
+        'marche'          => ['required', 'array'],
+        'marche.*'        => ['numeric'],
+        'dateOuv'         => ['required', 'date'],
+        'heureOuv'        => ['required', 'date_format:H:i'],
+        'dateExp'         => ['required', 'date'],
+        'fichier'         => 'required|file|mimes:pdf|max:5000',
+        'domaineActivite' => ['required', 'exists:types,id'],
     ]);
 
     // Stockage du fichier
@@ -69,48 +69,78 @@ class OffreController extends Controller
 
     // Création de l'offre
     $offre = new Offre();
-    $offre->titre = $req['titre'];
-    $offre->reference = $req['reference'];
-    $offre->lieu_depot = $req['depot'];
-    $offre->datePublication = date('Y-m-d');
-    $offre->dateExpiration = $req['dateExp'];
-    $offre->dateOuverture = $req['dateOuv'];
-    $offre->heureOuverture = $req['heureOuv'];
-    $offre->categ_id = $req['categorie'];
-    $offre->ac_id = $req['autorite'];
-    $offre->service = $req['service'];
-    $offre->domaine_activity = $req['domaineActivite']; // Enregistrement du domaine d'activité par ID
-    $offre->writeBy = Auth::user()->id;
-    $offre->fichier = $chemin;
+    $offre->titre            = $req['titre'];
+    $offre->reference        = $req['reference'];
+    $offre->lieu_depot       = $req['depot'];
+    $offre->datePublication  = date('Y-m-d');
+    $offre->dateExpiration   = $req['dateExp'];
+    $offre->dateOuverture    = $req['dateOuv'];
+    $offre->heureOuverture   = $req['heureOuv'];
+    $offre->categ_id         = $req['categorie'];
+    $offre->ac_id            = $req['autorite'];
+    $offre->service          = $req['service'];
+    $offre->domaine_activity = $req['domaineActivite'];
+    $offre->writeBy          = Auth::user()->id;
+    $offre->fichier          = $chemin;
     $offre->save();
 
-    // Insertion manuelle dans la table pivot
+    // Insertion dans la table pivot offre_type
     foreach ($req['marche'] as $typeId) {
         DB::table('offre_type')->insert([
             'offre_id' => $offre->id,
-            'type_id' => $typeId,
+            'type_id'  => $typeId,
         ]);
     }
 
-    // Notification des utilisateurs
-    $users = User::whereHas('alertes', function ($query) use ($offre) {
-        $typeMarIds = $offre->types->pluck('id'); // Obtenir les IDs des types de marché
-        $acId = $offre->ac_id;
+    // Récupérer les IDs des types de marché de cette offre
+    $typeMarIds = DB::table('offre_type')
+        ->where('offre_id', $offre->id)
+        ->pluck('type_id')
+        ->toArray();
 
-        $query->whereIn('marches', $typeMarIds)
-              ->where('ac', $acId);
-    })->get();
+    $acId = $offre->ac_id;
 
-    // Récupération du nom de l'autorité contractante
+    // Parcourir toutes les alertes et filtrer manuellement
+    // car marches/ac peuvent être en JSON ou en "1-2-3"
+    $alertes = Alerte::all();
+    $usersToNotify = collect();
+
+    foreach ($alertes as $alerte) {
+
+        // Décoder marches
+        $alerteMarches = json_decode($alerte->marches, true);
+        if (!is_array($alerteMarches)) {
+            $alerteMarches = explode('-', $alerte->marches);
+        }
+
+        // Décoder ac
+        $alerteAc = json_decode($alerte->ac, true);
+        if (!is_array($alerteAc)) {
+            $alerteAc = explode('-', $alerte->ac);
+        }
+
+        // Vérifier la correspondance
+        $matchMarche = count(array_intersect($typeMarIds, array_map('intval', $alerteMarches))) > 0;
+        $matchAc     = in_array((int) $acId, array_map('intval', $alerteAc));
+
+        if ($matchMarche && $matchAc) {
+            $user = User::find($alerte->idUser);
+            if ($user) {
+                $usersToNotify->push($user);
+            }
+        }
+    }
+
+    // Envoi des mails aux utilisateurs concernés
     $autorite = Autorite::find($offre->ac_id)->name;
 
-    foreach ($users as $user) {
+    foreach ($usersToNotify as $user) {
         $data = [
-            'offre' => $offre,
-            'user' => $user,
-            'autorite' => $autorite, // Ajouter le nom de l'autorité contractante
-            'lien_offre' => url('/appels-d-offres/' . $offre->id),
-            'fichier_offre' => url('storage/' . $offre->fichier), // Génère le lien de téléchargement du fichier
+            'offre'         => $offre,
+            'user'          => $user,
+            'autorite'      => $autorite,
+            'lien_offre'    => url('/appels-d-offres/' . $offre->id),
+            'fichier_offre' => url('storage/' . $offre->fichier),
         ];
 
         Mail::send('emails.offre_notification', $data, function ($message) use ($user) {
