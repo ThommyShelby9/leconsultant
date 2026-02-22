@@ -871,7 +871,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Search bar -->
     <div class="search-section">
         <div class="container mx-auto px-4">
-            <form action="{{ route('offre.recherche') }}" method="post" class="search-card">
+<form action="{{ route('offre.recherche') }}" method="GET" class="search-card">
                 @csrf
                 <select name="categ">
                     <option value="0">Toutes les Autorités Contractantes</option>
