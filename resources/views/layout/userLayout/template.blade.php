@@ -45,7 +45,6 @@
     #logo a { display: flex; align-items: center; }
     #logo img { height: 38px; width: auto; }
 
-    /* Wrapper droite : liens + boutons sur la même ligne */
     #nav-right {
         display: flex;
         align-items: center;
@@ -85,7 +84,7 @@
         flex-shrink: 0;
     }
 
-    /* ── BOUTONS AUTH — complètement hors du <ul> ─────── */
+    /* ── BOUTONS AUTH — hors du <ul> ── */
     .nav-auth-actions {
         display: flex;
         align-items: center;
@@ -156,8 +155,6 @@
             height: auto;
             min-height: 60px;
         }
-
-        /* Ligne logo + hamburger */
         #logo {
             display: flex;
             align-items: center;
@@ -166,8 +163,6 @@
             padding: 0.75rem 0;
         }
         #nav-toggle { display: flex; }
-
-        /* Panneau collapsible : liens + boutons empilés */
         #nav-right {
             display: none;
             flex-direction: column;
@@ -178,8 +173,6 @@
             gap: 0.1rem;
         }
         #nav-right.open { display: flex; }
-
-        /* Liens normaux pleine largeur */
         #main-menu-navigation {
             flex-direction: column;
             align-items: flex-start;
@@ -192,10 +185,7 @@
             padding: 0.6rem 0.75rem;
             border-radius: 10px;
         }
-
         .nav-sep { display: none; }
-
-        /* Boutons : taille naturelle, côte à côte, inchangés */
         .nav-auth-actions {
             margin-left: 0;
             padding: 0.5rem 0.25rem 0;
@@ -217,7 +207,6 @@
                 </button>
             </div>
 
-            {{-- Tout le contenu collapsible est dans #nav-right --}}
             <div id="nav-right">
                 <ul id="main-menu-navigation">
                     <li class="{{ request()->routeIs('welcome') ? 'active' : '' }}">
@@ -228,7 +217,12 @@
                     </li>
 
                     @auth
+                        <li class="{{ request()->routeIs('alerte') ? 'active' : '' }}">
+                            <a href="{{ Route('alerte') }}">Mes Alertes</a>
+                        </li>
+
                         <div class="nav-sep"></div>
+
                         <li class="{{ request()->routeIs('moncompte*') || request()->routeIs('mesSetting') || request()->routeIs('mesAbonnements') || request()->routeIs('mesformations') ? 'active' : '' }}">
                             <a href="{{ route('moncompte') }}">Mon compte</a>
                         </li>
@@ -245,7 +239,6 @@
                 </ul>
 
                 @guest
-                    {{-- Hors du <ul> : jamais affecté par li a { width:100% } --}}
                     <div class="nav-auth-actions">
                         <a href="{{ Route('login') }}" class="nav-btn-outline">Se connecter</a>
                         <a href="{{ Route('register.morale') }}" class="nav-btn-filled">S'inscrire</a>
