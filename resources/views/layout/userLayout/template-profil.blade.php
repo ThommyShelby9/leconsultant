@@ -383,7 +383,7 @@
                 @else
                     <div class="nav-sep"></div>
                     <li><a href="{{ Route('login') }}" class="nav-btn-outline">Se connecter</a></li>
-                    <li><a href="{{ Route('register.morale') }}" class="nav-btn-filled">S'inscrire</a></li>
+                    <li><a href="{{ Route('register.morale') }}" class="nav-btn-outline">S'inscrire</a></li>
                 @endauth
             </ul>
         </nav>

@@ -277,7 +277,7 @@
                     <a href="{{ Route('login') }}" class="nb-btn-outline">Se connecter</a>
                 </li>
                 <li>
-                    <a href="{{ Route('register.morale') }}" class="nb-btn-primary">S'inscrire</a>
+                    <a href="{{ Route('register.morale') }}" class="nb-btn-outline">S'inscrire</a>
                 </li>
             @endauth
 
