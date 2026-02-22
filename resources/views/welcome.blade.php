@@ -17,7 +17,7 @@
 <style>
 :root {
     --blue:    #0136ba;
-    --rouge:   #c8102fa8;
+    --rouge:   #C8102E;
     --bg:      #F5F4F0;
     --card-bg: #FFFFFF;
     --muted:   #6B7280;
@@ -84,6 +84,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); }
     margin-bottom: 2.5rem;
 }
 .stat-item { display: flex; flex-direction: column; }
+.stat-item-sep { padding-left: 1.5rem; border-left: 1px solid rgba(255,255,255,0.15); }
 .stat-val {
     font-family: 'Instrument Serif', serif;
     font-size: 1.9rem;
@@ -680,12 +681,84 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); }
 .phone-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(11,45,94,0.12); }
 .phone-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
 
+/* ── MOBILE ──────────────────────────────────────── */
 @media (max-width: 768px) {
-    .hero-image-wrap { display: none; }
-    .banner-blue { padding: 3rem 0 2rem; }
-    .modal-grid, .modal-dates { grid-template-columns: 1fr; }
-    .modal-actions { flex-direction: column-reverse; }
-    .offers-grid { grid-template-columns: 1fr; }
+
+    /* Banner */
+    .hero-image-wrap  { display: none !important; }
+    .banner-blue      { padding: 2.5rem 0 2rem; }
+    .banner-content   { max-width: 100% !important; width: 100% !important; }
+    .banner-title     { font-size: 2rem; }
+    .banner-sub       { font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .banner-eyebrow   { font-size: 0.65rem; }
+
+    /* Stats strip */
+    .stats-strip {
+        gap: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .stats-strip .stat-item {
+        padding-left: 0 !important;
+        border-left: none !important;
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+        border-right: 1px solid rgba(255,255,255,0.12);
+    }
+    .stats-strip .stat-item:last-child { border-right: none; }
+    .stat-val   { font-size: 1.4rem; }
+    .stat-lbl   { font-size: 0.65rem; }
+
+    /* CTA buttons */
+    .banner-ctas { flex-direction: column; gap: 0.6rem; }
+    .btn-primary,
+    .btn-outline-white {
+        width: 100%;
+        justify-content: center;
+        padding: 0.8rem 1rem;
+    }
+
+    /* Search section */
+    .search-section   { padding: 1.25rem 0; }
+    .search-card      {
+        padding: 1rem;
+        gap: 0.6rem;
+        border-radius: 12px;
+    }
+    .search-card select,
+    .search-card input[type="search"] { flex: 1 1 100%; font-size: 0.9rem; }
+    .search-card .search-row { flex-direction: column; gap: 0.5rem; }
+    .btn-search-red   { width: 100%; justify-content: center; padding: 0.7rem 1rem; }
+    .btn-alerte-white { width: 100%; justify-content: center; }
+
+    /* Offers section */
+    #offres           { padding: 2.5rem 0 3rem; }
+    .offers-grid      { grid-template-columns: 1fr; gap: 1rem; }
+    .section-head     { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+    /* Load more */
+    .load-more-wrap   { flex-direction: column; align-items: center; }
+    .btn-load,
+    .btn-load-less    { width: 100%; max-width: 320px; justify-content: center; }
+
+    /* News section */
+    #actualites       { padding: 2.5rem 0; }
+    .news-card-body   { padding: 1.25rem 1.25rem 1.5rem; }
+    .news-title       { font-size: 1.2rem; }
+
+    /* CTA strip */
+    #subscription-call { padding: 3rem 0; }
+    .cta-buttons      { flex-direction: column; align-items: center; gap: 0.75rem; }
+    .btn-cta-primary,
+    .btn-cta-secondary { width: 100%; max-width: 300px; justify-content: center; text-align: center; }
+
+    /* Modals */
+    .swal2-popup.offer-modal { max-width: 95vw !important; margin: 0 auto; }
+    .modal-grid,
+    .modal-dates      { grid-template-columns: 1fr; }
+    .modal-actions    { flex-direction: column-reverse; }
+    .modal-body       { padding: 1.25rem; }
+    .modal-top        { padding: 1.25rem; }
 }
 </style>
 @endsection
@@ -749,7 +822,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Blue Hero -->
     <div class="banner-blue">
         <div class="container mx-auto px-4" style="position:relative; z-index:1;">
-            <div style="max-width: 55%;">
+        <div class="banner-content" style="max-width: 55%;">
                 <div class="banner-eyebrow">
                     <span></span> Plateforme d'appels d'offres — Bénin
                 </div>
@@ -767,11 +840,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="stat-val">{{ $totalOffres ?? '100' }}+</span>
                         <span class="stat-lbl">Offres disponibles</span>
                     </div>
-                    <div class="stat-item" style="padding-left:1.5rem; border-left: 1px solid rgba(255,255,255,0.15);">
+                    <div class="stat-item stat-item-sep">
                         <span class="stat-val">24h</span>
                         <span class="stat-lbl">Mise à jour</span>
                     </div>
-                    <div class="stat-item" style="padding-left:1.5rem; border-left: 1px solid rgba(255,255,255,0.15);">
+                    <div class="stat-item stat-item-sep">
                         <span class="stat-val">∞</span>
                         <span class="stat-lbl">Alertes personnalisées</span>
                     </div>

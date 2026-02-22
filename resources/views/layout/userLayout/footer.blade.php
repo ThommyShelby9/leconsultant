@@ -221,7 +221,7 @@ footer::before {
             <!-- Bottom bar -->
             <div class="footer-bottom">
                 <p class="footer-copy">
-                    &copy; 2024 <strong>Le Consultant</strong> — Bénin. Tous droits réservés.
+                    &copy; 2026 <strong>Le Consultant</strong> — Bénin. Tous droits réservés.
                 </p>
                 <ul class="footer-links">
                     <li><a href="#">Mentions légales</a></li>
