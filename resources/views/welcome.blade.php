@@ -1,228 +1,941 @@
 @extends('layout.userLayout.template')
 
 @section('titre')
-<title>Le consultant | Accueil</title>
-@endsection
-
-@section('banner')
-<!-- Swiper CSS -->
+<title>Le Consultant | Accueil</title>
+<!-- Swiper -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-
-<!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-
-<!-- AOS Animation -->
+<!-- AOS -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-@if($user)
-@if(!$hasActiveSubscription)
-
-<!-- Inclure le script SweetAlert -->
+<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    // Afficher le formulaire de paiement PayPlus
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            title: "Abonnement requis!",
-            text: "Veuillez souscrire à l'abonnement de 1490 FCFA pour accéder à la plateforme.",
-            icon: 'warning',
-            showCancelButton: false,
-            showConfirmButton: true,
-            confirmButtonText: 'Souscrire maintenant',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            html: `
-                <div class="p-4">
-                    <p class="mb-4">Pour continuer, veuillez entrer votre numéro de téléphone Mobile Money</p>
-                    <form id="subscription-form" action="{{ route('subscription.initiate', ['packId' => 1]) }}" method="POST">
-                        @csrf
-                        <div class="mb-4">
-                            <input type="tel"
-                                   name="phone"
-                                   id="phone-input"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Ex: 97000000"
-                                   pattern="[0-9]{8,15}"
-                                   required>
-                            <small class="text-gray-500">Format: 8 à 15 chiffres</small>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-blue-600 mb-2">50 FCFA</p>
-                            <p class="text-sm text-gray-600">Abonnement mensuel</p>
-                        </div>
-                    </form>
-                </div>
-            `,
-            preConfirm: () => {
-                const phone = document.getElementById('phone-input').value;
-                if (!phone || phone.length < 8) {
-                    Swal.showValidationMessage('Veuillez entrer un numéro de téléphone valide');
-                    return false;
-                }
-                return phone;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Afficher le loader
-                if (typeof window.showLoader === 'function') {
-                    window.showLoader('Initialisation du paiement...');
-                }
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 
-                // Soumettre le formulaire
-                document.getElementById('subscription-form').submit();
-            }
-        });
-    });
-</script>
+<style>
+:root {
+    --blue:    #0B2D5E;
+    --rouge:   #C8102E;
+    --bg:      #F5F4F0;
+    --card-bg: #FFFFFF;
+    --muted:   #6B7280;
+    --border:  #E5E3DC;
+}
 
-@endif
-@endif
+*, *::before, *::after { box-sizing: border-box; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); }
 
-@include('sweetalert::alert') <!-- Inclus pour afficher les alertes -->
+/* ── BANNER ─────────────────────────────────────────────── */
+#banner { position: relative; overflow: hidden; }
 
-<!-- Vos scripts -->
-<script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
-<section id="banner" class="relative overflow-hidden">
-    <div class="bg-consultant-blue lg:pt-32 lg:pb-48 pt-6 pb-6">
-        <div class="container mx-auto px-0 lg:px-0">
-            <div class="flex flex-wrap">
-                <div class="lg:w-2/3 w-full">
-                    <h1 class="text-white lg:text-6xl text-3xl font-bold mb-1 lg:mb-4 w-full">
-                        Explorer les Appels d'offres disponibles au
-                    </h1>
-                    <h1 class="text-consultant-rouge lg:text-6xl text-3xl font-bold mb-2 lg:mb-6 w-full">
-                        Bénin
-                    </h1>
-                    <p class="text-white text-justify mb-1 lg:mb-2 w-full">
-                        Découvrez les opportunités d’affaires au Bénin à travers notre plateforme dédiée aux appels d’offres publics et privés. Que vous soyez une petite ou grande entreprise, nous vous aidons à identifier les projets les plus pertinents pour développer vos activités et accroître votre chiffre d’affaires. Ne manquez plus aucune opportunité grâce à notre système d’alerte personnalisée.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+.banner-blue {
+    background: var(--blue);
+    padding: 5rem 0 3rem;
+    position: relative;
+}
+.banner-blue::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 60%, rgba(200,16,46,0.18) 0%, transparent 65%);
+    pointer-events: none;
+}
 
-    <div class="bg-consultant-rouge lg:pt-12 lg:pb-12 py-6">
-        <div class="container mx-auto px-0 lg:px-0">
-            <div class="flex flex-wrap">
-                <div class="lg:w-2/3 w-full">
-                    <form action="{{ route('offre.recherche') }}" method="post" class="flex flex-wrap justify-center lg:w-2/3 w-full">
-                        @csrf
-                        <!-- Sélecteur des Autorités Contractantes -->
-                        <div class="w-full lg:w-1/3 px-1 mb-4">
-                            <select name="categ" class="w-full bg-white bg-opacity-75 border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-consultant-rouge focus:border-transparent">
-                                <option selected value="0">Toutes les Autorités Contractantes</option>
-                                @foreach ($ac as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <!-- Sélecteur des Domaines d'Activité (Types) -->
-                        <div class="w-full lg:w-1/3 px-1 mb-4">
-                            <select name="type" class="w-full bg-white bg-opacity-75 border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-consultant-rouge focus:border-transparent">
-                                <option value="0" selected>Tous les Domaines d'Activités</option>
-                                @foreach ($types as $item)
-                                <option value="{{ $item->id }}">{{ $item->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <!-- Zone de recherche -->
-                        <div class="w-full relative mb-4">
-                            <input type="search" name="search" placeholder="Que cherchez-vous ?" class="w-full px-4 py-2 bg-white bg-opacity-75 rounded-lg border border-gray-300 focus:ring-2 focus:ring-consultant-rouge" />
-                            <button type="submit" class="absolute right-0 top-0 bottom-0 bg-consultant-blue text-white py-2 px-6 rounded-lg">
-                                Rechercher
-                            </button>
-                        </div>
-                        <!-- Lien créer une alerte -->
-                        <div class="w-full text-center">
-                            <a href="{{ route('alerte') }}" class="bg-blue-600 text-white py-2 px-4 rounded-lg">Créer une alerte</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+.banner-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(200,16,46,0.2);
+    border: 1px solid rgba(200,16,46,0.4);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.85rem;
+    border-radius: 50px;
+    margin-bottom: 1.25rem;
+}
+.banner-eyebrow span { width: 6px; height: 6px; background: var(--rouge); border-radius: 50%; display: inline-block; }
 
-    <div data-aos="fade-left" class="absolute lg:right-[-30%] xl:right-[0%] xl:top-0 lg:bottom-0 lg:block hidden">
-        <img src="{{ asset('assets/img/Photo%201.png') }}" alt="" class="xl:w-full lg:w-3/5">
-    </div>
-</section>
+.banner-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+    color: #fff;
+    line-height: 1.08;
+    margin: 0 0 1.5rem;
+}
+.banner-title em { color: var(--rouge); font-style: italic; }
 
+.banner-sub {
+    color: rgba(255,255,255,0.68);
+    font-size: 1rem;
+    line-height: 1.75;
+    max-width: 520px;
+    margin-bottom: 2.5rem;
+}
 
+/* Stats strip */
+.stats-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+.stat-item { display: flex; flex-direction: column; }
+.stat-val {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.9rem;
+    color: #fff;
+    line-height: 1;
+}
+.stat-lbl { font-size: 0.72rem; color: rgba(255,255,255,0.5); font-weight: 500; letter-spacing: 0.05em; }
+
+/* CTA buttons */
+.banner-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+.btn-primary {
+    background: var(--rouge);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.6rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.btn-primary:hover { background: #a50d26; transform: translateY(-2px); }
+
+.btn-outline-white {
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 0.75rem 1.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); }
+
+/* Hero image */
+.hero-image-wrap {
+    position: absolute;
+    right: -4%;
+    top: 0; bottom: 0;
+    width: 45%;
+    display: flex;
+    align-items: flex-end;
+}
+.hero-image-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.hero-image-wrap::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 160px;
+    background: linear-gradient(to right, var(--blue), transparent);
+    z-index: 1;
+}
+
+/* ── SEARCH BAR ──────────────────────────────────────────── */
+.search-section {
+    background: var(--rouge);
+    padding: 2rem 0;
+    position: relative;
+    z-index: 2;
+}
+
+.search-card {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    max-width: 860px;
+}
+
+.search-card select,
+.search-card input[type="search"] {
+    background: rgba(255,255,255,0.95);
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--blue);
+    outline: none;
+    flex: 1 1 200px;
+    transition: box-shadow 0.2s;
+}
+.search-card select:focus,
+.search-card input:focus { box-shadow: 0 0 0 3px rgba(11,45,94,0.3); }
+
+.search-card .search-row {
+    display: flex;
+    gap: 0.6rem;
+    flex: 1 1 100%;
+}
+.search-card input[type="search"] { flex: 1; }
+
+.btn-search-red {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    display: flex; align-items: center; gap: 0.35rem;
+}
+.btn-search-red:hover { background: #0d3978; }
+
+.btn-alerte-white {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 10px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+.btn-alerte-white:hover { background: rgba(255,255,255,0.25); }
+
+/* ── OFFER CARDS ─────────────────────────────────────────── */
+#offres { padding: 4.5rem 0 5rem; }
+
+.section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    color: var(--blue);
+    margin: 0;
+}
+.section-title span { color: var(--rouge); }
+
+.see-all {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    color: var(--rouge);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: gap 0.2s;
+}
+.see-all:hover { gap: 0.6rem; }
+
+.offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+
+.offer-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    animation: fadeUp 0.5s ease both;
+}
+.offer-card:hover { transform: translateY(-5px); box-shadow: 0 20px 48px rgba(11,45,94,0.11); border-color: rgba(200,16,46,0.25); }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-header {
+    padding: 1.25rem 1.5rem 1rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-logo {
+    width: 50px; height: 50px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 4px;
+    flex-shrink: 0;
+}
+
+.card-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.05rem;
+    color: var(--blue);
+    line-height: 1.35;
+    margin: 0 0 0.2rem;
+    transition: color 0.2s;
+}
+.offer-card:hover .card-title { color: var(--rouge); }
+.card-ac { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+
+.card-body { padding: 1rem 1.5rem; flex: 1; }
+
+.card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.65rem;
+    border-radius: 50px;
+}
+.tag-categ { background: #EEF2FF; color: #3730A3; }
+.tag-type  { background: #FEF3C7; color: #92400E; }
+
+.card-dates { display: flex; justify-content: space-between; gap: 0.5rem; }
+.date-item { font-size: 0.8rem; }
+.date-label { color: var(--muted); display: block; margin-bottom: 0.1rem; font-size: 0.72rem; }
+.date-value { color: var(--blue); font-weight: 600; }
+.date-value.expired { color: var(--rouge); }
+
+.card-footer {
+    padding: 0.9rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    gap: 0.75rem;
+}
+
+.btn-card-details {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex: 1;
+}
+.btn-card-details:hover { background: #0d3978; }
+
+/* Load more */
+.load-more-wrap { margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+.btn-load {
+    background: var(--rouge);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.btn-load:hover { background: #a50d26; transform: translateY(-2px); }
+
+.btn-load-less {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1.8rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+.btn-load-less:hover { border-color: var(--muted); color: var(--blue); }
+
+/* ── NEWS ─────────────────────────────────────────────────── */
+#actualites { padding: 4.5rem 0; background: #fff; }
+
+.news-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    text-align: left;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.news-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.news-card-body { padding: 1.5rem 2rem 2rem; }
+
+.news-source {
+    display: inline-block;
+    background: rgba(11,45,94,0.08);
+    color: var(--blue);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: 50px;
+    margin-bottom: 0.85rem;
+}
+
+.news-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.5rem;
+    color: var(--blue);
+    line-height: 1.3;
+    margin: 0 0 0.75rem;
+}
+
+.news-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.25rem; }
+
+.btn-news {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.65rem 1.3rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.btn-news:hover { background: #0d3978; }
+
+.swiper-button-next,
+.swiper-button-prev {
+    background: #fff;
+    width: 44px !important; height: 44px !important;
+    border-radius: 50%;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    color: var(--blue) !important;
+}
+.swiper-button-next::after,
+.swiper-button-prev::after { font-size: 1rem !important; font-weight: 900 !important; }
+
+.swiper-pagination-bullet { background: var(--blue); opacity: 0.3; }
+.swiper-pagination-bullet-active { opacity: 1; background: var(--rouge); }
+
+/* ── CTA STRIP ───────────────────────────────────────────── */
+#subscription-call {
+    padding: 5rem 0;
+    background: var(--blue);
+    position: relative;
+    overflow: hidden;
+}
+#subscription-call::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,16,46,0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.cta-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: #fff;
+    margin: 0 0 1rem;
+}
+
+.cta-sub {
+    color: rgba(255,255,255,0.7);
+    font-size: 1rem;
+    max-width: 580px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.75;
+}
+
+.cta-price {
+    display: inline-block;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.5rem;
+    color: #F9D949;
+}
+
+.cta-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+.btn-cta-primary {
+    background: var(--rouge);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+}
+.btn-cta-primary:hover { background: #a50d26; transform: translateY(-2px); }
+
+.btn-cta-secondary {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.btn-cta-secondary:hover { background: rgba(255,255,255,0.2); }
+
+/* ── MODAL ───────────────────────────────────────────────── */
+.swal2-popup.offer-modal {
+    border-radius: 20px !important;
+    padding: 0 !important;
+    max-width: 560px !important;
+    overflow: hidden !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+
+.modal-inner { display: flex; flex-direction: column; }
+
+.modal-top {
+    background: var(--blue);
+    padding: 1.75rem 2rem 1.5rem;
+    position: relative;
+}
+.modal-top::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: var(--rouge);
+}
+
+.modal-badge {
+    display: inline-block;
+    background: rgba(200,16,46,0.25);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: 50px;
+    margin-bottom: 0.65rem;
+}
+
+.modal-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.5rem;
+    color: #fff;
+    line-height: 1.3;
+    margin: 0;
+    text-align: left;
+}
+
+.modal-ac {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    text-align: left;
+}
+
+.modal-body { padding: 1.5rem 2rem; }
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.modal-field { display: flex; flex-direction: column; gap: 0.2rem; }
+.modal-field-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.modal-field-value {
+    font-size: 0.92rem;
+    color: var(--blue);
+    font-weight: 500;
+}
+
+.modal-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 1.25rem; }
+
+.modal-dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.date-block { display: flex; flex-direction: column; gap: 0.15rem; }
+.date-block .lbl { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.date-block .val { font-size: 0.95rem; font-weight: 600; color: var(--blue); }
+.date-block.expire .val { color: var(--rouge); }
+
+.modal-actions { display: flex; gap: 0.75rem; }
+
+.modal-btn-primary {
+    flex: 1;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.modal-btn-primary:hover { background: #0d3978; }
+
+.modal-btn-download {
+    flex: 1;
+    background: var(--rouge);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    transition: background 0.2s;
+}
+.modal-btn-download:hover { background: #a50d26; }
+
+/* spinner */
+.modal-loading {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 3rem 2rem;
+    gap: 1rem; color: var(--muted); font-size: 0.9rem;
+}
+.spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Subscription modal */
+.sub-modal-price {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.5rem;
+    color: var(--blue);
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+}
+.sub-modal-period { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+
+.phone-input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--blue);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-top: 1rem;
+}
+.phone-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(11,45,94,0.12); }
+.phone-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
+
+@media (max-width: 768px) {
+    .hero-image-wrap { display: none; }
+    .banner-blue { padding: 3rem 0 2rem; }
+    .modal-grid, .modal-dates { grid-template-columns: 1fr; }
+    .modal-actions { flex-direction: column-reverse; }
+    .offers-grid { grid-template-columns: 1fr; }
+}
+</style>
 @endsection
 
-@section('contenu')
-<section id="offres" class="py-16 bg-gray-50">
-    <div class="container mx-auto px-4">
-        <h2 class="text-consultant-rouge text-3xl lg:text-5xl font-bold mb-8" data-aos="fade-up">Les dernières offres publiées</h2>
-        <div id="offre-list" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            @foreach ($offres as $item)
-            <div class="offre-item bg-white shadow-lg rounded-xl p-6 flex flex-col lg:flex-row h-80 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-2 hover:border-consultant-rouge" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                <div class="w-full lg:w-1/5 flex items-center justify-center mb-4 lg:mb-0">
-                    <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}" alt="logo" class="w-full rounded-lg object-contain transition-transform duration-300 hover:scale-110">
+
+@section('banner')
+
+@if($user && !$hasActiveSubscription)
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        html: `
+            <div style="font-family:'DM Sans',sans-serif; padding: 0;">
+                <div style="background:#0B2D5E; padding:1.5rem 2rem; border-radius:0; margin:-1px; text-align:left; border-bottom:3px solid #C8102E;">
+                    <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;">Accès plateforme</div>
+                    <div style="font-family:'Instrument Serif',serif;font-size:1.6rem;color:#fff;">Activez votre abonnement</div>
                 </div>
-                <div class="w-full lg:w-4/5 lg:pl-6 flex flex-col justify-between">
-                    <a href="javascript:void(0);" class="text-xl lg:text-2xl font-bold text-gray-800 hover:text-consultant-rouge transition-colors duration-300"
-                        onclick="handleOfferClick('{{ $item->id }}')">
-                        {{ Str::limit($item->titre, 60) }}
-                    </a>
-                    <p class="text-consultant-blue text-lg font-medium mt-2">{{ $item->autName }}</p>
-                    <hr class="my-3 border-gray-200">
-                    <div class="text-gray-600 text-sm space-y-2">
-                        <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-consultant-rouge" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>Catégorie: {{ $item->categTitle }}</p>
-                        @if(auth()->check())
-                        <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-consultant-blue" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>Type: {{ $item->typeTitle }}</p>
-                        @endif
-                        <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>Publiée le: {{ date('d M Y', strtotime($item->datePublication)) }}</p>
-                        <p class="flex items-center"><svg class="w-4 h-4 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>Expire le: {{ date('d M Y', strtotime($item->dateExpiration)) }}</p>
+                <div style="padding:1.5rem 2rem;">
+                    <div style="background:#F5F4F0;border-radius:12px;padding:1rem 1.25rem;text-align:center;margin-bottom:1.25rem;">
+                        <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7280;">Abonnement mensuel</div>
+                        <span style="font-family:'Instrument Serif',serif;font-size:2.2rem;color:#0B2D5E;display:block;margin:0.25rem 0 0.1rem;">50 FCFA</span>
+                        <div style="font-size:0.75rem;color:#6B7280;">accès illimité pendant 30 jours</div>
                     </div>
+                    <p style="color:#6B7280;font-size:0.875rem;margin-bottom:1rem;">Entrez votre numéro Mobile Money pour continuer :</p>
+                    <form id="subscription-form" action="{{ route('subscription.initiate', ['packId' => 1]) }}" method="POST">
+                        @csrf
+                        <input type="tel" name="phone" id="phone-input" class="phone-input"
+                               placeholder="Ex: 97000000" pattern="[0-9]{8,15}" required>
+                        <p class="phone-hint">Format : 8 à 15 chiffres</p>
+                    </form>
+                </div>
+            </div>
+        `,
+        showConfirmButton: true,
+        confirmButtonText: 'Procéder au paiement →',
+        confirmButtonColor: '#C8102E',
+        showCancelButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        customClass: { popup: 'offer-modal' },
+        preConfirm: () => {
+            const phone = document.getElementById('phone-input').value;
+            if (!phone || phone.length < 8) {
+                Swal.showValidationMessage('Veuillez entrer un numéro valide (8 chiffres minimum)');
+                return false;
+            }
+            return phone;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('subscription-form').submit();
+        }
+    });
+});
+</script>
+@endif
+
+@include('sweetalert::alert')
+
+<section id="banner">
+    <!-- Blue Hero -->
+    <div class="banner-blue">
+        <div class="container mx-auto px-4" style="position:relative; z-index:1;">
+            <div style="max-width: 55%;">
+                <div class="banner-eyebrow">
+                    <span></span> Plateforme d'appels d'offres — Bénin
+                </div>
+                <h1 class="banner-title">
+                    Trouvez les meilleures<br>
+                    <em>opportunités d'affaires</em><br>
+                    au Bénin
+                </h1>
+                <p class="banner-sub">
+                    Accédez à tous les appels d'offres publics et privés en un seul endroit. Ne manquez plus aucune opportunité grâce à nos alertes personnalisées.
+                </p>
+
+                <div class="stats-strip">
+                    <div class="stat-item">
+                        <span class="stat-val">{{ $totalOffres ?? '100' }}+</span>
+                        <span class="stat-lbl">Offres disponibles</span>
+                    </div>
+                    <div class="stat-item" style="padding-left:1.5rem; border-left: 1px solid rgba(255,255,255,0.15);">
+                        <span class="stat-val">24h</span>
+                        <span class="stat-lbl">Mise à jour</span>
+                    </div>
+                    <div class="stat-item" style="padding-left:1.5rem; border-left: 1px solid rgba(255,255,255,0.15);">
+                        <span class="stat-val">∞</span>
+                        <span class="stat-lbl">Alertes personnalisées</span>
+                    </div>
+                </div>
+
+                <div class="banner-ctas">
+                    <a href="{{ route('offre.recherche') }}" class="btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        Explorer les offres
+                    </a>
+                    <a href="{{ route('alerte') }}" class="btn-outline-white">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        Créer une alerte
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-image-wrap lg:flex hidden">
+            <img src="{{ asset('assets/img/Photo%201.png') }}" alt="Hero" />
+        </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-section">
+        <div class="container mx-auto px-4">
+            <form action="{{ route('offre.recherche') }}" method="post" class="search-card">
+                @csrf
+                <select name="categ">
+                    <option value="0">Toutes les Autorités Contractantes</option>
+                    @foreach ($ac as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+                <select name="type">
+                    <option value="0">Tous les Domaines d'Activités</option>
+                    @foreach ($types as $item)
+                    <option value="{{ $item->id }}">{{ $item->title }}</option>
+                    @endforeach
+                </select>
+                <div class="search-row">
+                    <input type="search" name="search" placeholder="Que cherchez-vous ?" />
+                    <button type="submit" class="btn-search-red">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        Rechercher
+                    </button>
+                </div>
+                <a href="{{ route('alerte') }}" class="btn-alerte-white">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    Créer une alerte
+                </a>
+            </form>
+        </div>
+    </div>
+</section>
+@endsection
+
+
+@section('contenu')
+<!-- ── OFFERS ─────────────────────────────────────── -->
+<section id="offres">
+    <div class="container mx-auto px-4">
+
+        <div class="section-head" data-aos="fade-up">
+            <h2 class="section-title">Dernières offres <span>publiées</span></h2>
+            <a href="{{ route('offre.recherche') }}" class="see-all">
+                Voir toutes les offres
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+
+        <div id="offre-list" class="offers-grid">
+            @foreach ($offres as $item)
+            <div class="offer-card" onclick="handleOfferClick('{{ $item->id }}')"
+                 data-aos="fade-up" data-aos-delay="{{ min($loop->index * 80, 400) }}">
+
+                <div class="card-header">
+                    <img src="{{ $item->logo ? asset($item->logo) : asset('default_offres.jpg') }}"
+                         alt="logo" class="card-logo">
+                    <div style="flex:1; min-width:0;">
+                        <div class="card-title">{{ Str::limit($item->titre, 65) }}</div>
+                        <div class="card-ac">{{ $item->autName }}</div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="card-tags">
+                        @if($item->categTitle)
+                            <span class="tag tag-categ">{{ $item->categTitle }}</span>
+                        @endif
+                        @if(auth()->check() && $item->typeTitle)
+                            <span class="tag tag-type">{{ $item->typeTitle }}</span>
+                        @endif
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">Publiée le</span>
+                            <span class="date-value">{{ date('d M Y', strtotime($item->datePublication)) }}</span>
+                        </div>
+                        <div class="date-item" style="text-align:right;">
+                            <span class="date-label">Expire le</span>
+                            <span class="date-value expired">{{ date('d M Y', strtotime($item->dateExpiration)) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn-card-details">Voir les détails →</button>
                 </div>
             </div>
             @endforeach
         </div>
 
-        <!-- Ajouter le bouton "Voir plus" si le nombre total d'offres est supérieur à 4 -->
         @if ($totalOffres > 4)
-            <div class="mt-8 text-center">
-                <button id="load-more" class="bg-consultant-rouge text-white px-6 py-2 rounded-lg" 
-                    onclick="handleLoadMore()">Voir plus</button>
-                <button id="load-less" class="bg-gray-500 text-white px-6 py-2 rounded-lg" 
-                    style="display:none;" onclick="loadLessOffres()">Voir moins</button>
-            </div>
+        <div class="load-more-wrap">
+            <button id="load-more" class="btn-load" onclick="handleLoadMore()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+                Voir plus d'offres
+            </button>
+            <button id="load-less" class="btn-load-less" style="display:none;" onclick="loadLessOffres()">
+                Voir moins
+            </button>
+        </div>
         @endif
+
     </div>
 </section>
 
 
-<!-- Section des actualités du Bénin -->
+<!-- ── NEWS ──────────────────────────────────────── -->
 @if(!empty($news) && count($news) > 0)
-<section id="actualites" class="py-16 bg-white">
+<section id="actualites">
     <div class="container mx-auto px-4">
-        <h2 class="text-consultant-blue text-3xl lg:text-5xl font-bold mb-8 text-center" data-aos="fade-up">Actualités du Bénin</h2>
-        <div class="swiper-container" data-aos="fade-up" data-aos-delay="200">
+
+        <div class="section-head" data-aos="fade-up">
+            <h2 class="section-title">Actualités <span>du Bénin</span></h2>
+        </div>
+
+        <div class="swiper-container" data-aos="fade-up" data-aos-delay="150">
             <div class="swiper-wrapper">
                 @foreach($news as $article)
                 <div class="swiper-slide">
-                    <div class="bg-[#F5FAFE] rounded-xl shadow-lg p-8 max-w-4xl mx-auto hover:shadow-2xl transition-shadow duration-300">
+                    <div class="news-card">
                         @if(isset($article->urlToImage) && $article->urlToImage)
-                        <img src="{{ $article->urlToImage }}" alt="{{ $article->title ?? 'Actualité' }}" class="rounded-lg mb-6 shadow-md">
+                        <img src="{{ $article->urlToImage }}" alt="{{ $article->title ?? '' }}">
                         @endif
-                        <h4 class="text-2xl font-bold text-gray-800 mb-4">{{ $article->title ?? 'Sans titre' }}</h4>
-                        <p class="text-gray-700 leading-relaxed mb-6">{{ Str::limit($article->description ?? '', 200) }}</p>
-                        @if(isset($article->url))
-                        <a href="{{ $article->url }}" target="_blank" class="inline-flex items-center bg-consultant-blue text-white px-6 py-3 rounded-lg hover:bg-consultant-rouge transition-colors duration-300">
-                            Lire l'article complet
-                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                        </a>
-                        @endif
-                        @if(isset($article->source->name))
-                        <p class="text-sm text-gray-500 mt-4">Source: {{ $article->source->name }}</p>
-                        @endif
+                        <div class="news-card-body">
+                            @if(isset($article->source->name))
+                            <span class="news-source">{{ $article->source->name }}</span>
+                            @endif
+                            <div class="news-title">{{ $article->title ?? 'Sans titre' }}</div>
+                            <p class="news-desc">{{ Str::limit($article->description ?? '', 200) }}</p>
+                            @if(isset($article->url))
+                            <a href="{{ $article->url }}" target="_blank" class="btn-news">
+                                Lire l'article complet
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 @endforeach
             </div>
-            <!-- Navigation Swiper -->
-            <div class="swiper-pagination mt-8"></div>
+            <div class="swiper-pagination" style="margin-top: 1.5rem; position:relative;"></div>
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
         </div>
@@ -230,334 +943,164 @@
 </section>
 @endif
 
-<!-- Section pour inciter à s'inscrire et s'abonner -->
-@if(!auth()->check())
 
-<section id="subscription-call" class="py-16 bg-gradient-to-r from-consultant-blue to-consultant-rouge">
-    <div class="container mx-auto text-center px-4" data-aos="zoom-in">
-        <h2 class="text-white text-3xl lg:text-5xl font-bold mb-4">Accédez pleinement à notre plateforme</h2>
-        <p class="text-white text-lg lg:text-xl mb-8 max-w-3xl mx-auto">
-            Inscrivez-vous dès aujourd'hui et souscrivez à notre abonnement mensuel à seulement <span class="font-bold text-yellow-300">1490 FCFA</span> pour profiter de toutes les fonctionnalités et ne manquer aucune opportunité d'affaires.
+<!-- ── CTA ───────────────────────────────────────── -->
+@if(!auth()->check())
+<section id="subscription-call">
+    <div class="container mx-auto px-4 text-center" data-aos="fade-up" style="position:relative; z-index:1;">
+        <div class="banner-eyebrow" style="margin: 0 auto 1.25rem; display:inline-flex;">
+            <span></span> Rejoignez la plateforme
+        </div>
+        <h2 class="cta-title">Accédez à toutes les opportunités</h2>
+        <p class="cta-sub">
+            Inscrivez-vous et souscrivez à notre abonnement mensuel à seulement
+            <span class="cta-price">1 490 FCFA</span>
+            pour profiter de toutes les fonctionnalités et alertes personnalisées.
         </p>
-        <div class="flex justify-center gap-4 flex-wrap">
-            <a href="{{ route('register.morale') }}" class="bg-white text-consultant-rouge py-3 px-8 rounded-lg text-lg font-semibold hover:bg-yellow-300 hover:text-consultant-blue transition-all duration-300 transform hover:scale-105 shadow-lg">S'inscrire maintenant</a>
-            <a href="{{ route('login') }}" class="bg-yellow-400 text-consultant-blue py-3 px-8 rounded-lg text-lg font-semibold hover:bg-white hover:text-consultant-rouge transition-all duration-300 transform hover:scale-105 shadow-lg" style="display: inline-block;">Se connecter</a>
+        <div class="cta-buttons">
+            <a href="{{ route('register.morale') }}" class="btn-cta-primary">S'inscrire maintenant</a>
+            <a href="{{ route('login') }}" class="btn-cta-secondary">Se connecter</a>
         </div>
     </div>
 </section>
 @endif
-
-
-
-<style>
-    /* Styles de la section des actualités */
-    .swiper-container {
-        overflow: hidden;
-    }
-
-    /* Style des slides pour être bien centrés */
-    .swiper-slide {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 20px;
-    }
-
-    /* Style du conteneur des actualités */
-    .bg-[#F5FAFE] {
-        background-color: #F5FAFE;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    /* Style pour le titre centré */
-    .bg-[#F5FAFE] h4 {
-        margin-bottom: 10px;
-        font-size: 1.25rem;
-        font-weight: bold;
-        text-align: center;
-    }
-
-    /* Style pour le texte justifié */
-    .bg-[#F5FAFE] p {
-        text-align: justify;
-        margin-bottom: 10px;
-        font-size: 1rem;
-    }
-
-    /* Style du lien vers l'article centré */
-    .bg-[#F5FAFE] a {
-        color: #1e40af;
-        text-decoration: underline;
-        font-size: 1rem;
-    }
-
-    /* Image centrée */
-    /* Image centrée */
-    .bg-[#F5FAFE] img {
-        width: 100%;
-        max-width: 300px;
-        /* Augmentez la taille max de l'image */
-        height: auto;
-        object-fit: cover;
-        margin-top: 20px;
-    }
-
-
-    /* Pagination et navigation de swiper */
-    .swiper-pagination,
-    .swiper-button-next,
-    .swiper-button-prev {
-        color: #007bff;
-    }
-
-    /* Superposition sur l'image (optionnel) */
-    .bg-[#F5FAFE]::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.3);
-        z-index: 2;
-    }
-
-    .swiper-slide img {
-        width: 100%;
-        max-width: 300px;
-        height: auto;
-        object-fit: cover;
-        margin-top: 20px;
-    }
-
-    @media (max-width: 768px) {
-        .w-1/5 {
-            margin-right: 0.5rem;
-        }
-
-        .w-4/5 {
-            margin-left: 0.5rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        #offres {
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }
-    }
-
-    #offres {
-        margin-top: 2rem;
-        /* au lieu de 8rem */
-        margin-bottom: 2rem;
-        /* au lieu de 8rem */
-    }
-
-    @media (max-width: 768px) {
-        .mb-6 {
-            margin-bottom: 1rem;
-        }
-
-        .mb-16 {
-            margin-bottom: 2rem;
-        }
-    }
-
-    .mb-6 {
-        margin-bottom: 2rem;
-        /* au lieu de 6rem */
-    }
-
-    .mb-16 {
-        margin-bottom: 4rem;
-        /* au lieu de 16rem */
-    }
-
-    /* Animation de fade-in lors de l'affichage des nouvelles offres */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Classe appliquée pour l'animation */
-.offre-item {
-    animation: fadeIn 0.6s ease-in-out;
-    cursor: pointer;
-}
-
-/* Amélioration de l'effet hover sur les cartes d'offres */
-.offre-item:hover {
-    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-}
-
-/* Animation pour les boutons */
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-.hover\:scale-105:hover {
-    animation: pulse 2s infinite;
-}
-
-/* Style amélioré pour le conteneur Swiper */
-.swiper-container {
-    padding: 20px 0;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-    background-color: rgba(255, 255, 255, 0.8);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    color: #1e40af;
-}
-
-.swiper-button-next:hover,
-.swiper-button-prev:hover {
-    background-color: rgba(255, 255, 255, 1);
-    transform: scale(1.1);
-    transition: all 0.3s ease;
-}
-
-.swiper-pagination-bullet {
-    background: #1e40af;
-    opacity: 0.5;
-    width: 12px;
-    height: 12px;
-}
-
-.swiper-pagination-bullet-active {
-    opacity: 1;
-    background: #dc2626;
-}
-
-/* Responsive amélioré */
-@media (max-width: 768px) {
-    .offre-item {
-        height: auto;
-        min-height: 320px;
-    }
-
-    .swiper-button-next,
-    .swiper-button-prev {
-        width: 40px;
-        height: 40px;
-    }
-}
-
-</style>
-
-
 @endsection
+
 
 @section('code')
 <script>
-    var swiper = new Swiper('.swiper-container', {
-        loop: true,
-        slidesPerView: 1, // Affiche un seul slide à la fois
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        autoplay: {
-            delay: 5000, // Temps en millisecondes avant de passer à la diapositive suivante
-            disableOnInteraction: false, // Continue l'autoplay même après une interaction utilisateur
-        },
-    });
-</script>
+AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true, offset: 80 });
 
-
-
-</script>
-<!-- Inclure SweetAlert via CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-
-<script>
-// Initialiser AOS
-AOS.init({
-    duration: 800,
-    easing: 'ease-in-out',
-    once: true,
-    offset: 100
+var swiper = new Swiper('.swiper-container', {
+    loop: true,
+    slidesPerView: 1,
+    spaceBetween: 20,
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+    autoplay: { delay: 6000, disableOnInteraction: false },
 });
 
+// ── Offer click ───────────────────────────────────
 function handleOfferClick(offerId) {
-    const isLoggedIn = @json(auth()->check());
-    const hasSubscription = @json($hasActiveSubscription ?? false);
+    const isLoggedIn    = @json(auth()->check());
+    const hasSub        = @json($hasActiveSubscription ?? false);
 
     if (!isLoggedIn) {
-        swal({
-            title: "Connexion requise",
-            text: "Vous devez vous connecter pour consulter les détails de cette offre.",
-            type: "warning",
+        Swal.fire({
+            html: `
+                <div style="font-family:'DM Sans',sans-serif; padding:0.5rem 0;">
+                    <p style="font-size:1.1rem;font-weight:600;color:#0B2D5E;margin-bottom:0.5rem;">Connexion requise</p>
+                    <p style="color:#6B7280;font-size:0.9rem;">Vous devez vous connecter pour consulter les détails de cette offre.</p>
+                </div>
+            `,
             showCancelButton: true,
-            confirmButtonText: "Se connecter",
-            cancelButtonText: "Annuler"
-        }).then((willRedirect) => {
-            if (willRedirect) {
-                window.location.href = '/login';
-            }
-        });
-    } else if (!hasSubscription) {
-        swal({
-            title: "Abonnement requis",
-            text: "Vous devez avoir un abonnement actif pour consulter les détails des offres.",
-            type: "warning",
-            confirmButtonText: "OK"
+            confirmButtonText: 'Se connecter',
+            cancelButtonText: 'Annuler',
+            confirmButtonColor: '#0B2D5E',
+            cancelButtonColor: '#E5E3DC',
+        }).then(r => { if (r.isConfirmed) window.location.href = '/login'; });
+
+    } else if (!hasSub) {
+        Swal.fire({
+            html: `
+                <div style="font-family:'DM Sans',sans-serif; padding:0.5rem 0;">
+                    <p style="font-size:1.1rem;font-weight:600;color:#0B2D5E;margin-bottom:0.5rem;">Abonnement requis</p>
+                    <p style="color:#6B7280;font-size:0.9rem;">Activez votre abonnement pour consulter les détails des offres.</p>
+                </div>
+            `,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#0B2D5E',
         });
     } else {
-        // Rediriger vers la page de détails de l'offre
-        window.location.href = '/appels-d-offres';
+        fetchOfferDetails(offerId);
     }
 }
 
+// ── Fetch & show modal ────────────────────────────
+function fetchOfferDetails(offerId) {
+    Swal.fire({
+        html: `<div class="modal-loading"><div class="spinner"></div><span>Chargement…</span></div>`,
+        showConfirmButton: false,
+        customClass: { popup: 'offer-modal' },
+        allowOutsideClick: false,
+    });
+
+    fetch('/offre/details/' + offerId)
+        .then(r => r.json())
+        .then(data => {
+            const fileBtn = data.file
+                ? `<a href="${data.file}" target="_blank" class="modal-btn-download">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Télécharger
+                   </a>`
+                : `<span style="flex:1;text-align:center;color:#9CA3AF;font-size:0.82rem;">Aucun fichier</span>`;
+
+            Swal.fire({
+                html: `
+                    <div class="modal-inner">
+                        <div class="modal-top">
+                            <div class="modal-badge">Appel d'offres</div>
+                            <div class="modal-title">${data.titre}</div>
+                            <div class="modal-ac">${data.autName ?? '—'}</div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-grid">
+                                <div class="modal-field">
+                                    <span class="modal-field-label">Catégorie</span>
+                                    <span class="modal-field-value">${data.categTitle ?? '—'}</span>
+                                </div>
+                                <div class="modal-field">
+                                    <span class="modal-field-label">Type de marché</span>
+                                    <span class="modal-field-value">${data.typeTitle ?? 'Non spécifié'}</span>
+                                </div>
+                            </div>
+                            <hr class="modal-divider">
+                            <div class="modal-dates">
+                                <div class="date-block">
+                                    <span class="lbl">Date de publication</span>
+                                    <span class="val">${data.datePublication}</span>
+                                </div>
+                                <div class="date-block expire">
+                                    <span class="lbl">Date d'expiration</span>
+                                    <span class="val">${data.dateExpiration}</span>
+                                </div>
+                            </div>
+                            <div class="modal-actions">
+                                ${fileBtn}
+                                <button class="modal-btn-primary" onclick="Swal.close()">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: false,
+                customClass: { popup: 'offer-modal' },
+                backdrop: 'rgba(11,45,94,0.45)',
+            });
+        })
+        .catch(() => {
+            Swal.fire({
+                title: 'Erreur',
+                text: "Impossible de récupérer les détails.",
+                icon: 'error',
+                confirmButtonColor: '#0B2D5E',
+            });
+        });
+}
+
+// ── Load more ─────────────────────────────────────
 function handleLoadMore() {
     const isLoggedIn = @json(auth()->check());
-
     if (!isLoggedIn) {
-        swal({
-            title: "Connexion requise",
-            text: "Vous devez vous connecter pour voir plus d'offres. Inscrivez-vous gratuitement !",
-            type: "warning",
+        Swal.fire({
+            html: `<p style="font-family:'DM Sans',sans-serif;color:#6B7280;">Connectez-vous pour voir plus d'offres.</p>`,
             showCancelButton: true,
-            confirmButtonText: "Se connecter",
-            cancelButtonText: "Annuler"
-        }).then((willRedirect) => {
-            if (willRedirect) {
-                window.location.href = '/login';
-            }
-        });
+            confirmButtonText: 'Se connecter',
+            cancelButtonText: 'Annuler',
+            confirmButtonColor: '#0B2D5E',
+        }).then(r => { if (r.isConfirmed) window.location.href = '/login'; });
     } else {
         window.location.href = '/appels-d-offres';
     }
 }
 </script>
-
-
 @endsection
