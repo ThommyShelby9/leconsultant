@@ -779,7 +779,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div style="padding:1.5rem 2rem;">
                     <div style="background:#F5F4F0;border-radius:12px;padding:1rem 1.25rem;text-align:center;margin-bottom:1.25rem;">
                         <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7280;">Abonnement mensuel</div>
-                        <span style="font-family:'Instrument Serif',serif;font-size:2.2rem;color:#0B2D5E;display:block;margin:0.25rem 0 0.1rem;">50 FCFA</span>
+                        <span style="font-family:'Instrument Serif',serif;font-size:2.2rem;color:#0B2D5E;display:block;margin:0.25rem 0 0.1rem;">1490 FCFA</span>
                         <div style="font-size:0.75rem;color:#6B7280;">accès illimité pendant 30 jours</div>
                     </div>
                     <p style="color:#6B7280;font-size:0.875rem;margin-bottom:1rem;">Entrez votre numéro Mobile Money pour continuer :</p>
@@ -851,7 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
 
                 <div class="banner-ctas">
-                    <a href="{{ route('offre.recherche') }}" class="btn-primary">
+                    <a href="{{ route('offre') }}" class="btn-primary">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                         Explorer les offres
                     </a>

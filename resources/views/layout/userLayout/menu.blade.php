@@ -11,6 +11,7 @@
     border-bottom: 1px solid #E5E3DC;
     transition: box-shadow 0.3s;
     box-sizing: border-box;
+    overflow: visible; /* ← indispensable pour le dropdown mobile */
 }
 #navbar.scrolled {
     box-shadow: 0 4px 24px rgba(11,45,94,0.1);
@@ -108,7 +109,6 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
 }
 .nb-link:hover     { background: rgba(11,45,94,0.07); }
 .nb-link.is-active { background: rgba(11,45,94,0.09); font-weight: 600; }
@@ -124,13 +124,14 @@
     font-size: 0.875rem;
     font-weight: 600;
     color: #0B2D5E;
-    border: 1.5px solid #E5E3DC;
+    border: 1.5px solid #0B2D5E;
     text-decoration: none;
     white-space: nowrap;
     transition: border-color 0.18s, background 0.18s;
     box-sizing: border-box;
+    background: transparent;
 }
-.nb-btn-outline:hover { border-color: #0B2D5E; background: rgba(11,45,94,0.04); }
+.nb-btn-outline:hover { background: rgba(11,45,94,0.06); }
 
 .nb-btn-primary {
     display: inline-flex;
@@ -159,49 +160,66 @@
     .nb-menu {
         display: none;
         position: absolute;
-        top: 68px;
+        top: 68px; /* hauteur exacte de la navbar */
         left: 0;
         right: 0;
         width: 100%;
         background: #fff;
         border-top: 1px solid #E5E3DC;
+        border-bottom: 1px solid #E5E3DC;
         box-shadow: 0 16px 40px rgba(11,45,94,0.12);
         flex-direction: column;
         align-items: stretch;
-        gap: 0.3rem;
-        padding: 0.75rem 1rem 1.25rem;
+        gap: 0;
+        padding: 0.5rem 0.75rem 1rem;
         box-sizing: border-box;
+        /* animation douce */
+        opacity: 0;
+        transform: translateY(-6px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
     }
 
-    .nb-menu.is-open { display: flex; }
+    .nb-menu.is-open {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
 
+    /* Séparateur horizontal */
     .nb-sep {
         width: 100%;
         height: 1px;
-        margin: 0.2rem 0;
+        margin: 0.35rem 0;
+        background: #F0EFE9;
     }
+    /* Cacher les séparateurs dans les <li> conteneurs */
+    .nb-menu > li:has(.nb-sep) { padding: 0; }
 
+    /* Liens pleine largeur */
     .nb-link {
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.7rem 0.85rem;
         border-radius: 10px;
         font-size: 0.9rem;
         justify-content: flex-start;
         box-sizing: border-box;
     }
 
-    .nb-btn-outline {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
-        font-size: 0.9rem;
+    /* Groupe boutons : côte à côte même sur mobile */
+    .nb-auth-row {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.4rem 0 0.2rem;
     }
-
-    .nb-btn-primary {
-        width: 100%;
-        padding: 0.75rem 1rem;
+    .nb-auth-row .nb-btn-outline,
+    .nb-auth-row .nb-btn-primary {
+        flex: 1;
+        justify-content: center;
+        padding: 0.7rem 0.5rem;
         border-radius: 10px;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
     }
 }
 </style>
@@ -233,7 +251,7 @@
 
             <li>
                 <a href="{{ Route('offre') }}"
-                   class="nb-link {{ request()->routeIs('offre') ? 'is-active' : '' }}">
+                   class="nb-link {{ request()->routeIs('offre*') ? 'is-active' : '' }}">
                     Appels d'offres
                 </a>
             </li>
@@ -251,7 +269,7 @@
 
                 <li>
                     <a href="{{ route('moncompte') }}"
-                       class="nb-link {{ request()->routeIs('moncompte') ? 'is-active' : '' }}">
+                       class="nb-link {{ request()->routeIs('moncompte*') || request()->routeIs('mesSetting') || request()->routeIs('mesAbonnements') || request()->routeIs('mesformations') ? 'is-active' : '' }}">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                         Mon compte
                     </a>
@@ -273,11 +291,12 @@
             @else
                 <li><span class="nb-sep"></span></li>
 
+                {{-- Boutons groupés dans un div pour rester côte à côte sur mobile --}}
                 <li>
-                    <a href="{{ Route('login') }}" class="nb-btn-outline">Se connecter</a>
-                </li>
-                <li>
-                    <a href="{{ Route('register.morale') }}" class="nb-btn-outline">S'inscrire</a>
+                    <div class="nb-auth-row">
+                        <a href="{{ Route('login') }}" class="nb-btn-outline">Se connecter</a>
+                        <a href="{{ Route('register.morale') }}" class="nb-btn-primary">S'inscrire</a>
+                    </div>
                 </li>
             @endauth
 

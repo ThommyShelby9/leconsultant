@@ -110,7 +110,7 @@ class AbonnementController extends Controller
             }
 
             // Montant du pack
-            $amount = $pack->prix ?? $pack->montant ?? config('payplus.packs.mensuel', 50);
+            $amount = $pack->prix ?? $pack->montant ?? config('payplus.packs.mensuel', 1490);
 
             \Log::info('💵 Pack details', [
                 'pack_id' => $packId,
