@@ -40,6 +40,7 @@
         top: 0;
         z-index: 200;
         box-shadow: 0 2px 16px rgba(11,45,94,0.06);
+        overflow: visible;
     }
 
     #logo a { display: flex; align-items: center; }
@@ -84,7 +85,7 @@
         flex-shrink: 0;
     }
 
-    /* ── BOUTONS AUTH — hors du <ul> ── */
+    /* ── BOUTONS AUTH ── */
     .nav-auth-actions {
         display: flex;
         align-items: center;
@@ -118,7 +119,7 @@
     }
     .nav-btn-filled:hover { background: #0140d4; box-shadow: 0 6px 18px rgba(1,54,186,0.3); }
 
-    /* ── HAMBURGER ───────────────────────────────────── */
+    /* ── HAMBURGER ── */
     #nav-toggle {
         display: none;
         flex-direction: column;
@@ -131,6 +132,7 @@
         cursor: pointer;
         gap: 5px; padding: 0;
         flex-shrink: 0;
+        -webkit-tap-highlight-color: transparent;
     }
     #nav-toggle span {
         display: block;
@@ -143,36 +145,53 @@
     #nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
     #nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    /* ── MAIN / FOOTER ───────────────────────────────── */
+    /* ── MAIN / FOOTER ── */
     main { min-height: calc(100vh - 68px); padding: 3rem 0; }
     footer { background: var(--blue); border-top: 3px solid var(--rouge); }
 
-    /* ── RESPONSIVE ──────────────────────────────────── */
+    /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
         #main-menu {
             padding: 0 1.25rem;
-            flex-wrap: wrap;
-            height: auto;
-            min-height: 60px;
+            height: 60px;
         }
         #logo {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            padding: 0.75rem 0;
         }
         #nav-toggle { display: flex; }
+
+        /* Menu caché via visibility+opacity (pas display:none)
+           pour que les transitions fonctionnent */
         #nav-right {
-            display: none;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 16px 40px rgba(11,45,94,0.12);
+            display: flex;
             flex-direction: column;
             align-items: flex-start;
-            width: 100%;
-            border-top: 1px solid var(--border);
-            padding: 0.5rem 0 1rem;
+            padding: 0.5rem 1rem 1rem;
             gap: 0.1rem;
+            transition: opacity 0.22s ease, visibility 0.22s ease;
+            z-index: 199;
         }
-        #nav-right.open { display: flex; }
+        #nav-right.open {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         #main-menu-navigation {
             flex-direction: column;
             align-items: flex-start;
@@ -185,10 +204,19 @@
             padding: 0.6rem 0.75rem;
             border-radius: 10px;
         }
+
         .nav-sep { display: none; }
+
         .nav-auth-actions {
             margin-left: 0;
-            padding: 0.5rem 0.25rem 0;
+            padding: 0.5rem 0 0.2rem;
+            width: 100%;
+        }
+        .nav-auth-actions .nav-btn-outline,
+        .nav-auth-actions .nav-btn-filled {
+            flex: 1;
+            justify-content: center;
+            border-radius: 10px;
         }
     }
     </style>
@@ -220,9 +248,7 @@
                         <li class="{{ request()->routeIs('alerte') ? 'active' : '' }}">
                             <a href="{{ Route('alerte') }}">Mes Alertes</a>
                         </li>
-
                         <div class="nav-sep"></div>
-
                         <li class="{{ request()->routeIs('moncompte*') || request()->routeIs('mesSetting') || request()->routeIs('mesAbonnements') || request()->routeIs('mesformations') ? 'active' : '' }}">
                             <a href="{{ route('moncompte') }}">Mon compte</a>
                         </li>
@@ -266,14 +292,27 @@
     <script>
         AOS.init({ once: true, duration: 600, easing: 'ease-out-quad' });
 
-        const toggle = document.getElementById('nav-toggle');
-        const navRight = document.getElementById('nav-right');
-        if (toggle && navRight) {
-            toggle.addEventListener('click', () => {
-                const open = navRight.classList.toggle('open');
-                toggle.setAttribute('aria-expanded', open);
+        (function () {
+            var toggle   = document.getElementById('nav-toggle');
+            var navRight = document.getElementById('nav-right');
+            var skipNext = false;
+
+            toggle.addEventListener('click', function () {
+                var open = navRight.classList.toggle('open');
+                toggle.setAttribute('aria-expanded', String(open));
+                // Ignore le prochain event document click (même tap)
+                skipNext = true;
+                setTimeout(function () { skipNext = false; }, 0);
             });
-        }
+
+            document.addEventListener('click', function (e) {
+                if (skipNext) return;
+                if (!document.getElementById('main-menu').contains(e.target)) {
+                    navRight.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        })();
     </script>
 
     @include('components.loader')
