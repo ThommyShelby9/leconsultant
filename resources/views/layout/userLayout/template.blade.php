@@ -27,7 +27,7 @@
     *, *::before, *::after { box-sizing: border-box; }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); margin: 0; }
 
-    /* ── NAVBAR ──────────────────────────────────────── */
+    /* ── NAVBAR ── */
     #main-menu {
         background: var(--white);
         border-bottom: 1px solid var(--border);
@@ -40,7 +40,6 @@
         top: 0;
         z-index: 200;
         box-shadow: 0 2px 16px rgba(11,45,94,0.06);
-        overflow: visible;
     }
 
     #logo a { display: flex; align-items: center; }
@@ -117,7 +116,7 @@
         border: 1.5px solid transparent;
         box-shadow: 0 4px 14px rgba(1,54,186,0.2);
     }
-    .nav-btn-filled:hover { background: #0140d4; box-shadow: 0 6px 18px rgba(1,54,186,0.3); }
+    .nav-btn-filled:hover { background: #0140d4; }
 
     /* ── HAMBURGER ── */
     #nav-toggle {
@@ -125,14 +124,15 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        width: 36px; height: 36px;
+        width: 40px; height: 40px;
         border: 1.5px solid var(--border);
         border-radius: 8px;
-        background: transparent;
+        background: #F5F4F0;
         cursor: pointer;
         gap: 5px; padding: 0;
         flex-shrink: 0;
         -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
     }
     #nav-toggle span {
         display: block;
@@ -140,10 +140,11 @@
         background: var(--blue);
         border-radius: 2px;
         transition: transform 0.25s, opacity 0.25s;
+        pointer-events: none; /* ← évite que les spans interceptent le clic */
     }
-    #nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    #nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-    #nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    #nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+    #nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
     /* ── MAIN / FOOTER ── */
     main { min-height: calc(100vh - 68px); padding: 3rem 0; }
@@ -154,6 +155,7 @@
         #main-menu {
             padding: 0 1.25rem;
             height: 60px;
+            position: relative; /* pour le dropdown absolu */
         }
         #logo {
             display: flex;
@@ -163,12 +165,8 @@
         }
         #nav-toggle { display: flex; }
 
-        /* Menu caché via visibility+opacity (pas display:none)
-           pour que les transitions fonctionnent */
+        /* Menu toujours dans le DOM, caché par max-height */
         #nav-right {
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
             position: absolute;
             top: 60px;
             left: 0;
@@ -176,20 +174,22 @@
             width: 100%;
             background: var(--white);
             border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 16px 40px rgba(11,45,94,0.12);
+            border-bottom: 2px solid var(--blue);
+            box-shadow: 0 12px 32px rgba(11,45,94,0.13);
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            padding: 0.5rem 1rem 1rem;
+            padding: 0 1rem;
             gap: 0.1rem;
-            transition: opacity 0.22s ease, visibility 0.22s ease;
             z-index: 199;
+            /* Fermeture par max-height — aucun display:none */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
         }
         #nav-right.open {
-            visibility: visible;
-            opacity: 1;
-            pointer-events: auto;
+            max-height: 500px; /* suffisamment grand pour tout le contenu */
+            padding: 0.5rem 1rem 1rem;
         }
 
         #main-menu-navigation {
@@ -209,7 +209,7 @@
 
         .nav-auth-actions {
             margin-left: 0;
-            padding: 0.5rem 0 0.2rem;
+            padding: 0.4rem 0 0.2rem;
             width: 100%;
         }
         .nav-auth-actions .nav-btn-outline,
@@ -292,27 +292,15 @@
     <script>
         AOS.init({ once: true, duration: 600, easing: 'ease-out-quad' });
 
-        (function () {
-            var toggle   = document.getElementById('nav-toggle');
-            var navRight = document.getElementById('nav-right');
-            var skipNext = false;
+        // ── Burger menu ── simple toggle, pas de document listener
+        var navToggle = document.getElementById('nav-toggle');
+        var navRight  = document.getElementById('nav-right');
 
-            toggle.addEventListener('click', function () {
-                var open = navRight.classList.toggle('open');
-                toggle.setAttribute('aria-expanded', String(open));
-                // Ignore le prochain event document click (même tap)
-                skipNext = true;
-                setTimeout(function () { skipNext = false; }, 0);
-            });
-
-            document.addEventListener('click', function (e) {
-                if (skipNext) return;
-                if (!document.getElementById('main-menu').contains(e.target)) {
-                    navRight.classList.remove('open');
-                    toggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-        })();
+        navToggle.addEventListener('click', function () {
+            var isOpen = navRight.classList.toggle('open');
+            navToggle.classList.toggle('is-open', isOpen);
+            navToggle.setAttribute('aria-expanded', String(isOpen));
+        });
     </script>
 
     @include('components.loader')
