@@ -11,7 +11,7 @@
     border-bottom: 1px solid #E5E3DC;
     transition: box-shadow 0.3s;
     box-sizing: border-box;
-    overflow: visible; /* ← indispensable pour le dropdown mobile */
+    overflow: visible;
 }
 #navbar.scrolled {
     box-shadow: 0 4px 24px rgba(11,45,94,0.1);
@@ -42,7 +42,7 @@
     width: auto;
 }
 
-/* ── BURGER BUTTON ──────────────────────────────── */
+/* ── BURGER ──────────────────────────────────────── */
 .nb-burger {
     display: none;
     flex-direction: column;
@@ -127,9 +127,9 @@
     border: 1.5px solid #0B2D5E;
     text-decoration: none;
     white-space: nowrap;
-    transition: border-color 0.18s, background 0.18s;
-    box-sizing: border-box;
     background: transparent;
+    transition: background 0.18s;
+    box-sizing: border-box;
 }
 .nb-btn-outline:hover { background: rgba(11,45,94,0.06); }
 
@@ -157,10 +157,13 @@
 @media (max-width: 1023px) {
     .nb-burger { display: flex; }
 
+    /* Menu caché par défaut — PAS de transition display,
+       juste visibility + opacity pour éviter le flash */
     .nb-menu {
-        display: none;
+        visibility: hidden;
+        opacity: 0;
         position: absolute;
-        top: 68px; /* hauteur exacte de la navbar */
+        top: 68px;
         left: 0;
         right: 0;
         width: 100%;
@@ -170,34 +173,27 @@
         box-shadow: 0 16px 40px rgba(11,45,94,0.12);
         flex-direction: column;
         align-items: stretch;
+        display: flex; /* toujours flex, on masque via visibility/opacity */
         gap: 0;
         padding: 0.5rem 0.75rem 1rem;
         box-sizing: border-box;
-        /* animation douce */
-        opacity: 0;
-        transform: translateY(-6px);
-        transition: opacity 0.2s ease, transform 0.2s ease;
         pointer-events: none;
+        transition: opacity 0.22s ease, visibility 0.22s ease;
     }
 
     .nb-menu.is-open {
-        display: flex;
+        visibility: visible;
         opacity: 1;
-        transform: translateY(0);
         pointer-events: auto;
     }
 
-    /* Séparateur horizontal */
     .nb-sep {
         width: 100%;
         height: 1px;
         margin: 0.35rem 0;
         background: #F0EFE9;
     }
-    /* Cacher les séparateurs dans les <li> conteneurs */
-    .nb-menu > li:has(.nb-sep) { padding: 0; }
 
-    /* Liens pleine largeur */
     .nb-link {
         width: 100%;
         padding: 0.7rem 0.85rem;
@@ -207,7 +203,7 @@
         box-sizing: border-box;
     }
 
-    /* Groupe boutons : côte à côte même sur mobile */
+    /* Boutons auth côte à côte */
     .nb-auth-row {
         display: flex;
         gap: 0.5rem;
@@ -291,7 +287,6 @@
             @else
                 <li><span class="nb-sep"></span></li>
 
-                {{-- Boutons groupés dans un div pour rester côte à côte sur mobile --}}
                 <li>
                     <div class="nb-auth-row">
                         <a href="{{ Route('login') }}" class="nb-btn-outline">Se connecter</a>
@@ -301,24 +296,28 @@
             @endauth
 
         </ul>
-
     </div>
 </nav>
 
 <script>
 (function () {
-    var burger = document.getElementById('nb-burger');
-    var menu   = document.getElementById('nb-menu');
-    var navbar = document.getElementById('navbar');
+    var burger  = document.getElementById('nb-burger');
+    var menu    = document.getElementById('nb-menu');
+    var navbar  = document.getElementById('navbar');
+    var skipNext = false; // ← empêche le document listener de fermer au même clic
 
-    burger.addEventListener('click', function (e) {
-        e.stopPropagation();
+    burger.addEventListener('click', function () {
         var isOpen = menu.classList.toggle('is-open');
         burger.classList.toggle('is-open', isOpen);
         burger.setAttribute('aria-expanded', String(isOpen));
+
+        // On ignore le prochain event document click (celui du même tap)
+        skipNext = true;
+        setTimeout(function () { skipNext = false; }, 0);
     });
 
     document.addEventListener('click', function (e) {
+        if (skipNext) return;
         if (!navbar.contains(e.target)) {
             menu.classList.remove('is-open');
             burger.classList.remove('is-open');
