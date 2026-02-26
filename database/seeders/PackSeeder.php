@@ -20,7 +20,7 @@ class PackSeeder extends Seeder
             ['titre' => 'Unique'],
             [
                 'payant' => true,
-                'prix' => 50,
+                'prix' => 1490,
                 'nombre' => 1,
                 'modalite' => "Mois"
             ]

@@ -16,12 +16,7 @@ $(function() {
 
     // AOS.init();
 
-    // Javascript to toggle the menu
-    $('#nav-toggle').click(function () {
-        $('#main-menu-navigation:visible').hide(400);
-
-        $('#main-menu-navigation:hidden').show(400);
-    });
+    // Burger menu géré par les templates inline — ne pas dupliquer ici
 
     var $window = $(window);
     $window.on('scroll', function () {
@@ -67,14 +62,5 @@ $(function() {
     // }
     // toggler.addEventListener("click", toggleNav);
 
-    /* Jquery js */
-    const togglerV2 = $("#nav-toggle");
-    const toggleNavV2 = () => {
-        togglerV2.toggleClass("open");
-
-        const ariaToggleV2 = togglerV2.attr("aria-expanded") === "true" ? "false" : "true";
-        togglerV2.attr("aria-expanded", ariaToggleV2);
-    }
-    togglerV2.click(toggleNavV2);
 
 });
